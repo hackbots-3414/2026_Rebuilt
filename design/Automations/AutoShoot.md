@@ -1,13 +1,16 @@
 # Auto Shoot
 
-## Assumptions
-* Can check for good launch angles and rotations
-* Know what target is shooting for
-
 ## Subsystems
-* Shooter shoots the fuel
+* Shooter
+* Turret
+
+## Initial State
+* Can check for good launch angles and rotations
+* EITHER:
+  * In alliance zone, not BUMP or TRENCH
+  * Human-triggered
+* shooter and turret are ready
 
 ## Steps
-* Check for good rotation and launch angle for given target
-* Get shooter up to speed
-* Shoot
+
+1. `shooter.shoot()`

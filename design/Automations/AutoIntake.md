@@ -1,15 +1,14 @@
 # Auto Intake
 
-## Assumptions
-* Can intake
-* can detect fuel and it's location
-
 ## Subsystems
 * Drivetrain
 * Intake
-* Vision 
+
+## Initial State
+* Vision detects fuel nearby
+* Human-triggered
 
 ## Steps
-* Find fuel using vision
-* drive to fuel
-* Intake fuel
+1. Find fuel using vision
+1. drive to fuel with `drivetrain.driveVelocity()` with calculated velocity (some speed towards fuel).
+1. `intake.intake()` in parallel

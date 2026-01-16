@@ -1,17 +1,15 @@
 # Auto Corral
 
-## Assumptions
-* Have fuel
-* Know pose
-* Can eject fuel
-* Indexer can go backwards
-
 ## Subsystems
 * Intake
 * Drivetrain
 * Indexer
 
+## Initial State
+* Have fuel
+* Close to corralStation
+* Triggered by human button
+
 ## Steps
-* Use pose to get to corral via drivetrain
-* run indexer in reverse to get fuel in intake
-* Eject fuel from intake into corral
+1. `drivetrain.driveToPose(corralStation)`
+1. `intake.reverse()` and `indexer.reverse()`

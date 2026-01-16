@@ -1,13 +1,20 @@
 # Shooter
+
 ## Assuptions
+
 * Controllable pitch angle of fuel
 * Controlling the speed of the flywheel
-* Tracking of goal
+* Accurate control over gamepiece final location
+* Read motor position/velocities to determine if shooting is ready.
 
 ## Operations
 
-`shoot`
-* shooting the ball
+`shoot(configuration)`
+* Ensure that we're at the correct shooting configuration
+* shooting the fuel
 
-`track`
-* changing the launch angle and speed of the ball
+`reverse()`
+* Reverses the shooter to potentially unjam a fuel
+
+`prepare(configuration)`
+* changing the launch angle and speed of the motors

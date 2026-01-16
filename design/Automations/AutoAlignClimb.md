@@ -1,14 +1,17 @@
 # Auto align and Climb
 
-## Assumptions
-* Able to climb all levels
-* able to retrive pose
-
-## Steps
-* Align climb
+## Subsystems
+* Drivetrain
 * Climb
 
-## Subsystems
-* Drivetrain aligns the robot to climb position
-* Climb subsystem climbs all levels
+## Initial State
+* Close to tower
+* Not yet climbed
+* Human triggers action
+* Human selects climb spot (via button)
+
+## Steps
+1. Align climb with `drivetrain.driveToPoint(climbPose)`
+1. Prepare climb with `climber.prepare()`
+1. Climb with `climber.climb(desiredLevel)`
 

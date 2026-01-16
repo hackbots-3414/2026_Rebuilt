@@ -2,14 +2,13 @@
 ## Assumptions
 
 * swerve drive
-* 8 motors
-* 4 motors
-* accurate pose position
+* 8 TalonFX motors
+* 4 absolute encoders for steer
+* accurate pose estimation
 * gyro for reading the azimuth of robot
-* error tolerence for position
+* Accurate drive-to-pose; within some reasonable tolerance
 
 ## Operations
-
 
 `drive(velocityRef)`
 

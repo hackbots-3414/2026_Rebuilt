@@ -1,12 +1,12 @@
 # Live Tracking
 
-## Assumptions 
-* know what target is aimed for
-
 ## Subsystems
-* Drivetrain/turret rotates the shooter
+* Turret
+
+## Initial State
+* Either:
+  * We're in our alliance AND we've got an active hub
+  * We're outside our alliance zone
 
 ## Steps
-* Check target
-* Aim yaw for target
-* Aim launch angle for target
+1. `turret.track()` and `shooter.prepare()` in parallel
