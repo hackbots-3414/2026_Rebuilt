@@ -1,17 +1,19 @@
 package frc.robot.vision.localization;
 
 import static edu.wpi.first.units.Units.Milliseconds;
+
 import java.util.function.Supplier;
+
 import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.FieldManager;
-import frc.robot.Robot;
 import frc.robot.vision.CameraIO;
 
 public class CameraIOAprilTagSim implements CameraIO {
