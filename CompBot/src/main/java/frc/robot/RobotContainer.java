@@ -4,36 +4,23 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest;
-
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.DriveForward;
+import frc.robot.binding.Binder;
+import frc.robot.binding.DriverBindings;
 import frc.robot.generated.TestBotTunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.superstructure.Superstructure;
 
 public class RobotContainer {
-
-   private final CommandXboxController joystick = new CommandXboxController(0);
-
     public final Superstructure superstructure = new Superstructure(TestBotTunerConstants.createDrivetrain());
 
-    public RobotContainer() {
-        configureBindings();
-    }
+    public final Binder driver = new DriverBindings();
 
-    private void configureBindings() {
-        superstructure.bindDrive(joystick);
+    public RobotContainer() {
+        driver.bind(superstructure);
     }
 
     public Command getAutonomousCommand() {
-        return superstructure.build(new DriveForward());
+        return Commands.none();
     }
 }
