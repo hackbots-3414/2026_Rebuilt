@@ -73,6 +73,11 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // adding logging support, latest for slf4j and logback (they work together)
+    implementation "org.slf4j:slf4j-api:2.0.1"
+    implementation "ch.qos.logback:logback-classic:1.4.14"
+
 }
 
 test {

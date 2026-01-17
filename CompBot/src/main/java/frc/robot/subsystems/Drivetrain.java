@@ -1,6 +1,10 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
@@ -16,6 +20,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -25,8 +31,11 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.FieldManager;
+import frc.robot.Robot;
 import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.generated.TestBotTunerConstants.TunerSwerveDrivetrain;
+import frc.robot.vision.localization.TimestampedPoseEstimate;
 
 public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private static final double kSimLoopPeriod = 0.004; // 4 ms
@@ -46,6 +55,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       .withDriveRequestType(DriveRequestType.Velocity);
   
   private SwerveDriveState state;
+
+  private boolean hasReceivedVisionUpdate;
 
   /* Swerve requests to apply during SysId characterization */
   private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -135,70 +146,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   /**
-   * Constructs a CTRE SwerveDrivetrain using the specified constants.
-   * <p>
-   * This constructs the underlying hardware devices, so users should not
-   * construct
-   * the devices themselves. If they need the devices, they can access them
-   * through
-   * getters in the classes.
-   *
-   * @param drivetrainConstants     Drivetrain-wide constants for the swerve drive
-   * @param odometryUpdateFrequency The frequency to run the odometry loop. If
-   *                                unspecified or set to 0 Hz, this is 250 Hz on
-   *                                CAN FD, and 100 Hz on CAN 2.0.
-   * @param modules                 Constants for each specific module
-   */
-  public Drivetrain(
-      SwerveDrivetrainConstants drivetrainConstants,
-      double odometryUpdateFrequency,
-      SwerveModuleConstants<?, ?, ?>... modules) {
-    super(drivetrainConstants, odometryUpdateFrequency, modules);
-    if (Utils.isSimulation()) {
-      startSimThread();
-    }
-  }
-
-  /**
-   * Constructs a CTRE SwerveDrivetrain using the specified constants.
-   * <p>
-   * This constructs the underlying hardware devices, so users should not
-   * construct
-   * the devices themselves. If they need the devices, they can access them
-   * through
-   * getters in the classes.
-   *
-   * @param drivetrainConstants       Drivetrain-wide constants for the swerve
-   *                                  drive
-   * @param odometryUpdateFrequency   The frequency to run the odometry loop. If
-   *                                  unspecified or set to 0 Hz, this is 250 Hz
-   *                                  on
-   *                                  CAN FD, and 100 Hz on CAN 2.0.
-   * @param odometryStandardDeviation The standard deviation for odometry
-   *                                  calculation
-   *                                  in the form [x, y, theta]ᵀ, with units in
-   *                                  meters
-   *                                  and radians
-   * @param visionStandardDeviation   The standard deviation for vision
-   *                                  calculation
-   *                                  in the form [x, y, theta]ᵀ, with units in
-   *                                  meters
-   *                                  and radians
-   * @param modules                   Constants for each specific module
-   */
-  public Drivetrain(
-      SwerveDrivetrainConstants drivetrainConstants,
-      double odometryUpdateFrequency,
-      Matrix<N3, N1> odometryStandardDeviation,
-      Matrix<N3, N1> visionStandardDeviation,
-      SwerveModuleConstants<?, ?, ?>... modules) {
-    super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
-    if (Utils.isSimulation()) {
-      startSimThread();
-    }
-  }
-
-  /**
    * Returns a command that applies the specified control request to this swerve
    * drivetrain.
    *
@@ -255,6 +202,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     state = getState();
+
+    FieldManager.getInstance().getField().setRobotPose(robotPose());
+    hasReceivedVisionUpdate = false;
   }
 
   private void startSimThread() {
@@ -333,7 +283,37 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     );
   }
 
+  /**
+   * Returns the drivetrain's estimated pose on the field.
+   */
   public Pose2d robotPose() {
     return state.Pose;
+  }
+
+  /**
+   * Returns the drivetrain's field-relative velocity.
+   */
+  public Transform2d robotVelocity() {
+    ChassisSpeeds fieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(state.Speeds, robotPose().getRotation());
+    return new Transform2d(
+      fieldRelative.vxMetersPerSecond,
+      fieldRelative.vyMetersPerSecond,
+      Rotation2d.fromRadians(fieldRelative.omegaRadiansPerSecond));
+  }
+
+  public void addPoseEstimate(TimestampedPoseEstimate estimate) {
+    hasReceivedVisionUpdate = true;
+    // This should NOT run in simulation!
+    if (Robot.isSimulation()) {
+      return;
+    }
+    addVisionMeasurement(
+        estimate.pose(),
+        estimate.timestamp(),
+        estimate.stdDevs());
+  }
+
+  public Command rotate() {
+    return this.applyRequest(() -> new SwerveRequest.RobotCentric().withRotationalRate(1.5));
   }
 }
