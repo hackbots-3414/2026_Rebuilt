@@ -300,4 +300,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
     }
+
+    public Command driveForwards() {
+        return this.run(() -> this.setControl(new SwerveRequest.RobotCentric().withVelocityX(5.0)));
+    }
 }
