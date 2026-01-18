@@ -26,6 +26,8 @@ public class DriverBindings implements Binder {
         superstructure.bindDrive(vx, vy, vrot);
 
         controller.button(1).toggleOnTrue(superstructure.build(new DrivetrainTrack()));
-        controller.button(2).onTrue(superstructure.build(new FuelShotSim()));
+        controller.button(2).whileTrue(superstructure.build(new DrivetrainTrack()));
+
+        superstructure.state.shootReady().whileTrue(superstructure.build(new FuelShotSim()).repeatedly());
     }
 }

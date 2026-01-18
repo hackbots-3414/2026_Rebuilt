@@ -1,7 +1,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -30,12 +32,13 @@ public class FuelShotSim implements CommandBuilder {
 
   public class FuelSim {
     private static final double dt = 0.02;
-    private static final int resolution = 30;
+    private static final int resolution = 1;
 
     private Translation3d position;
     private Translation3d velocity;
     private Translation3d target;
-    private final Translation3d acceleration = new Translation3d(0, 0, -9.81);
+
+    private Translation3d gravity = new Translation3d(0, 0, -9.81);
 
     public FuelSim() {}
 
@@ -54,15 +57,18 @@ public class FuelShotSim implements CommandBuilder {
         // Update position
         position = position.plus(velocity.times(dt / (double)resolution));
         // Update velocity
+        // Calculate the drag force / mass: 0.5 * 1.225 * pi * 0.075^2 * 0.47 * v^2
+        // double Fd = 0.5 * 1.225 * Math.PI * 0.075 * 0.075 * 0.47 * velocity.getNorm();
+        // Translation3d acceleration = velocity.times(Fd).plus(gravity).times(dt);
+        Translation3d acceleration = gravity;
         velocity = velocity.plus(acceleration.times(dt / (double)resolution));
       }
-      FieldManager.getInstance().addFuel(new Pose2d(position.toTranslation2d(), Rotation2d.kZero));
+      FieldManager.getInstance().addFuel(new Pose3d(position, Rotation3d.kZero));
     }
 
     public boolean atHub() {
-      final double epsilon = 0.4;
-      Translation3d delta = position.minus(target);
-      return delta.getNorm() <= epsilon || delta.getNorm() > 20;
+      return position.getZ() < target.getZ() && velocity.getZ() < 0;
     }
+
   }
 }

@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.FieldManager;
 import frc.robot.Robot;
@@ -275,9 +276,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return this.applyRequest(() -> {
       if (rotationOverride.isPresent()) {
         return driveOverride
-          .withVelocityX(vx.getAsDouble() * maxSpeed)
-          .withVelocityY(vy.getAsDouble() * maxSpeed)
-          .withTargetDirection(rotationOverride.get().yaw);
+            .withVelocityX(vx.getAsDouble() * maxSpeed)
+            .withVelocityY(vy.getAsDouble() * maxSpeed)
+            .withTargetDirection(rotationOverride.get().yaw);
       }
       return drive
           .withVelocityX(vx.getAsDouble() * maxSpeed)
@@ -329,5 +330,10 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public Optional<AimParams> aimParams() {
     return rotationOverride;
+  }
+
+  public Trigger tracked() {
+    return new Trigger(() -> rotationOverride.isPresent()
+        && rotationOverride.get().yaw.relativeTo(robotPose().getRotation()).getDegrees() < 5);
   }
 }

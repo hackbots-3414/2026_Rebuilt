@@ -3,6 +3,7 @@ package frc.robot.superstructure;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.superstructure.Superstructure.Subsystems;
 import frc.robot.util.FieldUtils;
 
@@ -34,5 +35,9 @@ public class StateManager {
     // For now, just assume that we're targeting the nearest hub.
     // TODO: add feeding logic as well.
     return FieldUtils.hub();
+  }
+
+  public Trigger shootReady() {
+    return subsystems.drivetrain().tracked();
   }
 }

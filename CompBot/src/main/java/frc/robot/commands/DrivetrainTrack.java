@@ -10,7 +10,7 @@ import frc.robot.superstructure.Superstructure.Subsystems;
 public class DrivetrainTrack implements CommandBuilder {
   public Command build(Subsystems subsystems, StateManager state) {
     AimParams params = new AimParams();
-    AimStrategy aim = new PhysicsAim(0.1);
+    AimStrategy aim = new PhysicsAim(2.0);
     return subsystems.drivetrain().track(() -> aim.update(state, params));
   }
 }

@@ -11,6 +11,6 @@ public class Constants {
     public static final Distance kFieldWidth = Meters.of(16.541);
     public static final Distance kFieldLength = Meters.of(8.069);
     
-    public static final Pose3d kBlueHub = new Pose3d(4.632516, 4.011139, 3.0, Rotation3d.kZero);
+    public static final Pose3d kBlueHub = new Pose3d(4.632516, 4.011139, 1.83, Rotation3d.kZero);
   }
 }

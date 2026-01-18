@@ -18,7 +18,7 @@ public class PhysicsAim implements AimStrategy {
           "Positive final descent speed required, but nonpositive number found; assigning value of 1.",
           false);
     }
-    this.finalDescentSpeed = finalDescentSpeed; // we fall
+    this.finalDescentSpeed = finalDescentSpeed;
   }
 
   public AimParams update(StateManager state, AimParams params) {
@@ -39,7 +39,7 @@ public class PhysicsAim implements AimStrategy {
     // Solve for the initial velocity components given the time
     double vx = dx / t;
     double vy = dy / t;
-    double vz = 9.81 * t + finalDescentSpeed;
+    double vz = 9.81 * t - finalDescentSpeed;
 
 
     // Compensate for robot velocity
