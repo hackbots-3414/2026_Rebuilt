@@ -1,0 +1,38 @@
+package frc.robot.util;
+
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
+
+/**
+ * A class with helper static methods to register status signals. This class lets all status signals
+ * update at once, instead of each and every time they're read individually, bettering performance.
+ */
+@SuppressWarnings("rawtypes")
+public class StatusSignalUtil {
+  private static StatusSignal[] m_rioSignals = new StatusSignal[0];
+  private static StatusSignal[] m_canivoreSignals = new StatusSignal[0];
+
+  public static void registerRioSignals(StatusSignal... signals) {
+    StatusSignal[] newSignals = new StatusSignal[m_rioSignals.length + signals.length];
+    System.arraycopy(m_rioSignals, 0, newSignals, 0, m_rioSignals.length);
+    System.arraycopy(signals, 0, newSignals, m_rioSignals.length, signals.length);
+    m_rioSignals = newSignals;
+  }
+
+  public static void registerCANivoreSignals(StatusSignal... signals) {
+    StatusSignal[] newSignals = new StatusSignal[m_canivoreSignals.length + signals.length];
+    System.arraycopy(m_canivoreSignals, 0, newSignals, 0, m_canivoreSignals.length);
+    System.arraycopy(signals, 0, newSignals, m_canivoreSignals.length, signals.length);
+    m_canivoreSignals = newSignals;
+  }
+
+  public static void refreshAll() {
+    if (m_rioSignals.length > 0) {
+      BaseStatusSignal.refreshAll(m_rioSignals);
+    }
+    if (m_canivoreSignals.length > 0) {
+      BaseStatusSignal.refreshAll(m_canivoreSignals);
+    }
+  }
+}
+
