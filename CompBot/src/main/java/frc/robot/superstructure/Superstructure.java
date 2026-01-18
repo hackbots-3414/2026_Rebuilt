@@ -28,7 +28,7 @@ public class Superstructure {
      * run as a proxied command, because it's helpful for autons.
      */
     public Command build(CommandBuilder builder) {
-        return builder.build(subsystems).asProxy();
+        return buildWithoutProxy(builder).asProxy();
     }
 
     /**
@@ -37,7 +37,7 @@ public class Superstructure {
      * other than that, there aren't many uses for this method, so <b>use with care!</b>.
      */
     public Command buildWithoutProxy(CommandBuilder builder) {
-        return builder.build(subsystems)
+        return builder.build(subsystems, state)
             .withName(builder.getClass().getSimpleName());
     }
 

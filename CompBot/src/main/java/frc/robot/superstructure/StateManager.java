@@ -5,6 +5,9 @@ import edu.wpi.first.math.geometry.Transform2d;
 import frc.robot.superstructure.Superstructure.Subsystems;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
+/**
+ * A class representing the robot-wide state variables.
+ */
 public class StateManager {
     private final Subsystems subsystems;
 
