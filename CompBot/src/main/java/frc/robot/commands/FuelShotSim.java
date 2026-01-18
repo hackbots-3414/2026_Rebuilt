@@ -32,7 +32,7 @@ public class FuelShotSim implements CommandBuilder {
 
   public class FuelSim {
     private static final double dt = 0.02;
-    private static final int resolution = 1;
+    private static final int resolution = 10;
 
     private Translation3d position;
     private Translation3d velocity;
@@ -44,6 +44,7 @@ public class FuelShotSim implements CommandBuilder {
 
     public void launch(StateManager state, AimParams params) {
       position = new Translation3d(state.robotPose().getTranslation());
+      // field-relative velocity, but with the robot as the origin
       Translation3d veloR = new Translation3d(
           params.pitch.getCos() * params.yaw.getCos() * params.velocity.baseUnitMagnitude(),
           params.pitch.getCos() * params.yaw.getSin() * params.velocity.baseUnitMagnitude(),
@@ -57,10 +58,9 @@ public class FuelShotSim implements CommandBuilder {
         // Update position
         position = position.plus(velocity.times(dt / (double)resolution));
         // Update velocity
-        // Calculate the drag force / mass: 0.5 * 1.225 * pi * 0.075^2 * 0.47 * v^2
-        // double Fd = 0.5 * 1.225 * Math.PI * 0.075 * 0.075 * 0.47 * velocity.getNorm();
-        // Translation3d acceleration = velocity.times(Fd).plus(gravity).times(dt);
-        Translation3d acceleration = gravity;
+        // Calculate the drag force / mass: 0.5 * 1.225 * pi * 0.075^2 * 0.47 * v^2 * 2
+        double Fd = -0.5 * 1.225 * Math.PI * 0.075 * 0.075 * 0.47 * velocity.getNorm() * 2;
+        Translation3d acceleration = velocity.times(Fd).plus(gravity);
         velocity = velocity.plus(acceleration.times(dt / (double)resolution));
       }
       FieldManager.getInstance().addFuel(new Pose3d(position, Rotation3d.kZero));
