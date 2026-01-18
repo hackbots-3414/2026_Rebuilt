@@ -74,7 +74,7 @@ public class AprilTagVisionHandler implements AutoCloseable {
         return;
       }
     }
-    superstructure.state.addPoseEstimate(estimate);
+    superstructure.addPoseEstimate(estimate);
   }
 
   @Override
