@@ -1,10 +1,9 @@
 package frc.robot.superstructure;
 
 import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.CommandBuilder;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 
 public class Superstructure {
