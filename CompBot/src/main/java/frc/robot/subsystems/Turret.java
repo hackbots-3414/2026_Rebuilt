@@ -2,9 +2,16 @@ package frc.robot.subsystems;
 
 public class Turret {
 
-    private double getTurretLocation(double gear1position, double gear2position) {
+    /**
+     * 
+     * @param gear1position Position off of the 28 tooth gear as read by the CANcoder on that axle
+     * @param gear2position Position off of the 26 tooth gear as read by the CANcoder on that axle
+     * @return: Turret position in radians
+     * @throws IllegalArgumentException Thrown if the turret location is bigger than the turret size
+     */
+    private double getTurretLocation(double gear1position, double gear2position) throws IllegalArgumentException {
         
-        //These can be constants in Constants.java - Gear tooth numbers. Not coprime, which may invalidate the theorem.
+        //These can be constants in Constants.java - Gear tooth numbers.
         int gear1size = 28;
         int gear2size = 26;
         int turretSize = 100;
@@ -13,9 +20,9 @@ public class Turret {
         int m1 = gear1size;
         int m2 = gear2size;
 
-        //Turn CANcoder's -1 to 1 measurement into teeth.
-        int a1 = (int) Math.round((gear1position+1) * gear1size/2);
-        int a2 = (int) Math.round((gear2position+1) * gear2size/2);
+        //Turn CANcoder's 0 to 1 measurement into teeth.
+        int a1 = (int) Math.round(gear1position * gear1size);
+        int a2 = (int) Math.round(gear2position * gear2size);
 
         //Calculating M, M1, M2, and their inverses.
         int M = m1*m2;
@@ -39,7 +46,15 @@ public class Turret {
                 break;
             }
         }
-        return (a1*M1*inverseM1 + a2*M2*inverseM2)%M;
+        double turretPositionInTeeth = (a1*M1*inverseM1 + a2*M2*inverseM2)%M;
+
+        if (turretPositionInTeeth > turretSize) {
+            throw new IllegalArgumentException("Current turret encoders reflect over 100-tooth turret position. Turret only has 100 teeth. Gears likely slipped.");
+        }
+
+        double turretPositionInRadians = turretPositionInTeeth * 2 * Math.PI / turretSize;
+
+        return turretPositionInRadians;
     }
     
 }
