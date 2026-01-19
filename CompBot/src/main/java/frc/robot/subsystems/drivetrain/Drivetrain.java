@@ -5,19 +5,18 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -34,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.FieldManager;
 import frc.robot.Robot;
 import frc.robot.aiming.AimParams;
@@ -56,11 +56,12 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private double maxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+      .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
       .withDriveRequestType(DriveRequestType.Velocity);
   private final SwerveRequest.FieldCentricFacingAngle driveOverride =
       new SwerveRequest.FieldCentricFacingAngle()
           .withDriveRequestType(DriveRequestType.Velocity)
-          .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
+          .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
           .withHeadingPID(30, 0, 0);
 
   private Optional<AimParams> rotationOverride = Optional.empty();
@@ -320,7 +321,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public Command rotate() {
-    return this.applyRequest(() -> new SwerveRequest.RobotCentric().withRotationalRate(1.5));
+    return this.applyRequest(
+        () -> new SwerveRequest.RobotCentric().withRotationalRate(0.5 * Math.PI));
   }
 
   public Command track(Supplier<AimParams> params) {

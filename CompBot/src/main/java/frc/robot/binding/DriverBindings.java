@@ -1,9 +1,6 @@
 package frc.robot.binding;
 
-import java.util.Set;
 import java.util.function.DoubleSupplier;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.binding.BindingConstants.Driver;
 import frc.robot.commands.DrivetrainTrack;

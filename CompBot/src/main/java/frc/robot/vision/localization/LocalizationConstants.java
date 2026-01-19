@@ -78,7 +78,6 @@ public class LocalizationConstants {
   protected static final Rotation2d kFOV = Rotation2d.fromDegrees(82.0);
   protected static final Rotation2d kHorizontalFov = Rotation2d.fromDegrees(70.0);
 
-
   // Simulated error:
   protected static final Time kAvgLatency = Milliseconds.of(18);
   protected static final Time kLatencyStdDev = Milliseconds.of(2);
