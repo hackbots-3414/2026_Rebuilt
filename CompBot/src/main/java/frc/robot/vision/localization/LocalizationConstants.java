@@ -88,8 +88,8 @@ public class LocalizationConstants {
   // Stats about the camera for simulation
   protected static final int kResWidth = 640;
   protected static final int kResHeight = 380;
-  protected static final Rotation2d kFOV = Rotation2d.fromDegrees(82.0);
-  protected static final Rotation2d kHorizontalFov = Rotation2d.fromDegrees(70.0);
+  protected static final Rotation2d kFOV = Rotation2d.fromDegrees(92.0);
+  protected static final Rotation2d kHorizontalFov = Rotation2d.fromDegrees(77.4);
 
 
   // Simulated error:
