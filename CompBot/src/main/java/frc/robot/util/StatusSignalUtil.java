@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 
@@ -9,30 +11,24 @@ import com.ctre.phoenix6.StatusSignal;
  */
 @SuppressWarnings("rawtypes")
 public class StatusSignalUtil {
-  private static StatusSignal[] m_rioSignals = new StatusSignal[0];
-  private static StatusSignal[] m_canivoreSignals = new StatusSignal[0];
+  private static List<BaseStatusSignal> rioSignals = new ArrayList<>();
+  private static List<BaseStatusSignal> canivoreSignals = new ArrayList<>();
 
   public static void registerRioSignals(StatusSignal... signals) {
-    StatusSignal[] newSignals = new StatusSignal[m_rioSignals.length + signals.length];
-    System.arraycopy(m_rioSignals, 0, newSignals, 0, m_rioSignals.length);
-    System.arraycopy(signals, 0, newSignals, m_rioSignals.length, signals.length);
-    m_rioSignals = newSignals;
+    for (StatusSignal signal : signals) {
+      rioSignals.add(signal);
+    }
   }
 
   public static void registerCANivoreSignals(StatusSignal... signals) {
-    StatusSignal[] newSignals = new StatusSignal[m_canivoreSignals.length + signals.length];
-    System.arraycopy(m_canivoreSignals, 0, newSignals, 0, m_canivoreSignals.length);
-    System.arraycopy(signals, 0, newSignals, m_canivoreSignals.length, signals.length);
-    m_canivoreSignals = newSignals;
+    for (StatusSignal signal : signals) {
+      canivoreSignals.add(signal);
+    }
   }
 
   public static void refreshAll() {
-    if (m_rioSignals.length > 0) {
-      BaseStatusSignal.refreshAll(m_rioSignals);
-    }
-    if (m_canivoreSignals.length > 0) {
-      BaseStatusSignal.refreshAll(m_canivoreSignals);
-    }
+    BaseStatusSignal.refreshAll(rioSignals);
+    BaseStatusSignal.refreshAll(canivoreSignals);
   }
 }
 
