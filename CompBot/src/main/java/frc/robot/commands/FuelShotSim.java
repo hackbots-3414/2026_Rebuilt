@@ -42,11 +42,12 @@ public class FuelShotSim implements CommandBuilder {
 
     public void launch(StateManager state, AimParams params) {
       position = new Translation3d(state.robotPose().getTranslation());
+      final double error = 0.15;
       // field-relative velocity, but with the robot as the origin
       Translation3d veloR = new Translation3d(
-          params.pitch.getCos() * params.yaw.getCos() * params.velocity.baseUnitMagnitude(),
-          params.pitch.getCos() * params.yaw.getSin() * params.velocity.baseUnitMagnitude(),
-          params.pitch.getSin() * params.velocity.baseUnitMagnitude());
+          params.pitch.getCos() * params.yaw.getCos() * params.velocity.baseUnitMagnitude() + Math.random() * error,
+          params.pitch.getCos() * params.yaw.getSin() * params.velocity.baseUnitMagnitude() + Math.random() * error,
+          params.pitch.getSin() * params.velocity.baseUnitMagnitude() + Math.random() * error);
       velocity = veloR.plus(new Translation3d(state.robotVelocity().getTranslation()));
       target = state.aimTarget().getTranslation();
     }

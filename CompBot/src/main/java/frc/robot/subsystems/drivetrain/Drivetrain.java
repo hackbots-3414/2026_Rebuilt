@@ -21,9 +21,12 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.util.datalog.StructLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -56,17 +59,18 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private double maxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
+      .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity);
   private final SwerveRequest.FieldCentricFacingAngle driveOverride =
       new SwerveRequest.FieldCentricFacingAngle()
           .withDriveRequestType(DriveRequestType.Velocity)
-          .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
+          .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
           .withHeadingPID(30, 0, 0);
 
   private Optional<AimParams> rotationOverride = Optional.empty();
 
   private SwerveDriveState state;
+  private final StructLogEntry<Pose2d> poseLogEntry;
 
   private boolean hasReceivedVisionUpdate;
 
@@ -154,6 +158,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     if (Utils.isSimulation()) {
       startSimThread();
     }
+    poseLogEntry = StructLogEntry.create(DataLogManager.getLog(), "Robot Pose", Pose2d.struct);
   }
 
   /**
@@ -208,6 +213,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     state = getState();
+    poseLogEntry.update(robotPose());
 
     FieldManager.getInstance().getField().setRobotPose(robotPose());
     hasReceivedVisionUpdate = false;
@@ -275,15 +281,18 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public Command teleopDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot) {
     return this.applyRequest(() -> {
+      // Recalculate the *real* vx and vy to be operator-dependent
+      Translation2d operatorRelative = new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
+      Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
       if (rotationOverride.isPresent()) {
         return driveOverride
-            .withVelocityX(vx.getAsDouble() * maxSpeed)
-            .withVelocityY(vy.getAsDouble() * maxSpeed)
+            .withVelocityX(fieldRelative.getX())
+            .withVelocityY(fieldRelative.getY())
             .withTargetDirection(rotationOverride.get().yaw);
       }
       return drive
-          .withVelocityX(vx.getAsDouble() * maxSpeed)
-          .withVelocityY(vy.getAsDouble() * maxSpeed)
+          .withVelocityX(fieldRelative.getX())
+          .withVelocityY(fieldRelative.getY())
           .withRotationalRate(vrot.getAsDouble() * maxAngularRate);
     })
         .withName("Teleop Drive");
