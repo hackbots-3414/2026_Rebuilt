@@ -46,8 +46,13 @@ public class LocalizationConstants {
     Map.entry("cam5", new Transform3d(-kHorizontalOffset, -kHorizontalOffset, kCameraHeight, new Rotation3d(0, kLowPitch, Units.degreesToRadians(180-yawOffset)))),
     Map.entry("cam6", new Transform3d(-kHorizontalOffset, -kHorizontalOffset, kCameraHeight, new Rotation3d(0, kHighPitch, Units.degreesToRadians(-90+yawOffset)))),
     Map.entry("cam7", new Transform3d(kHorizontalOffset, -kHorizontalOffset, kCameraHeight, new Rotation3d(0, kLowPitch, Units.degreesToRadians(-180+yawOffset)))),
-    Map.entry("cam8", new Transform3d(kHorizontalOffset, -kHorizontalOffset, kCameraHeight, new Rotation3d(0, kHighPitch, Units.degreesToRadians(yawOffset))))
-  );
+    Map.entry("cam8", new Transform3d(kHorizontalOffset, -kHorizontalOffset, kCameraHeight, new Rotation3d(0, kHighPitch, Units.degreesToRadians(yawOffset)))),
+    Map.entry("turretCam", new Transform3d(0, 0, 0.5, new Rotation3d(0, 0, 0))),
+    Map.entry("turretCamUp", new Transform3d(0, 0, 0.5, new Rotation3d(0, Units.degreesToRadians(-15), 0))),
+    Map.entry("turretCamHighUp", new Transform3d(0, 0, 0.5, new Rotation3d(0, Units.degreesToRadians(-30), 0))),
+    Map.entry("turretCamVeryHighUp", new Transform3d(0, 0, 0.5, new Rotation3d(0, Units.degreesToRadians(-45), 0)))
+    );
+
 
   /** The tick time for each pose estimator to run */
   protected static final double kPeriodic = 0.02;
