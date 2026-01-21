@@ -36,14 +36,6 @@ public class Turret {
 
     }
 
-    /**
-     * Calibrates the turret by resetting both encoders to 0.
-     */
-    public void calibrate() {
-        TurretConstants.gear1CANcoder.setPosition(0);
-        TurretConstants.gear2CANcoder.setPosition(0);
-    }
-
     /** 
      * @param gear1position Position off of the 28 tooth gear as read by the CANcoder on that axle
      * @param gear2position Position off of the 26 tooth gear as read by the CANcoder on that axle
