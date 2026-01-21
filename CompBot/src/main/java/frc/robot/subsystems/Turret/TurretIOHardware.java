@@ -1,5 +1,6 @@
 package frc.robot.subsystems.Turret;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
@@ -25,6 +26,11 @@ public class TurretIOHardware implements TurretIO {
     private final CANcoder m_gear2CANcoder;
     private final CANcoder m_motorCANcoder;
 
+    private final StatusSignal<Voltage> m_turretVoltageSignal;
+    private final StatusSignal<Current> m_turretCurrentSignal;
+    private final StatusSignal<Temperature> m_turretTempSignal;
+    private final StatusSignal<AngularVelocity> m_turretVelocitySignal;
+    private final StatusSignal<Angle> m_turretPositionSignal;
 
     public TurretIOHardware() {
         m_turretMotor = new TalonFX(TurretConstants.turretMotorID);
@@ -39,6 +45,12 @@ public class TurretIOHardware implements TurretIO {
                 TurretConstants.kMaxSpeed,
                 TurretConstants.kMaxAcceleration,
                 TurretConstants.kMaxJerk);
+
+        m_turretVoltageSignal = m_turretMotor.getMotorVoltage();
+        m_turretCurrentSignal = m_turretMotor.getSupplyCurrent();
+        m_turretTempSignal = m_turretMotor.getDeviceTemp();
+        m_turretVelocitySignal = m_turretMotor.getVelocity();
+        m_turretPositionSignal = m_turretMotor.getPosition();
 
     }
 
@@ -65,4 +77,28 @@ public class TurretIOHardware implements TurretIO {
     public void calibrateZero() {
         m_turretMotor.setPosition(0.0);
     }
+
+    public void updateInputs(TurretIOInputs inputs) {
+
+        inputs.turretMotorConnected = BaseStatusSignal.isAllGood(
+            m_turretVoltageSignal,
+            m_turretCurrentSignal,
+            m_turretTempSignal,
+            m_turretVelocitySignal,
+            m_turretPositionSignal);
+        inputs.turretVoltage = m_turretVoltageSignal.getValueAsDouble();
+        inputs.turretCurrent = m_turretCurrentSignal.getValueAsDouble();
+        inputs.turretTemp = m_turretTempSignal.getValueAsDouble();
+        inputs.turretVelocityRPS = m_turretVelocitySignal.getValueAsDouble();
+        inputs.turretPosition = m_turretPositionSignal.getValueAsDouble();
+        inputs.position = inputs.turretPosition;
+
+        inputs.reference = m_reference;
+
+        inputs.gear1CANcoder = m_gear1CANcoder.getAbsolutePosition().getValueAsDouble();
+        inputs.gear2CANcoder = m_gear2CANcoder.getAbsolutePosition().getValueAsDouble();
+        inputs.turretCANcoder = m_motorCANcoder.getAbsolutePosition().getValueAsDouble();
+
+    }
+
 }

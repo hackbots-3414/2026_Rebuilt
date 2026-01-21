@@ -1,22 +1,30 @@
 package frc.robot.subsystems.Turret;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.Robot;
 
 public class Turret {    
 
-    private void setPosition(double position) {
-            
+    private final TurretIO m_io;
+
+    public Turret() {
+        super();
+        if (Robot.isReal()) {
+            m_io = new TurretIOHardware();
+        } else {
+            m_io = new TurretIOSim();
+        }
     }
 
-    private void setMotor(double speed) {
-        TurretConstants.turretMotor.set(speed);
+    private void setPosition(double position) {
+        m_io.setPosition(position);
     }
 
     /**
      * Go to zero from turret's current location - Aligns to robot's 0
      */
     public void home() {
-            setPosition(0);
+            m_io.setPosition(0);
     }
 
     /**
