@@ -69,14 +69,14 @@ public class Turret {
         int inverseM2 = 0;
 
         //Going to m1 because the lowest possible value of inverseM1 to get a remainder of 1 is going to be less than m1.
-        for (var i = 0; i <= m1; i++) {
+        for (int i = 0; i <= m1; i++) {
             if ((M1 *i) % m1 == 1) {
                 inverseM1 = i;
                 break;
             }
         }
 
-        for (var i = 0; i <= m2; i++) {
+        for (int i = 0; i <= m2; i++) {
             if ((M2 *i) % m2 == 1) {
                 inverseM2 = i;
                 break;
