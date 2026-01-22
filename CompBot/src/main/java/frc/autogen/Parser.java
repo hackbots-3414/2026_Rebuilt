@@ -1,24 +1,33 @@
 package frc.autogen;
 
 import java.util.List;
-import edu.wpi.first.wpilibj.DriverStation;
+import java.util.Optional;
+import frc.autogen.ErrorHandler.ErrorInfo;
 import frc.autogen.Production.ProductionKind.CompositionKind;
 import frc.autogen.Token.SymbolKind;
 
 class Parser {
   private int curr;
   private List<Token> tokens;
+  private int line;
+  private final ErrorHandler errorHandler;
 
-  public Parser(List<Token> tokens) {
+  public Parser(List<Token> tokens, int line, ErrorHandler errorHandler) {
     this.tokens = tokens;
+    this.line = line;
+    this.errorHandler = errorHandler;
     curr = 0;
   }
 
-  public Expr expression() {
-    return sequence();
+  public Optional<Expr> expression() {
+    try {
+      return Optional.of(sequence());
+    } catch (Exception e) {
+      return Optional.empty();
+    }
   }
 
-  private Expr sequence() {
+  private Expr sequence() throws Exception {
     Expr left = parallel();
     while (matches(SymbolKind.Plus)) {
       Expr right = parallel();
@@ -27,7 +36,7 @@ class Parser {
     return left;
   }
 
-  private Expr parallel() {
+  private Expr parallel() throws Exception {
     Expr left = deadline();
     while (matches(SymbolKind.And)) {
       Expr right = deadline();
@@ -36,7 +45,7 @@ class Parser {
     return left;
   }
 
-  private Expr deadline() {
+  private Expr deadline() throws Exception {
     Expr left = race();
     while (matches(SymbolKind.Question)) {
       Expr right = race();
@@ -45,7 +54,7 @@ class Parser {
     return left;
   }
 
-  private Expr race() {
+  private Expr race() throws Exception {
     Expr left = primary();
     while (matches(SymbolKind.Star)) {
       Expr right = primary();
@@ -54,16 +63,20 @@ class Parser {
     return left;
   }
 
-  private Expr primary() {
+  private Expr primary() throws Exception {
     if (matches(SymbolKind.OpenParen)) {
-      Expr inner = expression();
+      Expr inner = expression().get();
       if (!matches(SymbolKind.CloseParen)) {
-        DriverStation.reportError("unclosed paren", false);
-        return null; // Erroring could happen here
+        errorHandler.error(new ErrorInfo("Unclosed parenthesis", line));
       }
       return new Expr.Grouping(inner);
     }
-    return advance().expr().get(); // TODO: add error reporting
+    Optional<Expr> expr = advance().expr();
+    if (expr.isEmpty()) {
+      errorHandler.error(new ErrorInfo("Expected expression", line));
+      throw new Exception();
+    }
+    return expr.get();
   }
 
   private boolean matches(SymbolKind symbol) {

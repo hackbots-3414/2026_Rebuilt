@@ -61,7 +61,7 @@ interface Token {
     }
 
     public Optional<Expr> expr() {
-      return null;
+      return Optional.empty();
     }
 
     @Override
