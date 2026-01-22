@@ -22,17 +22,18 @@ public class TurretConstants {
     protected static final int turretMotorID = 11;
 
     //Find these actual values
-    protected static final int gear1CANcoderID = 0;
-    protected static final int gear2CANcoderID = 1;
-    protected static final int motorCANcoderID = 2;
+    protected static final int kGear1CANcoderID = 0;
+    protected static final int kGear2CANcoderID = 1;
+    protected static final int kMotorCANcoderID = 2;
 
     //Find actual values
-    protected static final int gear1Size = 28;
-    protected static final int gear2Size = 26;
-    protected static final int turretSize = 100;
+    protected static final int kGear1Size = 28;
+    protected static final int kGear2Size = 26;
+    protected static final int kTurretSize = 100;
 
     protected static final double kSupplyCurrentLimit = 100;
 
+    protected static double kTurretHomePos = 0.5;
 
     //Get actual value
     protected static final double kGearRatio = 1.07;

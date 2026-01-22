@@ -1,9 +1,17 @@
 package frc.robot.subsystems.Turret;
 
+import static edu.wpi.first.units.Units.Radians;
+
+import java.util.function.BooleanSupplier;
+
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 
-public class Turret {    
+public class Turret extends SubsystemBase {    
 
     private final TurretIO m_io;
 
@@ -16,15 +24,22 @@ public class Turret {
         }
     }
 
-    private void setPosition(double position) {
+    private void setPosition(Angle position) {
         m_io.setPosition(position);
     }
 
     /**
      * Go to zero from turret's current location - Aligns to robot's 0
      */
-    public void home() {
-            m_io.setPosition(0);
+    public Command home() {
+        return Commands.sequence(
+            runOnce(() -> m_io.setPosition(Radians.zero())),
+            Commands.waitUntil(ready()));
+    }
+
+    //TODO: Make real ready
+    private BooleanSupplier ready() {
+        return () -> false;
     }
 
     /**
@@ -33,14 +48,15 @@ public class Turret {
      */
     public void track(Pose2d configuration) {
         //Get current locations of turret and robot
-        double turretAngleRadians = getTurretAngleRadians(TurretConstants.gear1CANcoder.getAbsolutePosition().getValueAsDouble(), 
-                                                        TurretConstants.gear2CANcoder.getAbsolutePosition().getValueAsDouble());
+        //TODO: Create turretIOInputs and pass those in here instead of turretconstants gear 1/2 cancoder
+        double turretAngleRadians = getTurretAngleRadians(TurretConstants.kGear1CANcoder.getAbsolutePosition().getValueAsDouble(), 
+                                                        TurretConstants.kGear2CANcoder.getAbsolutePosition().getValueAsDouble());
         double robotAngleRadians = configuration.getRotation().getRadians();
 
         //Calculate the turret's goal position in radians
         double turretGoal = robotAngleRadians - turretAngleRadians;
 
-        setPosition(turretGoal);
+        setPosition(Radians.of(turretGoal));
 
     }
 
@@ -53,12 +69,12 @@ public class Turret {
     private double getTurretAngleRadians(double gear1position, double gear2position) throws IllegalArgumentException {
         
         //Changing gear names to match video so we can follow the video
-        int m1 = TurretConstants.gear1Size;
-        int m2 = TurretConstants.gear2Size;
+        int m1 = TurretConstants.kGear1Size;
+        int m2 = TurretConstants.kGear2Size;
 
         //Turn CANcoder's 0 to 1 measurement into teeth.
-        int a1 = (int) Math.round(gear1position * TurretConstants.gear1Size);
-        int a2 = (int) Math.round(gear2position * TurretConstants.gear2Size);
+        int a1 = (int) Math.round(gear1position * TurretConstants.kGear1Size);
+        int a2 = (int) Math.round(gear2position * TurretConstants.kGear2Size);
 
         //Calculating M, M1, M2, and their inverses.
         int M = m1*m2;
@@ -84,11 +100,11 @@ public class Turret {
         }
         double turretPositionInTeeth = (a1*M1*inverseM1 + a2*M2*inverseM2)%M;
 
-        if (turretPositionInTeeth > TurretConstants.turretSize) {
+        if (turretPositionInTeeth > TurretConstants.kTurretSize) {
             throw new IllegalArgumentException("Current turret encoders reflect value over possible turret positions.");
         }
 
-        double turretPositionInRadians = (turretPositionInTeeth * 2 * Math.PI / TurretConstants.turretSize) - Math.PI;
+        double turretPositionInRadians = (turretPositionInTeeth * 2 * Math.PI / TurretConstants.kTurretSize) - Math.PI;
 
         return turretPositionInRadians;
     }

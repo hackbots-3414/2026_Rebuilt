@@ -1,20 +1,22 @@
 package frc.robot.subsystems.Turret;
 
+import static edu.wpi.first.units.Units.Radians;
+
+import edu.wpi.first.units.measure.Angle;
+
 public class TurretIOSim implements TurretIO {
-  private double m_position = 0;
-  private double m_reference = 0;
+  private Angle position = Radians.zero();
+  private Angle reference = Radians.zero();
 
   public void updateInputs(TurretIOInputs inputs) {
-    m_position = 0.9 * m_position + 0.1 * m_reference;
-    inputs.position = m_position;
-    inputs.reference = m_reference;
+    position = position.times(0.9).plus(reference);
+    inputs.turretPosition = position;
+    inputs.reference = reference;
   }
 
-  public void setPosition(double position) {
-    m_reference = position; 
+  public void setPosition(Angle position) {
+    reference = position; 
   }
-
-  public void setVoltage(double voltage) {}
   
   public void enableLimits() {}
   public void disableLimits() {}

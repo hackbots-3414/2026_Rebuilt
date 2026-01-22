@@ -1,5 +1,7 @@
 package frc.robot.subsystems.Turret;
 
+import static edu.wpi.first.units.Units.Radians;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -13,92 +15,79 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.util.StatusSignalUtil;
 
 public class TurretIOHardware implements TurretIO {
 
-    private final TalonFX m_turretMotor;
+    private final TalonFX turretMotor;
 
-    private final DynamicMotionMagicVoltage m_control;
+    private final DynamicMotionMagicVoltage control;
 
-    private double m_reference = Double.NaN;
+    private Angle reference = Radians.zero();
 
-    private final CANcoder m_gear1CANcoder;
-    private final CANcoder m_gear2CANcoder;
-    private final CANcoder m_motorCANcoder;
-
-    private final StatusSignal<Voltage> m_turretVoltageSignal;
-    private final StatusSignal<Current> m_turretCurrentSignal;
-    private final StatusSignal<Temperature> m_turretTempSignal;
-    private final StatusSignal<AngularVelocity> m_turretVelocitySignal;
-    private final StatusSignal<Angle> m_turretPositionSignal;
+    private final CANcoder gear1CANcoder;
+    private final CANcoder gear2CANcoder;
+    private final CANcoder motorCANcoder;
 
     public TurretIOHardware() {
-        m_turretMotor = new TalonFX(TurretConstants.turretMotorID);
-        m_turretMotor.getConfigurator().apply(TurretConstants.kMotorConfig);
-        m_turretMotor.setPosition(0.0);
+        turretMotor = new TalonFX(TurretConstants.turretMotorID);
+        turretMotor.getConfigurator().apply(TurretConstants.kMotorConfig);
+        turretMotor.setPosition(0.0);
 
-        m_gear1CANcoder = new CANcoder(TurretConstants.gear1CANcoderID);
-        m_gear2CANcoder = new CANcoder(TurretConstants.gear2CANcoderID);
-        m_motorCANcoder = new CANcoder(TurretConstants.motorCANcoderID);
+        gear1CANcoder = new CANcoder(TurretConstants.kGear1CANcoderID);
+        gear2CANcoder = new CANcoder(TurretConstants.kGear2CANcoderID);
+        motorCANcoder = new CANcoder(TurretConstants.kMotorCANcoderID);
 
-        m_control = new DynamicMotionMagicVoltage(
+        control = new DynamicMotionMagicVoltage(
                 TurretConstants.kMaxSpeed,
                 TurretConstants.kMaxAcceleration,
                 TurretConstants.kMaxJerk);
 
-        m_turretVoltageSignal = m_turretMotor.getMotorVoltage();
-        m_turretCurrentSignal = m_turretMotor.getSupplyCurrent();
-        m_turretTempSignal = m_turretMotor.getDeviceTemp();
-        m_turretVelocitySignal = m_turretMotor.getVelocity();
-        m_turretPositionSignal = m_turretMotor.getPosition();
+        StatusSignalUtil.registerRioSignals(turretMotor.getMotorVoltage(false));
+        StatusSignalUtil.registerRioSignals(turretMotor.getSupplyCurrent(false));
+        StatusSignalUtil.registerRioSignals(turretMotor.getDeviceTemp(false));
+        StatusSignalUtil.registerRioSignals(turretMotor.getVelocity(false));
+        StatusSignalUtil.registerRioSignals(turretMotor.getPosition(false));
 
     }
 
-    public void setPosition(double reference) {
-        m_turretMotor.setControl(m_control.withPosition(reference));
-        m_reference = reference;
-    }
-
-    public void setVoltage(double voltage) {
-        m_turretMotor.setVoltage(voltage);
+    public void setPosition(Angle referenceAngle) {
+        turretMotor.setControl(control.withPosition(referenceAngle));
+        reference = referenceAngle;
     }
 
     public void enableLimits() {
-        m_turretMotor.getConfigurator().apply(TurretConstants.kMotorConfig.SoftwareLimitSwitch);
+        turretMotor.getConfigurator().apply(TurretConstants.kMotorConfig.SoftwareLimitSwitch);
     }
 
     public void disableLimits() {
         SoftwareLimitSwitchConfigs noLimits = new SoftwareLimitSwitchConfigs()
                 .withForwardSoftLimitEnable(false)
                 .withReverseSoftLimitEnable(false);
-        m_turretMotor.getConfigurator().apply(noLimits);
+        turretMotor.getConfigurator().apply(noLimits);
     }
 
     public void calibrateZero() {
-        m_turretMotor.setPosition(0.0);
+        turretMotor.setPosition(0.0);
     }
 
     public void updateInputs(TurretIOInputs inputs) {
 
-        inputs.turretMotorConnected = BaseStatusSignal.isAllGood(
-            m_turretVoltageSignal,
-            m_turretCurrentSignal,
-            m_turretTempSignal,
-            m_turretVelocitySignal,
-            m_turretPositionSignal);
-        inputs.turretVoltage = m_turretVoltageSignal.getValueAsDouble();
-        inputs.turretCurrent = m_turretCurrentSignal.getValueAsDouble();
-        inputs.turretTemp = m_turretTempSignal.getValueAsDouble();
-        inputs.turretVelocityRPS = m_turretVelocitySignal.getValueAsDouble();
-        inputs.turretPosition = m_turretPositionSignal.getValueAsDouble();
-        inputs.position = inputs.turretPosition;
-
-        inputs.reference = m_reference;
-
-        inputs.gear1CANcoder = m_gear1CANcoder.getAbsolutePosition().getValueAsDouble();
-        inputs.gear2CANcoder = m_gear2CANcoder.getAbsolutePosition().getValueAsDouble();
-        inputs.turretCANcoder = m_motorCANcoder.getAbsolutePosition().getValueAsDouble();
-
+        inputs.turretMotorConnected = BaseStatusSignal.isAllGood(        
+            turretMotor.getMotorVoltage(false),
+            turretMotor.getSupplyCurrent(false),
+            turretMotor.getDeviceTemp(false),
+            turretMotor.getVelocity(false),
+            turretMotor.getPosition(false)
+        );
+        
+        inputs.turretVoltage = turretMotor.getMotorVoltage().getValue();
+        inputs.turretCurrent = turretMotor.getStatorCurrent().getValue();
+        inputs.turretTemp = turretMotor.getDeviceTemp().getValue();
+        inputs.turretVelocityRPS = turretMotor.getVelocity().getValue();
+        inputs.turretPosition = turretMotor.getPosition().getValue();
+        inputs.motorPosition = motorCANcoder.getAbsolutePosition().getValue();
+        inputs.reference = reference;
     }
 
 }
