@@ -21,7 +21,7 @@ public class ShooterIOSim implements ShooterIO {
             0.02);
     }
 
-    public void updateInputs(shooterIOInputs inputs) {
+    public void updateInputs(ShooterIOInputs inputs) {
         motor.update(Robot.kDefaultPeriod);
         inputs.supplyCurrent = Amps.of(motor.getCurrentDrawAmps());
         inputs.voltage = Volts.of(motor.getInputVoltage());

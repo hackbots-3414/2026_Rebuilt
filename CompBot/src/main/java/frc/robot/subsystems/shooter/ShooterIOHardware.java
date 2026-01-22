@@ -13,7 +13,8 @@ public class ShooterIOHardware implements ShooterIO {
     private final TalonFX motor;
 
     private AngularVelocity lastVelocity = RotationsPerSecond.zero();
-    private final MotionMagicVelocityTorqueCurrentFOC control = new MotionMagicVelocityTorqueCurrentFOC(0);
+    private final MotionMagicVelocityTorqueCurrentFOC control = new MotionMagicVelocityTorqueCurrentFOC(0)
+        .withAcceleration(ShooterConstants.kAcceleration);
 
     public ShooterIOHardware() {
         motor = new TalonFX(ShooterConstants.kMotorID);
@@ -29,7 +30,7 @@ public class ShooterIOHardware implements ShooterIO {
         );
     }
 
-    public void updateInputs(shooterIOInputs inputs) {
+    public void updateInputs(ShooterIOInputs inputs) {
         inputs.motorConnected = BaseStatusSignal.isAllGood(
             motor.getSupplyCurrent(false),
             motor.getTorqueCurrent(false),

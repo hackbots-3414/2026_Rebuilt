@@ -1,11 +1,15 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.units.measure.AngularAcceleration;
 
 public final class ShooterConstants {
     protected static final int kMotorID = 60;
@@ -32,4 +36,6 @@ public final class ShooterConstants {
             .withStatorCurrentLimitEnable(true)
             .withSupplyCurrentLimit(kSupplyCurrentLimit)
             .withStatorCurrentLimit(kStatorCurrentLimit));
+
+    public static final AngularAcceleration kAcceleration = RotationsPerSecondPerSecond.zero();
 }

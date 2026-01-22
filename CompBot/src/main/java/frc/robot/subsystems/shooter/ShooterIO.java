@@ -11,9 +11,9 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
 public interface ShooterIO {
-    void updateInputs (shooterIOInputs inputs);
+    public void updateInputs (ShooterIOInputs inputs);
 
-    class shooterIOInputs {
+    class ShooterIOInputs {
         public boolean motorConnected = true;
         public Current supplyCurrent = Amps.zero();
         public Current torqueCurrent = Amps.zero();
@@ -24,5 +24,5 @@ public interface ShooterIO {
     }
 
     //void setVoltage(double voltage);
-    void setVelocity(AngularVelocity velocity);
+    public void setVelocity(AngularVelocity velocity);
 }

@@ -11,7 +11,7 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
 public interface IndexerIO {
-    void updateInputs(IndexerIOInputs inputs);
+    public void updateInputs(IndexerIOInputs inputs);
 
     class IndexerIOInputs { 
         public boolean motorConnected = true;
@@ -23,5 +23,5 @@ public interface IndexerIO {
         public AngularVelocity velocity = RotationsPerSecond.zero();
     }
 
-    void setVoltage(Voltage voltage);
+    public void setVoltage(Voltage voltage);
 }
