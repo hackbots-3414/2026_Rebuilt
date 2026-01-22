@@ -9,9 +9,12 @@ import com.ctre.phoenix6.HootAutoReplay;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.StatusSignalUtil;
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
+
+    private boolean hasStartedVision;
 
     private final RobotContainer m_robotContainer;
 
@@ -27,11 +30,17 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         m_timeAndJoystickReplay.update();
-        CommandScheduler.getInstance().run(); 
+        StatusSignalUtil.refreshAll();
+        CommandScheduler.getInstance().run();
     }
 
     @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+        if (!hasStartedVision) {
+            m_robotContainer.aprilTagVisionHandler.startThread();
+            hasStartedVision = true;
+        }
+    }
 
     @Override
     public void disabledPeriodic() {}
