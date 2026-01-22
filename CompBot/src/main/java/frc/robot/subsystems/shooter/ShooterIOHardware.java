@@ -4,7 +4,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.units.measure.AngularVelocity;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import frc.robot.util.StatusSignalUtil;
@@ -13,6 +13,7 @@ public class ShooterIOHardware implements ShooterIO {
     private final TalonFX motor;
 
     private AngularVelocity lastVelocity = RotationsPerSecond.zero();
+    private final MotionMagicVelocityTorqueCurrentFOC control = new MotionMagicVelocityTorqueCurrentFOC(0);
 
     public ShooterIOHardware() {
         motor = new TalonFX(ShooterConstants.kMotorID);
@@ -47,7 +48,7 @@ public class ShooterIOHardware implements ShooterIO {
 
     public void setVelocity(AngularVelocity velocity) {
         if(!velocity.equals(lastVelocity)) {
-            motor.setControl(new VelocityDutyCycle(velocity));
+            motor.setControl(control.withVelocity(velocity));
             lastVelocity = velocity;
         }
     }
