@@ -6,9 +6,12 @@ package frc.robot;
 
 import com.ctre.phoenix6.HootAutoReplay;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.autogen.Autogen;
 import frc.robot.util.StatusSignalUtil;
 
 public class Robot extends TimedRobot {
@@ -29,6 +32,11 @@ public class Robot extends TimedRobot {
     if (isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
+
+    // Test some autogen stuff
+    Autogen.registerCommand("A", Commands.print("A ran!"));
+    Autogen.registerCommand("B", Commands.print("B ran!"));
+    Autogen.registerCommand("C", Commands.print("C ran!"));
   }
 
   @Override
@@ -56,7 +64,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = Autogen.loadFromFile("myauto.autogen");
 
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);

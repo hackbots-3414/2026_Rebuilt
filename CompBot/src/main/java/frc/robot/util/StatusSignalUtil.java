@@ -27,8 +27,12 @@ public class StatusSignalUtil {
   }
 
   public static void refreshAll() {
-    BaseStatusSignal.refreshAll(rioSignals);
-    BaseStatusSignal.refreshAll(canivoreSignals);
+    if (!rioSignals.isEmpty()) {
+      BaseStatusSignal.refreshAll(rioSignals);
+    }
+    if (!canivoreSignals.isEmpty()) {
+      BaseStatusSignal.refreshAll(canivoreSignals);
+    }
   }
 }
 
