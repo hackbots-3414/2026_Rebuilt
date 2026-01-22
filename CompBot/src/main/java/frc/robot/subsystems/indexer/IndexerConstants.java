@@ -8,22 +8,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public final class IndexerConstants {
 
-     protected static final int kMotorID = 60;
-
-  protected static final double kIntakeVoltage = 12;
-  protected static final double kNetEjectVoltage = -3.0;
-  protected static final double kProcessorEjectVoltage = -3.2;
-  protected static final double kHoldVoltage = 6.0;
-  protected static final double kManualEjectVoltage = -6.0;
-
-  protected static final double kTorqueCurrentThreshold = 75; // We should consider 40-55 range as well.
+  protected static final int kMotorID = 60;
 
   protected static final double kSupplyCurrentLimit = 40.0;
   protected static final double kStatorCurrentLimit = 125.0;
-
-  protected static final double kProcessorScoreTime = 2.0;
-  protected static final double kNetScoreTime = 0.4;
-  protected static final double kManualEjectTime = 0.3;
 
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
@@ -32,7 +20,7 @@ public final class IndexerConstants {
 
       .withCurrentLimits(new CurrentLimitsConfigs()
           .withSupplyCurrentLimitEnable(true)
+          .withStatorCurrentLimitEnable(true)
           .withSupplyCurrentLimit(kSupplyCurrentLimit)
-          .withStatorCurrentLimit(kStatorCurrentLimit)
-          .withStatorCurrentLimitEnable(true));
+          .withStatorCurrentLimit(kStatorCurrentLimit));
 }
