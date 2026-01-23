@@ -1,8 +1,11 @@
 package frc.robot.aiming;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.LinearVelocity;
+
+import frc.robot.util.OnboardLogger;
 
 /**
  * The parameters of a shooter at a particlar moment in time. This is the type that is returned when
@@ -25,4 +28,13 @@ public class AimParams {
   public Rotation2d deltayaw = Rotation2d.fromDegrees(1);
   /** the tolerated error in the shot's velocity */
   public LinearVelocity deltaVelocity = MetersPerSecond.of(0.05);
+
+  private OnboardLogger ologger = new OnboardLogger("AimParams");
+
+  public AimParams() {
+    ologger.registerMeasurment("Pitch", () -> pitch.getMeasure(), Degrees);
+    ologger.registerMeasurment("Yaw", () -> yaw.getMeasure(), Degrees);
+    ologger.registerMeasurment("Velocity", () -> velocity, MetersPerSecond);
+  }
 }
+
