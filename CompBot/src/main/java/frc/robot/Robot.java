@@ -4,13 +4,17 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.HootAutoReplay;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.OnboardLogger;
 import frc.robot.util.StatusSignalUtil;
 
 public class Robot extends TimedRobot {
@@ -19,6 +23,8 @@ public class Robot extends TimedRobot {
     private boolean hasStartedVision;
 
     private final RobotContainer robotContainer;
+
+    private final OnboardLogger oLogger;
 
     /* log and replay timestamp and joystick data */
     private final HootAutoReplay timeAndJoystickReplay = new HootAutoReplay()
@@ -29,8 +35,10 @@ public class Robot extends TimedRobot {
         robotContainer = new RobotContainer();
 
         DataLogManager.start();
-
         DriverStation.startDataLog(DataLogManager.getLog());
+
+        oLogger = new OnboardLogger("Robot");
+        oLogger.registerMeasurment("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
     }
 
     @Override
@@ -38,6 +46,8 @@ public class Robot extends TimedRobot {
         timeAndJoystickReplay.update();
         StatusSignalUtil.refreshAll();
         CommandScheduler.getInstance().run();
+
+        oLogger.log();
     }
 
     @Override
