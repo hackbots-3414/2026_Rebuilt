@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.ctre.phoenix6.HootAutoReplay;
 
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -16,20 +18,24 @@ public class Robot extends TimedRobot {
 
     private boolean hasStartedVision;
 
-    private final RobotContainer m_robotContainer;
+    private final RobotContainer robotContainer;
 
     /* log and replay timestamp and joystick data */
-    private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
+    private final HootAutoReplay timeAndJoystickReplay = new HootAutoReplay()
         .withTimestampReplay()
         .withJoystickReplay();
 
     public Robot() {
-        m_robotContainer = new RobotContainer();
+        robotContainer = new RobotContainer();
+
+        DataLogManager.start();
+
+        DriverStation.startDataLog(DataLogManager.getLog());
     }
 
     @Override
     public void robotPeriodic() {
-        m_timeAndJoystickReplay.update();
+        timeAndJoystickReplay.update();
         StatusSignalUtil.refreshAll();
         CommandScheduler.getInstance().run();
     }
@@ -37,7 +43,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         if (!hasStartedVision) {
-            m_robotContainer.aprilTagVisionHandler.startThread();
+            robotContainer.aprilTagVisionHandler.startThread();
             hasStartedVision = true;
         }
     }
@@ -50,7 +56,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        m_autonomousCommand = robotContainer.getAutonomousCommand();
 
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(m_autonomousCommand);
