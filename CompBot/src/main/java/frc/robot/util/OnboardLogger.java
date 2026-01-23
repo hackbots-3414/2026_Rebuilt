@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
  */
 public class OnboardLogger {
   private static final DataLog dataLog = DataLogManager.getLog();
+  private static final List<OnboardLogger> loggers = new ArrayList<>();
 
   private final String name;
 
@@ -44,6 +45,7 @@ public class OnboardLogger {
     pose2dArrayEntries = new ArrayList<>();
     pose3dEntries = new ArrayList<>();
     pose3dArrayEntries = new ArrayList<>();
+    loggers.add(this);
   }
 
   public void registerDouble(String name, DoubleSupplier supplier) {
@@ -110,6 +112,12 @@ public class OnboardLogger {
     }
     for (Pair<Supplier<Pose3d[]>, StructArrayLogEntry<Pose3d>> pair : pose3dArrayEntries) {
       pair.getSecond().update(pair.getFirst().get());
+    }
+  }
+
+  public static void logAll() {
+    for (OnboardLogger logger : loggers) {
+      logger.log();
     }
   }
 }

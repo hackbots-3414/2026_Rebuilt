@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
         StatusSignalUtil.refreshAll();
         CommandScheduler.getInstance().run();
 
-        oLogger.log();
+        OnboardLogger.logAll();
     }
 
     @Override
