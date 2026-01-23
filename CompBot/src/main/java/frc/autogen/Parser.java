@@ -10,12 +10,10 @@ class Parser {
   private int curr;
   private List<Token> tokens;
   private int line;
-  private final ErrorHandler errorHandler;
 
   public Parser(List<Token> tokens, int line, ErrorHandler errorHandler) {
     this.tokens = tokens;
     this.line = line;
-    this.errorHandler = errorHandler;
     curr = 0;
   }
 
@@ -67,13 +65,13 @@ class Parser {
     if (matches(SymbolKind.OpenParen)) {
       Expr inner = expression().get();
       if (!matches(SymbolKind.CloseParen)) {
-        errorHandler.error(new ErrorInfo("Unclosed parenthesis", line));
+        Autogen.errorHandler.error(new ErrorInfo("Unclosed parenthesis", line));
       }
       return new Expr.Grouping(inner);
     }
     Optional<Expr> expr = advance().expr();
     if (expr.isEmpty()) {
-      errorHandler.error(new ErrorInfo("Expected expression", line));
+      Autogen.errorHandler.error(new ErrorInfo("Expected expression", line));
       throw new Exception();
     }
     return expr.get();

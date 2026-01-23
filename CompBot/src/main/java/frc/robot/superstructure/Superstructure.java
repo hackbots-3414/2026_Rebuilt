@@ -7,6 +7,9 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
+/**
+ * This class is important
+ */
 public class Superstructure {
   public record Subsystems(Drivetrain drivetrain) {
   }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.autogen.ErrorHandler.ErrorInfo;
 
 interface Production {
   public enum ProductionKind {
@@ -43,7 +44,10 @@ interface Production {
     }
 
     public Command build() {
-      return Autogen.registered.get(name);
+      if (!Autogen.registered.containsKey(name)) {
+        Autogen.errorHandler.error(new ErrorInfo("Unregistered command: " + name, -1));
+      }
+      return Autogen.registered.getOrDefault(name, Commands.print("Unregistered command: " + name));
     }
   }
 

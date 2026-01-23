@@ -22,7 +22,7 @@ public abstract class ErrorHandler {
   /** A class to hold error information */
   public record ErrorInfo(String message, int line) {
     public String fullMessage() {
-      return "Error on line " + line + ": " + message;
+      return (line > 0) ? "Error on line " + line + ": " + message : "Error: " + message;
     }
   }
 
