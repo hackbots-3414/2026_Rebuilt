@@ -10,8 +10,6 @@ import com.ctre.phoenix6.configs.ProximityParamsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -35,12 +33,14 @@ public class TurretConstants {
 
     protected static double kTurretHomePos = 0.5;
 
-    //Get actual value
+    //Find actual values
     protected static final double kGearRatio = 1.07;
-    protected static final double kDrumRadius = 1;
     protected static final double kMaxSpeed = 32;
     protected static final double kMaxAcceleration = 48;
     protected static final double kMaxJerk = 480;
+
+    //Find actual values
+    protected static final double kTolerance = 5;
 
     protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
@@ -67,8 +67,8 @@ public class TurretConstants {
           .withKI(0)
           .withKD(0)
           .withKS(0.125)
-          .withKV(3.59 * (kDrumRadius * 2 * Math.PI))
-          .withKA(0.05 * (kDrumRadius * 2 * Math.PI))
+          .withKV(0)
+          .withKA(0)
           .withKG(0.42))
 
       .withMotionMagic(new MotionMagicConfigs()

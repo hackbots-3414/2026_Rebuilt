@@ -3,18 +3,12 @@ package frc.robot.subsystems.Turret;
 import static edu.wpi.first.units.Units.Radians;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.StatusSignalUtil;
 
 public class TurretIOHardware implements TurretIO {
@@ -85,9 +79,59 @@ public class TurretIOHardware implements TurretIO {
         inputs.turretCurrent = turretMotor.getStatorCurrent().getValue();
         inputs.turretTemp = turretMotor.getDeviceTemp().getValue();
         inputs.turretVelocityRPS = turretMotor.getVelocity().getValue();
-        inputs.turretPosition = turretMotor.getPosition().getValue();
+        inputs.turretPosition = Radians.of(getTurretAngleRadians(gear1CANcoder.getAbsolutePosition().getValueAsDouble(), gear2CANcoder.getAbsolutePosition().getValueAsDouble()));
         inputs.motorPosition = motorCANcoder.getAbsolutePosition().getValue();
         inputs.reference = reference;
+    }
+
+
+    /** 
+     * @param gear1position Position off of the 28 tooth gear as read by the CANcoder on that axle
+     * @param gear2position Position off of the 26 tooth gear as read by the CANcoder on that axle
+     * @return: Turret position in radians in relation to robot, assuming that the opposite from center of the turret's blind spot is 0
+     * @throws IllegalArgumentException Thrown if the turret location is bigger than the turret size
+     */
+    private double getTurretAngleRadians(double gear1position, double gear2position) throws IllegalArgumentException {
+        
+        //Changing gear names to match video so we can follow the video
+        int m1 = TurretConstants.kGear1Size;
+        int m2 = TurretConstants.kGear2Size;
+
+        //Turn CANcoder's 0 to 1 measurement into teeth.
+        int a1 = (int) Math.round(gear1position * TurretConstants.kGear1Size);
+        int a2 = (int) Math.round(gear2position * TurretConstants.kGear2Size);
+
+        //Calculating M, M1, M2, and their inverses.
+        int M = m1*m2;
+        int M1 = M/m1;
+        int M2 = M/m2;
+
+        int inverseM1 = 0;
+        int inverseM2 = 0;
+
+        //Going to m1 because the lowest possible value of inverseM1 to get a remainder of 1 is going to be less than m1.
+        for (int i = 0; i <= m1; i++) {
+            if ((M1 *i) % m1 == 1) {
+                inverseM1 = i;
+                break;
+            }
+        }
+
+        for (int i = 0; i <= m2; i++) {
+            if ((M2 *i) % m2 == 1) {
+                inverseM2 = i;
+                break;
+            }
+        }
+        double turretPositionInTeeth = (a1*M1*inverseM1 + a2*M2*inverseM2)%M;
+
+        if (turretPositionInTeeth > TurretConstants.kTurretSize) {
+            throw new IllegalArgumentException("Current turret encoders reflect value over possible turret positions.");
+        }
+
+        double turretPositionInRadians = (turretPositionInTeeth * 2 * Math.PI / TurretConstants.kTurretSize) - Math.PI;
+
+        return turretPositionInRadians;
     }
 
 }
