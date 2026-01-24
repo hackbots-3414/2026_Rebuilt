@@ -22,9 +22,8 @@ public class PhysicsAim implements AimStrategy {
   }
 
   public AimParams update(StateManager state, AimParams params) {
-    Pose3d target = state.aimTarget();
-    Translation3d offset =
-        target.getTranslation().minus(new Translation3d(state.robotPose().getTranslation()));
+    Translation3d offset = state.aimTarget().getTranslation()
+        .minus(new Translation3d(state.robotPose().getTranslation()));
     double dx = offset.getX();
     double dy = offset.getY();
     double dz = offset.getZ();
