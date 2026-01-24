@@ -1,7 +1,5 @@
 package frc.robot.subsystems.Turret;
 
-import static edu.wpi.first.units.Units.Radians;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
@@ -9,9 +7,6 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Turret.TurretConstants.TurretCRTConstants;
 import frc.robot.util.StatusSignalUtil;
 
@@ -26,10 +21,6 @@ public class TurretIOHardware implements TurretIO {
 
     private Rotation2d reference = Rotation2d.kZero;
 
-    private final SoftwareLimitSwitchConfigs noLimits = new SoftwareLimitSwitchConfigs()
-                .withForwardSoftLimitEnable(false)
-                .withReverseSoftLimitEnable(false);
-
     public TurretIOHardware() {
         turretMotor = new TalonFX(TurretConstants.turretMotorID);
         turretMotor.getConfigurator().apply(TurretConstants.kMotorConfig);
@@ -37,6 +28,9 @@ public class TurretIOHardware implements TurretIO {
 
         gear1CANcoder = new CANcoder(TurretConstants.kGear1CANcoderID);
         gear2CANcoder = new CANcoder(TurretConstants.kGear2CANcoderID);
+
+        gear1CANcoder.getConfigurator().apply(TurretConstants.kGear1CANcoderConfig);
+        gear2CANcoder.getConfigurator().apply(TurretConstants.kGear2CANcoderConfig);
 
         control = new DynamicMotionMagicVoltage(
                 TurretConstants.kMaxSpeed,
@@ -77,9 +71,12 @@ public class TurretIOHardware implements TurretIO {
     public void calibrate() {
         double x12 = gear1CANcoder.getAbsolutePosition().getValueAsDouble();
         double x26 = gear2CANcoder.getAbsolutePosition().getValueAsDouble();
-
+        // Compensate for offsets
+        if (x12 < 0) x12 += 1.0;
+        if (x26 < 0) x26 += 1.0;
+        // Calcuate absolute position
         double absolutePosition = crtSolve(x12, x26);
-        turretMotor.setPosition(absolutePosition);
+        if (absolutePosition != Double.NaN) turretMotor.setPosition(absolutePosition);
     }
 
     public static double crtSolve(double x12, double x26) {

@@ -1,17 +1,14 @@
 package frc.robot.subsystems.Turret;
 
-import com.ctre.phoenix6.configs.CANrangeConfiguration;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.FovParamsConfigs;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.ProximityParamsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -45,6 +42,19 @@ public class TurretConstants {
     //Find actual values
     protected static final double kTolerance = 5;
 
+    protected static final double kGear1CANcoderOffset = 0.0;
+    protected static final double kGear2CANcoderOffset = 0.0;
+
+    // CANcoder configurations
+    protected static final CANcoderConfiguration kGear1CANcoderConfig = new CANcoderConfiguration()
+        .withMagnetSensor(new MagnetSensorConfigs()
+            .withMagnetOffset(kGear1CANcoderOffset));
+
+    protected static final CANcoderConfiguration kGear2CANcoderConfig = new CANcoderConfiguration()
+        .withMagnetSensor(new MagnetSensorConfigs()
+            .withMagnetOffset(kGear2CANcoderOffset));
+
+    // Motor configuration
     protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
           .withNeutralMode(NeutralModeValue.Brake)
@@ -64,8 +74,7 @@ public class TurretConstants {
           .withKD(0)
           .withKS(0.125)
           .withKV(0)
-          .withKA(0)
-          .withKG(0.0))
+          .withKA(0))
 
       .withMotionMagic(new MotionMagicConfigs()
           .withMotionMagicCruiseVelocity(kMaxSpeed)

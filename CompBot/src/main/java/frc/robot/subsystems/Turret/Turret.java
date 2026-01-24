@@ -34,12 +34,14 @@ public class Turret extends SubsystemBase {
         }
         inputs = new TurretIOInputs();
         SmartDashboard.putData("Turret/home", home());
+        SmartDashboard.putData("Turret/Calibrate", runOnce(io::calibrate));
     }
 
 
     @Override
     public void periodic() {
         io.updateInputs(inputs);
+        SmartDashboard.putNumber("Turret/Position", inputs.position.in(Radians));
     }
 
     /**
