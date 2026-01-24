@@ -1,7 +1,7 @@
 package frc.robot.subsystems.Turret;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Celsius;;
+import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Revolution;
