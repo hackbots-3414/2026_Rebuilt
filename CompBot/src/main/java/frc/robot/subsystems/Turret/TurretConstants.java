@@ -17,7 +17,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class TurretConstants {
 
-    protected static final int turretMotorID = 11;
+    protected static final int turretMotorID = 48;
 
     //Find these actual values
     protected static final int kGear1CANcoderID = 0;
@@ -44,7 +44,7 @@ public class TurretConstants {
     protected static final double kMaxJerk = 480;
 
     //Find actual values
-    protected static final double kTolerance = 5;
+protected static final double kTolerance = 5;
 
     protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
@@ -59,21 +59,14 @@ public class TurretConstants {
           .withSupplyCurrentLimitEnable(true)
           .withSupplyCurrentLimit(kSupplyCurrentLimit))
 
-      .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-          .withForwardSoftLimitThreshold(0.99)
-          .withForwardSoftLimitEnable(true)
-          .withReverseSoftLimitThreshold(0.01)
-          .withReverseSoftLimitEnable(false))
-
       .withSlot0(new Slot0Configs()
-          .withGravityType(GravityTypeValue.Elevator_Static)
           .withKP(20)
           .withKI(0)
           .withKD(0)
           .withKS(0.125)
           .withKV(0)
           .withKA(0)
-          .withKG(0.42))
+          .withKG(0.0))
 
       .withMotionMagic(new MotionMagicConfigs()
           .withMotionMagicCruiseVelocity(kMaxSpeed)
