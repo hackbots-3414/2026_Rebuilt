@@ -1,0 +1,32 @@
+package frc.robot.subsystems.climber;
+
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Volts;
+
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.Robot;
+
+public class ClimberIOSim implements ClimberIO {
+    private final DCMotorSim motor;
+
+    public ClimberIOSim() {
+        motor = new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 2, 10),
+            DCMotor.getKrakenX60Foc(1),
+            0.01,
+            0.02);
+    }
+
+    public void updateInputs(ClimberIOInputs inputs) {
+        motor.update(Robot.kDefaultPeriod);
+        inputs.supplyCurrent = Amps.of(motor.getCurrentDrawAmps());
+        inputs.voltage = Volts.of(motor.getInputVoltage());
+    }
+
+    public void setVoltage(Voltage voltage) {
+        motor.setInputVoltage(voltage.baseUnitMagnitude());
+    }
+}
