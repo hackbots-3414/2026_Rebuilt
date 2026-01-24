@@ -27,9 +27,8 @@ public class TurretConstants {
     //Find actual values
     protected static final int kGear1Size = 28;
     protected static final int kGear2Size = 26;
-    protected static final int kTurretSize = 100;
-
     protected static final int kGear3Size = 12;
+    protected static final int kTurretSize = 100;
 
     protected static final int kAlpha = 27300;
 
