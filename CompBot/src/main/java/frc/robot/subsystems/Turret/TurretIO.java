@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -29,5 +28,5 @@ public interface TurretIO {
 
   public void setPosition(Rotation2d position);
 
-  public void calibrate();
+  public boolean calibrate();
 }

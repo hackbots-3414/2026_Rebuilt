@@ -1,5 +1,6 @@
 package frc.robot.subsystems.Turret;
 
+import static edu.wpi.first.units.Units.Degrees;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -12,6 +13,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import edu.wpi.first.units.measure.Angle;
 
 public class TurretConstants {
 
@@ -30,7 +32,7 @@ public class TurretConstants {
     protected static final double kMaxJerk = 480;
 
     //Find actual values
-    protected static final double kTolerance = 5;
+    protected static final Angle kTolerance = Degrees.of(1);
 
     protected static final double kGear1CANcoderOffset = -0.352051;
     protected static final double kGear2CANcoderOffset = -0.531006;

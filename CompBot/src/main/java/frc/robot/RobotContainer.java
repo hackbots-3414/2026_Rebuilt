@@ -25,7 +25,7 @@ public class RobotContainer {
   public final Binder driver = new DriverBindings();
 
   public RobotContainer() {
-    superstructure = new Superstructure(TestBotTunerConstants.createDrivetrain(), new Turret());
+    superstructure = new Superstructure();
     driver.bind(superstructure);
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();
 

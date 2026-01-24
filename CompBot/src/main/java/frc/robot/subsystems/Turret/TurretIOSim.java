@@ -16,12 +16,16 @@ public class TurretIOSim implements TurretIO {
     inputs.position = position;
     inputs.reference = reference;
     SmartDashboard.putNumber("Turret Location (degrees)", position.in(Degrees));
+    SmartDashboard.putBoolean("Turret/Successful Calibration?", false);
   }
 
   public void setPosition(Rotation2d position) {
     reference = position.getMeasure();
   }
 
-  public void calibrate() {}
+  public boolean calibrate() {
+    return SmartDashboard.getBoolean("Turret/Successful Calibration?", true);
+  }
 
 }
+

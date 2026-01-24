@@ -1,74 +1,66 @@
 package frc.robot.subsystems.Turret;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Revolutions;
-
 import java.util.function.Supplier;
-
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Robot;
+import frc.robot.aiming.AimParams;
 import frc.robot.subsystems.Turret.TurretIO.TurretIOInputs;
 import frc.robot.superstructure.StateManager;
-import frc.robot.aiming.AimParams;
 
-import frc.robot.Robot;
+public class Turret extends SubsystemBase {
 
-public class Turret extends SubsystemBase {    
+  private final TurretIO io;
+  private final TurretIOInputs inputs;
 
-    private final TurretIO io;
-    private final TurretIOInputs inputs;
+  private boolean successfulCalibration;
+  private final Alert calibrationAlert = new Alert("Calibration", AlertType.kError);
 
-    public Turret() {
-        super();
-        if (Robot.isReal()) {
-            io = new TurretIOHardware();
-        } else {
-            io = new TurretIOSim();
-        }
-        inputs = new TurretIOInputs();
-        io.calibrate();
-        SmartDashboard.putData("Turret/home", home());
-        SmartDashboard.putData("Turret/Calibrate", runOnce(io::calibrate));
-    }
+  public Turret(TurretIO io) {
+    super();
+    this.io = io;
+    inputs = new TurretIOInputs();
+    successfulCalibration = io.calibrate();
+    SmartDashboard.putData("Turret/home", home());
+    SmartDashboard.putData("Turret/Calibrate",
+        runOnce(() -> successfulCalibration = io.calibrate()));
+  }
 
+  @Override
+  public void periodic() {
+    io.updateInputs(inputs);
+    SmartDashboard.putNumber("Turret/Motor Position", inputs.position.in(Revolutions));
+    calibrationAlert.set(successfulCalibration);
+  }
 
-    @Override
-    public void periodic() {
-        io.updateInputs(inputs);
-        SmartDashboard.putNumber("Turret/Motor Position", inputs.position.in(Revolutions));
-    }
+  public Command track(StateManager configuration, Supplier<AimParams> aimParams) {
+    return this.run(() -> {
+      Rotation2d robot = configuration.robotPose().getRotation();
+      Rotation2d relative = aimParams.get().yaw.minus(robot);
+      io.setPosition(relative);
+    });
+  }
 
-    /**
-     * Keeps the turret pointed at the correct target
-     */
-    public Command track(StateManager configuration, Supplier<AimParams> aimParams) {
-            return this.run(() -> {
-            Rotation2d angle = configuration.robotPose().getRotation();
-            Rotation2d newAngle = aimParams.get().yaw.minus(angle);
-            io.setPosition(newAngle);
-        });
-    }
+  /**
+   * Sends the turret to its home position.
+   */
+  public Command home() {
+    return Commands.sequence(
+        runOnce(() -> io.setPosition(Rotation2d.kZero)),
+        Commands.waitUntil(ready()));
+  }
 
-    /**
-     * Go to zero from turret's current location - Aligns to robot's 0
-     */
-    public Command home() {
-        return Commands.sequence(
-            runOnce(() -> io.setPosition(Rotation2d.kZero)),
-            Commands.waitUntil(ready()));
-    }
-
-    public Trigger ready() {
-        return new Trigger(
-            () -> (Math.abs(inputs.reference.in(Radians)-inputs.position.in(Radians)) < TurretConstants.kTolerance));
-    }
+  public Trigger ready() {
+    return new Trigger(() -> inputs.position.minus(inputs.reference)
+        .baseUnitMagnitude() <= TurretConstants.kTolerance.baseUnitMagnitude());
+  }
 
 }

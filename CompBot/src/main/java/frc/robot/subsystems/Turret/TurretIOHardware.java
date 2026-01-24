@@ -68,7 +68,7 @@ public class TurretIOHardware implements TurretIO {
         inputs.reference = reference.getMeasure();
     }
 
-    public void calibrate() {
+    public boolean calibrate() {
         double x12 = gear1CANcoder.getAbsolutePosition().getValueAsDouble();
         double x26 = gear2CANcoder.getAbsolutePosition().getValueAsDouble();
         // Compensate for offsets
@@ -76,7 +76,9 @@ public class TurretIOHardware implements TurretIO {
         if (x26 < 0) x26 += 1.0;
         // Calcuate absolute position
         double absolutePosition = crtSolve(x12, x26);
-        if (absolutePosition != Double.NaN) turretMotor.setPosition(absolutePosition);
+        boolean isOk = absolutePosition != Double.NaN;
+        if (isOk) turretMotor.setPosition(absolutePosition);
+        return isOk;
     }
 
     public static double crtSolve(double x12, double x26) {

@@ -2,21 +2,44 @@ package frc.robot.superstructure;
 
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
 import frc.robot.commands.CommandBuilder;
+import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.subsystems.Turret.Turret;
+import frc.robot.subsystems.Turret.TurretIOHardware;
+import frc.robot.subsystems.Turret.TurretIOSim;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIOHardware;
+import frc.robot.subsystems.indexer.IndexerIOSim;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOHardware;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIOHardware;
+import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
 public class Superstructure {
-  public record Subsystems(Drivetrain drivetrain, Turret turret) {
+  public record Subsystems(
+      Drivetrain drivetrain,
+      Turret turret,
+      Shooter shooter,
+      Indexer indexer,
+      Intake intake) {
   }
 
   private final Subsystems subsystems;
   public final StateManager state;
 
-  public Superstructure(Drivetrain drivetrain, Turret turret) {
-    subsystems = new Subsystems(drivetrain, turret);
+  public Superstructure() {
+    Drivetrain drivetrain = TestBotTunerConstants.createDrivetrain();
+    Turret turret = new Turret(Robot.isReal() ? new TurretIOHardware() : new TurretIOSim());
+    Shooter shooter = new Shooter(Robot.isReal() ? new ShooterIOHardware() : new ShooterIOSim());
+    Indexer indexer = new Indexer(Robot.isReal() ? new IndexerIOHardware() : new IndexerIOSim());
+    Intake intake = new Intake(Robot.isReal() ? new IntakeIOHardware() : new IntakeIOSim());
+    subsystems = new Subsystems(drivetrain, turret, shooter, indexer, intake);
     state = new StateManager(subsystems);
   }
 
