@@ -92,47 +92,26 @@ public class TurretIOHardware implements TurretIO {
      * @return: Turret position in radians in relation to robot, assuming that the opposite from center of the turret's blind spot is 0
      * @throws IllegalArgumentException Thrown if the turret location is bigger than the turret size
      */
-    private double getTurretAngleRadians(double gear1position, double gear2position) throws IllegalArgumentException {        
+    private double getTurretAngleRadians(double gear1Position, double gear2Position) throws IllegalArgumentException {        
         
-        //Changing gear names to match video so we can follow the video
-        int m1 = TurretConstants.kGear1Size;
-        int m2 = TurretConstants.kGear2Size;
+        double g12 = (double) TurretConstants.kGear3Size/TurretConstants.kTurretSize;
+        double g26 = (double) TurretConstants.kGear3Size*TurretConstants.kGear2Size/(TurretConstants.kTurretSize*TurretConstants.kGear1Size);
+        int alpha = TurretConstants.kAlpha;
 
-        //Turn CANcoder's 0 to 1 measurement into teeth.
-        int a1 = (int) Math.round(gear1position * TurretConstants.kGear1Size);
-        int a2 = (int) Math.round(gear2position * TurretConstants.kGear2Size);
+        double x12 = gear1Position;
+        double x26 = gear2Position;
 
-        //Calculating M, M1, M2, and their inverses.
-        int M = m1*m2;
-        int M1 = M/m1;
-        int M2 = M/m2;
-
-        int inverseM1 = 0;
-        int inverseM2 = 0;
-
-        //Going to m1 because the lowest possible value of inverseM1 to get a remainder of 1 is going to be less than m1.
-        for (int i = 0; i <= m1; i++) {
-            if ((M1 *i) % m1 == 1) {
-                inverseM1 = i;
-                break;
+        double a1 = alpha*g12;
+        double a2 = alpha*g26;
+ 
+        for (double n = 0; n < 100*g12; n++) {
+            if (((a1*n+x12*a1)-(x26*a2)) % a2 == 0) {
+                return g12*(n+x12) *2*Math.PI;
             }
         }
+        
+        throw new IllegalArgumentException("Current turret encoders reflect impossible turret positions.");
 
-        for (int i = 0; i <= m2; i++) {
-            if ((M2 *i) % m2 == 1) {
-                inverseM2 = i;
-                break;
-            }
-        }
-        double turretPositionInTeeth = (a1*M1*inverseM1 + a2*M2*inverseM2)%M;
-
-        if (turretPositionInTeeth > TurretConstants.kTurretSize) {
-            throw new IllegalArgumentException("Current turret encoders reflect value over possible turret positions.");
-        }
-
-        double turretPositionInRadians = (turretPositionInTeeth * 2 * Math.PI / TurretConstants.kTurretSize) - Math.PI;
-
-        return turretPositionInRadians;
     }
 
 }
