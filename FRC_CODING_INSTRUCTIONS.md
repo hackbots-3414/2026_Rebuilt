@@ -11,6 +11,10 @@ Based on Team 3414's FRC Programming Reference
 6. [Command Decorators](#command-decorators)
 7. [Triggers and Bindings](#triggers-and-bindings)
 8. [Advanced Patterns](#advanced-patterns)
+   - [IO Layer Separation](#io-layer-separation)
+   - [Non-Subsystem Code](#non-subsystem-code-vision-utilities-etc)
+   - [Generated Code](#generated-code-ctre-etc)
+   - [Thread Safety](#thread-safety-notes)
 
 ---
 
@@ -101,20 +105,27 @@ public Command goTo(ElevatorState state) {
 }
 ```
 
-#### 4. Return Triggers, Not Booleans
-Triggers update with subsystem state and remain valid:
+#### 4. Return Triggers, Not Booleans (For Command-Based Subsystems)
+For **boolean states** in command-based subsystems, return Triggers instead of booleans. Triggers update with subsystem state and can be directly used for command bindings.
+
+**Note**: This principle applies to boolean conditions in subsystems, not to data types like `Pose2d` or `Transform2d`, which should be returned directly.
 
 ```java
-// BAD
+// BAD - for boolean states in subsystems
 public boolean atSetpoint() {
     return Math.abs(target - getPosition()) < tolerance;
 }
 
-// GOOD
+// GOOD - for boolean states in subsystems
 public Trigger atSetpoint() {
     return new Trigger(() ->
         Math.abs(target - getPosition()) < tolerance
     );
+}
+
+// GOOD - non-boolean data should be returned directly
+public Pose2d robotPose() {
+    return currentPose;
 }
 ```
 
@@ -465,12 +476,61 @@ public class Shooter extends SubsystemBase {
 - Easy testing without hardware
 - Multiple implementations of same interface
 
+### Non-Subsystem Code (Vision, Utilities, etc.)
+
+Not all robot code follows the command-based subsystem pattern. Some components intentionally operate outside this paradigm:
+
+#### Vision Processing
+Vision classes are **not** subsystems because:
+- Subsystems are tightly coupled with the command requirements system
+- Vision code has no need for command "requirements" - nothing should exclusively "own" vision processing
+- Vision state shouldn't be used to trigger commands directly (that's what Triggers in subsystems are for)
+- Vision often runs on separate threads with different timing requirements
+
+```java
+// Vision classes implement Runnable or use Notifier, not SubsystemBase
+public class SingleInputPoseEstimator implements Runnable {
+    // Returns boolean directly - this is NOT a subsystem
+    public boolean isConnected() {
+        return inputs.connected;
+    }
+}
+```
+
+#### Access Modifiers for Architecture
+Sometimes classes need to be public for architectural reasons:
+
+```java
+// Subsystems record is public so CommandBuilder implementations can access it
+public record Subsystems(Drivetrain drivetrain, Shooter shooter) {}
+
+public interface CommandBuilder {
+    // Needs access to Subsystems
+    Command build(Subsystems subsystems, StateManager state);
+}
+```
+
+### Generated Code (CTRE, etc.)
+
+When using vendor-generated code (e.g., CTRE's TunerSwerveDrivetrain):
+- Follow the vendor's conventions for that code
+- Don't add `super.periodic()` calls unless the generated code includes them
+- The vendor knows their library's requirements
+
+### Thread Safety Notes
+
+The WPILib command scheduler runs everything in a single thread. This means:
+- Non-final fields reassigned in `periodic()` don't cause race conditions
+- You don't need to worry about synchronization for state accessed only by commands and subsystems
+- Vision code running on separate threads (via `Notifier`) should handle its own thread safety
+
 ---
 
 ## Best Practices Summary
 
+**For Command-Based Subsystems:**
 1. **Subsystems**: Represent features, not hardware. Keep hardware private.
-2. **API Design**: Use enums for setpoints, return Triggers instead of booleans, return Commands instead of void methods.
+2. **API Design**: Use enums for setpoints, return Triggers for boolean states, return Commands instead of void methods.
 3. **Commands**: Use factories over subclassing when possible.
 4. **Compositions**: Prefer static `Commands` factories for clarity.
 5. **Decorators**: Add conditional logic without modifying core commands.
@@ -479,6 +539,11 @@ public class Shooter extends SubsystemBase {
 8. **Periodic**: Never write commands in `periodic()` methods.
 9. **Declarative**: Always prefer "what" over "how" in your APIs.
 10. **Protection**: Prevent invalid states through careful API design.
+
+**For Non-Subsystem Code (Vision, Utilities):**
+11. **Vision classes** are intentionally not subsystems - they don't need command requirements.
+12. **Return types**: Use appropriate types directly (booleans for vision, Pose2d for state) - Triggers are for command bindings.
+13. **Generated code**: Follow vendor conventions; don't override patterns the vendor established.
 
 ---
 
