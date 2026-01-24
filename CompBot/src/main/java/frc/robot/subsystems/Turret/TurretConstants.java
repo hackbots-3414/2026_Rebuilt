@@ -48,10 +48,12 @@ public class TurretConstants {
     // CANcoder configurations
     protected static final CANcoderConfiguration kGear1CANcoderConfig = new CANcoderConfiguration()
         .withMagnetSensor(new MagnetSensorConfigs()
+            .withAbsoluteSensorDiscontinuityPoint(1.0)
             .withMagnetOffset(kGear1CANcoderOffset));
 
     protected static final CANcoderConfiguration kGear2CANcoderConfig = new CANcoderConfiguration()
         .withMagnetSensor(new MagnetSensorConfigs()
+            .withAbsoluteSensorDiscontinuityPoint(1.0)
             .withMagnetOffset(kGear2CANcoderOffset));
 
     // Motor configuration
