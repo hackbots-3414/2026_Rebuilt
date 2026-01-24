@@ -11,12 +11,14 @@ public class TurretIOSim implements TurretIO {
   private Angle position = Radians.zero();
   private Angle reference = Radians.zero();
 
+  private final String calibrationLabel = "Turret/Successful Calibration?";
+
   public void updateInputs(TurretIOInputs inputs) {
     position = position.times(0.9).plus(reference);
     inputs.position = position;
     inputs.reference = reference;
     SmartDashboard.putNumber("Turret Location (degrees)", position.in(Degrees));
-    SmartDashboard.putBoolean("Turret/Successful Calibration?", false);
+    SmartDashboard.putBoolean(calibrationLabel, SmartDashboard.getBoolean(calibrationLabel, false));
   }
 
   public void setPosition(Rotation2d position) {
@@ -24,7 +26,7 @@ public class TurretIOSim implements TurretIO {
   }
 
   public boolean calibrate() {
-    return SmartDashboard.getBoolean("Turret/Successful Calibration?", true);
+    return SmartDashboard.getBoolean(calibrationLabel, false);
   }
 
 }
