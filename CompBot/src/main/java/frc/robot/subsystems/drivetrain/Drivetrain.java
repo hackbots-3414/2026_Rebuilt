@@ -280,7 +280,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   public Command teleopDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot) {
     return this.applyRequest(() -> {
       // Recalculate the *real* vx and vy to be operator-dependent
-      Translation2d operatorRelative = new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
+      Translation2d operatorRelative =
+          new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
       Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
       if (rotationOverride.isPresent()) {
         return driveOverride
