@@ -29,5 +29,7 @@ public interface TurretIO {
 
   public void setPosition(Rotation2d position);
 
+  public double getCRTPosition();
+
   public void calibrate();
 }

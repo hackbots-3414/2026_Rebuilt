@@ -22,6 +22,10 @@ public class TurretIOSim implements TurretIO {
     reference = position.getMeasure();
   }
 
+  public double getCRTPosition() {
+    return position.in(Radians);
+  }
+
   public void calibrate() {}
 
 }

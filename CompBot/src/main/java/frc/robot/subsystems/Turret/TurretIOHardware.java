@@ -68,6 +68,16 @@ public class TurretIOHardware implements TurretIO {
         inputs.reference = reference.getMeasure();
     }
 
+    public double getCRTPosition() {
+        double x12 = gear1CANcoder.getAbsolutePosition().getValueAsDouble();
+        double x26 = gear2CANcoder.getAbsolutePosition().getValueAsDouble();
+        // Compensate for offsets
+        if (x12 < 0) x12 += 1.0;
+        if (x26 < 0) x26 += 1.0;
+        // Calcuate absolute position
+        return crtSolve(x12, x26);
+    }
+
     public void calibrate() {
         double x12 = gear1CANcoder.getAbsolutePosition().getValueAsDouble();
         double x26 = gear2CANcoder.getAbsolutePosition().getValueAsDouble();

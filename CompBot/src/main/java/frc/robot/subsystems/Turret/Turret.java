@@ -2,6 +2,7 @@ package frc.robot.subsystems.Turret;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Revolutions;
 
 import java.util.function.Supplier;
 
@@ -33,6 +34,7 @@ public class Turret extends SubsystemBase {
             io = new TurretIOSim();
         }
         inputs = new TurretIOInputs();
+        io.calibrate();
         SmartDashboard.putData("Turret/home", home());
         SmartDashboard.putData("Turret/Calibrate", runOnce(io::calibrate));
     }
@@ -41,7 +43,8 @@ public class Turret extends SubsystemBase {
     @Override
     public void periodic() {
         io.updateInputs(inputs);
-        SmartDashboard.putNumber("Turret/Position", inputs.position.in(Radians));
+        SmartDashboard.putNumber("Turret/Calibrated Position", io.getCRTPosition());
+        SmartDashboard.putNumber("Turret/Motor Position", inputs.position.in(Revolutions));
     }
 
     /**

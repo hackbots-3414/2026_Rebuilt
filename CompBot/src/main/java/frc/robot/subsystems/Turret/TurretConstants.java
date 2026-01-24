@@ -11,30 +11,20 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 public class TurretConstants {
 
     protected static final int turretMotorID = 48;
-
-    //Find these actual values
-    protected static final int kGear1CANcoderID = 0;
-    protected static final int kGear2CANcoderID = 1;
-    protected static final int kMotorCANcoderID = 2;
-
-    //Find actual values
-    protected static final int kGear1Size = 28;
-    protected static final int kGear2Size = 26;
-    protected static final int kGear3Size = 12;
-    protected static final int kTurretSize = 100;
-
-    protected static final int kAlpha = 27300;
+    protected static final int kGear1CANcoderID = 49;
+    protected static final int kGear2CANcoderID = 50;
 
     protected static final double kSupplyCurrentLimit = 100;
 
     protected static double kTurretHomePos = 0.5;
 
     //Find actual values
-    protected static final double kGearRatio = 1.07;
+    protected static final double kGearRatio = 38.46;
     protected static final double kMaxSpeed = 32;
     protected static final double kMaxAcceleration = 48;
     protected static final double kMaxJerk = 480;
@@ -42,8 +32,8 @@ public class TurretConstants {
     //Find actual values
     protected static final double kTolerance = 5;
 
-    protected static final double kGear1CANcoderOffset = 0.0;
-    protected static final double kGear2CANcoderOffset = 0.0;
+    protected static final double kGear1CANcoderOffset = -0.352051;
+    protected static final double kGear2CANcoderOffset = -0.531006;
 
     // CANcoder configurations
     protected static final CANcoderConfiguration kGear1CANcoderConfig = new CANcoderConfiguration()
@@ -54,12 +44,13 @@ public class TurretConstants {
     protected static final CANcoderConfiguration kGear2CANcoderConfig = new CANcoderConfiguration()
         .withMagnetSensor(new MagnetSensorConfigs()
             .withAbsoluteSensorDiscontinuityPoint(1.0)
-            .withMagnetOffset(kGear2CANcoderOffset));
+            .withMagnetOffset(kGear2CANcoderOffset)
+            .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
     // Motor configuration
     protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
-          .withNeutralMode(NeutralModeValue.Brake)
+          .withNeutralMode(NeutralModeValue.Coast)
           .withInverted(InvertedValue.CounterClockwise_Positive))
 
       .withFeedback(new FeedbackConfigs()
@@ -71,7 +62,7 @@ public class TurretConstants {
           .withSupplyCurrentLimit(kSupplyCurrentLimit))
 
       .withSlot0(new Slot0Configs()
-          .withKP(20)
+          .withKP(30)
           .withKI(0)
           .withKD(0)
           .withKS(0.125)
