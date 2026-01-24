@@ -11,9 +11,10 @@ public class Indexer extends SubsystemBase {
   public Indexer(IndexerIO io) {
     this.io = io;
   }
-  
+
   @Override
   public void periodic() {
+    io.updateInputs(inputs);
   }
 
 }

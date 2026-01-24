@@ -28,6 +28,7 @@ public class FieldUtils {
   }
 
   /** Returns the position of the hub corresponding to the currently selected alliance */
+  // TODO: Actually flip target based on alliance
   public static Pose3d hub() {
     return FieldConstants.kBlueHub;
   }

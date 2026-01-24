@@ -5,7 +5,7 @@ import frc.robot.subsystems.climber.ClimberIO.ClimberIOInputs;
 
 public class Climber extends SubsystemBase {
   private final ClimberIO io;
-  private final ClimberIOInputs inputs =  new ClimberIOInputs();
+  private final ClimberIOInputs inputs = new ClimberIOInputs();
 
   public Climber(ClimberIO io) {
     this.io = io;
@@ -13,7 +13,7 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
+    io.updateInputs(inputs);
   }
 
 }

@@ -11,24 +11,25 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Robot;
 
 public class ShooterIOSim implements ShooterIO {
-    private final DCMotorSim motor;
+  private final DCMotorSim motor;
 
-    public ShooterIOSim() {
-        motor = new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 2, 10),
-            DCMotor.getKrakenX60Foc(1),
-            0.01,
-            0.02);
-    }
+  public ShooterIOSim() {
+    motor = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 2, 10),
+        DCMotor.getKrakenX60Foc(1),
+        0.01,
+        0.02);
+  }
 
-    public void updateInputs(ShooterIOInputs inputs) {
-        motor.update(Robot.kDefaultPeriod);
-        inputs.supplyCurrent = Amps.of(motor.getCurrentDrawAmps());
-        inputs.voltage = Volts.of(motor.getInputVoltage());
-        inputs.velocity = motor.getAngularVelocity();
-    }
+  public void updateInputs(ShooterIOInputs inputs) {
+    motor.update(Robot.kDefaultPeriod);
+    inputs.motorConnected = true;
+    inputs.supplyCurrent = Amps.of(motor.getCurrentDrawAmps());
+    inputs.voltage = Volts.of(motor.getInputVoltage());
+    inputs.velocity = motor.getAngularVelocity();
+  }
 
-    public void setVelocity(AngularVelocity velocity) {
-        motor.setAngularVelocity(velocity.baseUnitMagnitude());
-    }
+  public void setVelocity(AngularVelocity velocity) {
+    motor.setAngularVelocity(velocity.baseUnitMagnitude());
+  }
 }

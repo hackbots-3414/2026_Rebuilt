@@ -1,15 +1,14 @@
 package frc.robot.aiming;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.LinearVelocity;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import frc.robot.superstructure.StateManager;
 
 public class PolyRegAim extends ExperimentalAim {
@@ -42,7 +41,6 @@ public class PolyRegAim extends ExperimentalAim {
     Translation3d offset = state.aimTarget().getTranslation()
         .minus(new Translation3d(state.robotPose().getTranslation()));
     double xyDistance = offset.toTranslation2d().getNorm();
-    Translation2d robotVelocity = state.robotVelocity().getTranslation();
     // Calculate angles and field-relative fuel velocity
     Rotation2d yaw = Rotation2d.fromRadians(Math.atan2(offset.getY(), offset.getX()));
     Rotation2d pitch = Rotation2d.fromRadians(sample(pitchCoeffs, xyDistance));

@@ -22,6 +22,7 @@ public class IndexerIOSim implements IndexerIO {
 
     public void updateInputs(IndexerIOInputs inputs) {
         motor.update(Robot.kDefaultPeriod);
+        inputs.motorConnected = true;
         inputs.supplyCurrent = Amps.of(motor.getCurrentDrawAmps());
         inputs.voltage = Volts.of(motor.getInputVoltage());
         inputs.velocity = motor.getAngularVelocity();

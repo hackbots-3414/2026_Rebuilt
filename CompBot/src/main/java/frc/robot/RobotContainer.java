@@ -4,17 +4,12 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Radians;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.binding.Binder;
 import frc.robot.binding.DriverBindings;
-import frc.robot.commands.VisionTest;
-import frc.robot.generated.TestBotTunerConstants;
-import frc.robot.subsystems.Turret.Turret;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 
@@ -29,7 +24,6 @@ public class RobotContainer {
     driver.bind(superstructure);
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();
 
-    SmartDashboard.putData("VISION TEST", superstructure.build(new VisionTest()));
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
   }
 
