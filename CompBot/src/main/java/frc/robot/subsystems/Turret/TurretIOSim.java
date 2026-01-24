@@ -1,7 +1,9 @@
 package frc.robot.subsystems.Turret;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -11,18 +13,15 @@ public class TurretIOSim implements TurretIO {
 
   public void updateInputs(TurretIOInputs inputs) {
     position = position.times(0.9).plus(reference);
-    inputs.turretPosition = position;
+    inputs.position = position;
     inputs.reference = reference;
-    SmartDashboard.putNumber("Turret Location", position.in(Radians));
+    SmartDashboard.putNumber("Turret Location (degrees)", position.in(Degrees));
   }
 
-  public void setPosition(Angle position) {
-    reference = position; 
+  public void setPosition(Rotation2d position) {
+    reference = position.getMeasure();
   }
-  
-  public void enableLimits() {}
-  public void disableLimits() {}
 
-  public void calibrateZero() {}
+  public void calibrate() {}
 
 }

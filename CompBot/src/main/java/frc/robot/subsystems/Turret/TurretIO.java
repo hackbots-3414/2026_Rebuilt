@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -20,17 +21,13 @@ public interface TurretIO {
     public Current turretCurrent = Amps.zero();
     public Temperature turretTemp = Celsius.zero();
     public AngularVelocity turretVelocityRPS = RotationsPerSecond.zero();
-    public Angle turretPosition = Radians.zero();
     public Angle reference = Radians.zero();
-    public Angle motorPosition = Radians.zero();
+    public Angle position = Radians.zero();
   }
 
-  void updateInputs(TurretIOInputs inputs);
+  public void updateInputs(TurretIOInputs inputs);
 
-  void setPosition(Angle position);
+  public void setPosition(Rotation2d position);
 
-  void disableLimits();
-  void enableLimits();
-
-  void calibrateZero();
+  public void calibrate();
 }

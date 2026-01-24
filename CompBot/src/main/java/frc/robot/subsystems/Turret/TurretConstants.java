@@ -43,7 +43,7 @@ public class TurretConstants {
     protected static final double kMaxJerk = 480;
 
     //Find actual values
-protected static final double kTolerance = 5;
+    protected static final double kTolerance = 5;
 
     protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
@@ -72,14 +72,11 @@ protected static final double kTolerance = 5;
           .withMotionMagicAcceleration(kMaxAcceleration)
           .withMotionMagicJerk(kMaxJerk));
 
-  protected static final CANrangeConfiguration kCANrangeConfig = new CANrangeConfiguration()
-      .withFovParams(new FovParamsConfigs()
-          .withFOVRangeX(6.75)
-          .withFOVRangeY(6.75))
-      .withProximityParams(new ProximityParamsConfigs()
-          .withMinSignalStrengthForValidMeasurement(3500)
-          .withProximityThreshold(0.13)
-          .withProximityHysteresis(0));
+    public static class TurretCRTConstants {
+        public static final double kG12 = 12.0 / 100.0;
+        public static final double kG26 = (12.0 * 26.0) / (100.0 * 28.0);
 
+        public static final long kAlpha = 312;
+    }
     
 }

@@ -39,32 +39,18 @@ public class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Turret Position", inputs.turretPosition.in(Degrees));
+        io.updateInputs(inputs);
     }
 
     /**
      * Keeps the turret pointed at the correct target
      */
-    private void track(StateManager configuration, Supplier<AimParams> aimParams) {
-        Rotation2d angle = configuration.robotPose().getRotation();
-        Rotation2d newAngle = aimParams.get().yaw.minus(angle);
-        setPosition(newAngle.getMeasure());
-        
-    }
-
-    public Command track(StateManager configuration, Supplier<AimParams> aimParams, Subsystem turret) {
-        return Commands.run(() -> track(configuration, aimParams), turret);
-    }
-
-
-    public Command setPosition(Angle referenceAngle) {
-        return Commands.sequence(
-            runOnce(() -> io.setPosition(referenceAngle)),
-            Commands.waitUntil(ready()));
-    }
-
-    public Angle getPosition() {
-        return inputs.turretPosition;
+    public Command track(StateManager configuration, Supplier<AimParams> aimParams) {
+            return this.run(() -> {
+            Rotation2d angle = configuration.robotPose().getRotation();
+            Rotation2d newAngle = aimParams.get().yaw.minus(angle);
+            io.setPosition(newAngle);
+        });
     }
 
     /**
@@ -72,13 +58,13 @@ public class Turret extends SubsystemBase {
      */
     public Command home() {
         return Commands.sequence(
-            runOnce(() -> io.setPosition(Radians.zero())),
+            runOnce(() -> io.setPosition(Rotation2d.kZero)),
             Commands.waitUntil(ready()));
     }
 
     public Trigger ready() {
         return new Trigger(
-            () -> (Math.abs(inputs.reference.in(Radians)-inputs.turretPosition.in(Radians)) < TurretConstants.kTolerance));
+            () -> (Math.abs(inputs.reference.in(Radians)-inputs.position.in(Radians)) < TurretConstants.kTolerance));
     }
 
 }
