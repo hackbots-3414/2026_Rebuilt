@@ -29,6 +29,10 @@ public class TurretConstants {
     protected static final int kGear2Size = 26;
     protected static final int kTurretSize = 100;
 
+    protected static final int kGear3Size = 12;
+
+    protected static final int kAlpha = 27300;
+
     protected static final double kSupplyCurrentLimit = 100;
 
     protected static double kTurretHomePos = 0.5;

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Radians;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -12,6 +14,7 @@ import frc.robot.binding.Binder;
 import frc.robot.binding.DriverBindings;
 import frc.robot.commands.VisionTest;
 import frc.robot.generated.TestBotTunerConstants;
+import frc.robot.subsystems.Turret.Turret;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 
@@ -22,7 +25,7 @@ public class RobotContainer {
   public final Binder driver = new DriverBindings();
 
   public RobotContainer() {
-    superstructure = new Superstructure(TestBotTunerConstants.createDrivetrain());
+    superstructure = new Superstructure(TestBotTunerConstants.createDrivetrain(), new Turret());
     driver.bind(superstructure);
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();
 

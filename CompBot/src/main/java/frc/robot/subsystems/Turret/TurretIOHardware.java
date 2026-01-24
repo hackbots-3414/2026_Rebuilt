@@ -9,6 +9,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.StatusSignalUtil;
 
 public class TurretIOHardware implements TurretIO {
@@ -91,7 +92,7 @@ public class TurretIOHardware implements TurretIO {
      * @return: Turret position in radians in relation to robot, assuming that the opposite from center of the turret's blind spot is 0
      * @throws IllegalArgumentException Thrown if the turret location is bigger than the turret size
      */
-    private double getTurretAngleRadians(double gear1position, double gear2position) throws IllegalArgumentException {
+    private double getTurretAngleRadians(double gear1position, double gear2position) throws IllegalArgumentException {        
         
         //Changing gear names to match video so we can follow the video
         int m1 = TurretConstants.kGear1Size;

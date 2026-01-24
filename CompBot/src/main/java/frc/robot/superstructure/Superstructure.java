@@ -3,19 +3,20 @@ package frc.robot.superstructure;
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.CommandBuilder;
+import frc.robot.subsystems.Turret.Turret;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
 public class Superstructure {
-  public record Subsystems(Drivetrain drivetrain) {
+  public record Subsystems(Drivetrain drivetrain, Turret turret) {
   }
 
   private final Subsystems subsystems;
   public final StateManager state;
 
-  public Superstructure(Drivetrain drivetrain) {
-    subsystems = new Subsystems(drivetrain);
+  public Superstructure(Drivetrain drivetrain, Turret turret) {
+    subsystems = new Subsystems(drivetrain, turret);
     state = new StateManager(subsystems);
   }
 
