@@ -1,14 +1,17 @@
 package frc.robot.subsystems.Turret;
 
 import static edu.wpi.first.units.Units.Radians;
+import java.util.Optional;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
-import frc.robot.subsystems.Turret.TurretConstants.TurretCRTConstants;
 import frc.robot.util.StatusSignalUtil;
+
+import yams.units.EasyCRTConfig;
+import yams.units.EasyCRT;
 
 public class TurretIOHardware implements TurretIO {
 
@@ -20,6 +23,10 @@ public class TurretIOHardware implements TurretIO {
   private final DynamicMotionMagicVoltage control;
 
   private Angle reference = Radians.zero();
+
+  private boolean calibrated = false;
+  private EasyCRTConfig crtConfig;
+  private EasyCRT crt;
 
   public TurretIOHardware() {
     motor = new TalonFX(TurretConstants.turretMotorID);
@@ -45,9 +52,14 @@ public class TurretIOHardware implements TurretIO {
         motor.getPosition(false),
         gear1CANcoder.getAbsolutePosition(false),
         gear2CANcoder.getAbsolutePosition(false));
-  }
 
-  private boolean calibrated = false;
+    crtConfig = new EasyCRTConfig(
+        gear1CANcoder.getAbsolutePosition(false)::getValue,
+        gear2CANcoder.getAbsolutePosition(false)::getValue)
+            .withEncoderRatios(TurretConstants.kGearRatio1, TurretConstants.kGearRatio2);
+
+    crt = new EasyCRT(crtConfig);
+  }
 
   public void setPosition(Rotation2d referenceAngle) {
     reference = referenceAngle.getMeasure();
@@ -75,31 +87,10 @@ public class TurretIOHardware implements TurretIO {
   }
 
   public void calibrate() {
-    double x12 = gear1CANcoder.getAbsolutePosition().getValueAsDouble();
-    double x26 = gear2CANcoder.getAbsolutePosition().getValueAsDouble();
-    // Calcuate absolute position
-    double absolutePosition = crtSolve(x12, x26);
-    boolean isOk = absolutePosition != Double.NaN;
-    if (isOk)
-      motor.setPosition(absolutePosition);
+    Optional<Angle> totalPosition = crt.getAngleOptional();
+    boolean isOk = totalPosition.isPresent();
+    totalPosition.ifPresent(position -> motor.setPosition(position));
     calibrated |= isOk;
   }
 
-  public static double crtSolve(double x12, double x26) {
-    double best = Double.NaN;
-    double bestDelta = 1e-1;
-
-    for (int n = 0; n <= Math.ceil(1 / TurretCRTConstants.kG12); n++) {
-      for (int m = 0; m < Math.ceil(1 / TurretCRTConstants.kG26); m++) {
-        double xFromN = TurretCRTConstants.kG12 * (n + x12);
-        double xFromM = TurretCRTConstants.kG26 * (m + x26);
-        double delta = Math.abs(xFromN - xFromM);
-        if (delta < bestDelta) {
-          bestDelta = delta;
-          best = (xFromN + xFromM) / 2.0;
-        }
-      }
-    }
-    return best;
-  }
 }

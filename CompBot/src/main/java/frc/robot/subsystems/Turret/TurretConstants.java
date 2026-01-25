@@ -36,6 +36,9 @@ public class TurretConstants {
 
   protected static final double kGear1CANcoderOffset = -0.352051;
   protected static final double kGear2CANcoderOffset = -0.531006;
+  public static final double kGearRatio1 = 100.0 / 12.0;
+  public static final double kGearRatio2 = (100 * 28.0) / (12.0 * 26.0);
+
 
   // CANcoder configurations
   protected static final CANcoderConfiguration kGear1CANcoderConfig = new CANcoderConfiguration()
@@ -75,12 +78,5 @@ public class TurretConstants {
           .withMotionMagicCruiseVelocity(kMaxSpeed)
           .withMotionMagicAcceleration(kMaxAcceleration)
           .withMotionMagicJerk(kMaxJerk));
-
-  public static class TurretCRTConstants {
-    public static final double kG12 = 12.0 / 100.0;
-    public static final double kG26 = (12.0 * 26.0) / (100.0 * 28.0);
-
-    public static final long kAlpha = 312;
-  }
 
 }
