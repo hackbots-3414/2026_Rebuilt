@@ -1,6 +1,7 @@
 package frc.robot.subsystems.Turret;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Revolutions;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -23,7 +24,7 @@ public class TurretConstants {
 
   protected static final double kSupplyCurrentLimit = 100;
 
-  protected static double kTurretHomePos = 0.5;
+  protected static Angle kHomePosition = Revolutions.of(0.5);
 
   // Find actual values
   protected static final double kGearRatio = 38.46;

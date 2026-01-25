@@ -40,7 +40,7 @@ public class Turret extends SubsystemBase {
     return this.run(() -> {
       Rotation2d robot = configuration.robotPose().getRotation();
       Rotation2d relative = aimParams.get().yaw.minus(robot);
-      io.setPosition(relative);
+      io.setPosition(relative.getMeasure());
     });
   }
 
@@ -49,7 +49,7 @@ public class Turret extends SubsystemBase {
    */
   public Command home() {
     return Commands.sequence(
-        runOnce(() -> io.setPosition(Rotation2d.kZero)),
+        runOnce(() -> io.setPosition(TurretConstants.kHomePosition)),
         Commands.waitUntil(ready()));
   }
 

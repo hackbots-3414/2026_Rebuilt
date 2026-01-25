@@ -61,8 +61,8 @@ public class TurretIOHardware implements TurretIO {
     crt = new EasyCRT(crtConfig);
   }
 
-  public void setPosition(Rotation2d referenceAngle) {
-    reference = referenceAngle.getMeasure();
+  public void setPosition(Angle reference) {
+    this.reference = reference;
     motor.setControl(control.withPosition(reference));
   }
 
@@ -92,5 +92,4 @@ public class TurretIOHardware implements TurretIO {
     totalPosition.ifPresent(position -> motor.setPosition(position));
     calibrated |= isOk;
   }
-
 }
