@@ -16,11 +16,10 @@ public class FuelShotSim implements CommandBuilder {
     FuelSim sim = new FuelSim();
     return Commands.sequence(
         Commands.runOnce(() -> {
-          sim.launch(state, subsystems.drivetrain().aimParams().get());
+          sim.launch(state, state.aimParams());
         }),
         Commands.run(sim::tick))
         .until(sim::atHub)
-        .onlyIf(() -> subsystems.drivetrain().aimParams().isPresent())
         .withName("Fuel Shot (sim)");
   }
 

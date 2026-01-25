@@ -12,7 +12,7 @@ public class TurretIOSim implements TurretIO {
 
   public void updateInputs(TurretIOInputs inputs) {
     inputs.motorConnected = true;
-    position = position.times(0.9).plus(reference);
+    position = position.times(0.9).plus(reference.times(0.1));
     inputs.position = position;
     inputs.reference = reference;
     inputs.calibrated = SmartDashboard.getBoolean(calibrationLabel, false);

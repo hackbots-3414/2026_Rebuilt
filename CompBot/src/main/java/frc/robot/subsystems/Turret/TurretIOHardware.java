@@ -6,12 +6,10 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import frc.robot.util.StatusSignalUtil;
-
-import yams.units.EasyCRTConfig;
 import yams.units.EasyCRT;
+import yams.units.EasyCRTConfig;
 
 public class TurretIOHardware implements TurretIO {
 
@@ -29,15 +27,15 @@ public class TurretIOHardware implements TurretIO {
   private EasyCRT crt;
 
   public TurretIOHardware() {
-    motor = new TalonFX(TurretConstants.turretMotorID);
+    motor = new TalonFX(TurretConstants.kMotorId);
     motor.getConfigurator().apply(TurretConstants.kMotorConfig);
     motor.setPosition(0.0);
 
-    gear1CANcoder = new CANcoder(TurretConstants.kGear1CANcoderID);
-    gear2CANcoder = new CANcoder(TurretConstants.kGear2CANcoderID);
+    gear1CANcoder = new CANcoder(TurretConstants.kEncoder1Id);
+    gear2CANcoder = new CANcoder(TurretConstants.kEncoder2Id);
 
-    gear1CANcoder.getConfigurator().apply(TurretConstants.kGear1CANcoderConfig);
-    gear2CANcoder.getConfigurator().apply(TurretConstants.kGear2CANcoderConfig);
+    gear1CANcoder.getConfigurator().apply(TurretConstants.kEncoder1Config);
+    gear2CANcoder.getConfigurator().apply(TurretConstants.kEncoder2Config);
 
     control = new DynamicMotionMagicVoltage(
         TurretConstants.kMaxSpeed,
@@ -56,7 +54,7 @@ public class TurretIOHardware implements TurretIO {
     crtConfig = new EasyCRTConfig(
         gear1CANcoder.getAbsolutePosition(false)::getValue,
         gear2CANcoder.getAbsolutePosition(false)::getValue)
-            .withEncoderRatios(TurretConstants.kGearRatio1, TurretConstants.kGearRatio2);
+            .withEncoderRatios(TurretConstants.kEncoder1GearRatio, TurretConstants.kEncoder2GearRatio);
 
     crt = new EasyCRT(crtConfig);
   }

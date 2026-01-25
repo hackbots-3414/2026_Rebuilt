@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.superstructure.StateManager;
 
-public class PhysicsAim implements AimStrategy {
+public class PhysicsAim extends AimStrategy {
   private final double finalDescentSpeed;
 
   public PhysicsAim(double finalDescentSpeed) {
@@ -20,7 +20,7 @@ public class PhysicsAim implements AimStrategy {
     this.finalDescentSpeed = finalDescentSpeed;
   }
 
-  public AimParams update(StateManager state, AimParams params) {
+  public AimParams update(StateManager state) {
     Translation3d offset = state.aimTarget().getTranslation()
         .minus(new Translation3d(state.robotPose().getTranslation()));
     double dx = offset.getX();

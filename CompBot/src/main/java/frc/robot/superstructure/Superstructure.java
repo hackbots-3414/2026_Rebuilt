@@ -72,4 +72,8 @@ public class Superstructure {
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
     subsystems.drivetrain().addPoseEstimate(estimate);
   }
+
+  public void periodic() {
+    subsystems.turret.telemetrize(state);
+  }
 }

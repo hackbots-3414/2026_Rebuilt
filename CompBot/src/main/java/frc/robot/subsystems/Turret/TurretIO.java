@@ -3,12 +3,10 @@ package frc.robot.subsystems.Turret;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Revolution;
+import static edu.wpi.first.units.Units.Revolutions;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -39,13 +37,13 @@ public interface TurretIO {
       log.registerMeasurment("Torque Current", () -> torqueCurrent, Amps);
       log.registerMeasurment("Temperature", () -> temperature, Celsius);
       log.registerMeasurment("Velocity", () -> velocity, RevolutionsPerSecond);
-      log.registerMeasurment("Position", () -> position, Revolution);
+      log.registerMeasurment("Position", () -> position, Revolutions);
     }
   }
 
   public void updateInputs(TurretIOInputs inputs);
 
-  public void setPosition(Rotation2d position);
+  public void setPosition(Angle position);
 
   public void calibrate();
 }

@@ -6,14 +6,14 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.LinearVelocity;
 import frc.robot.superstructure.StateManager;
 
-public abstract class ExperimentalAim implements AimStrategy {
+public abstract class ExperimentalAim extends AimStrategy {
   /**
    * Predicts the aim parameters for a static shot from the given position. Velocity should NOT be
    * considered in the implementation of this method.
    */
   public abstract AimParams predict(StateManager state, AimParams params);
 
-  public final AimParams update(StateManager state, AimParams params) {
+  public final AimParams update(StateManager state) {
     params = predict(state, params);
     double feulVelocity = params.velocity.in(MetersPerSecond);
     // Break up initial velocity

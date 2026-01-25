@@ -46,12 +46,15 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     FieldManager.getInstance().clearFuel();
-    timeAndJoystickReplay.update();
+
     StatusSignalUtil.refreshAll();
     CommandScheduler.getInstance().run();
+    robotContainer.superstructure.periodic();
+
     FieldManager.getInstance().drawFuel();
 
     OnboardLogger.logAll();
+    timeAndJoystickReplay.update();
   }
 
   @Override

@@ -14,43 +14,51 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.measure.Angle;
 
 public class TurretConstants {
+  protected static final Transform2d kTurretPosition = Transform2d.kZero;
 
-  protected static final int turretMotorID = 48;
-  protected static final int kGear1CANcoderID = 49;
-  protected static final int kGear2CANcoderID = 50;
+  protected static final int kMotorId = 48;
+  protected static final int kEncoder1Id = 49;
+  protected static final int kEncoder2Id = 50;
 
   protected static final double kSupplyCurrentLimit = 100;
 
-  protected static Angle kHomePosition = Revolutions.of(0.5);
+  protected static final Angle kHomePosition = Revolutions.of(0.5);
+  /**
+   * The position measurement of the turret such that the turret points directly forward on the
+   * robot. For example, if this value was 30 degrees, then setting the turret's position to 30
+   * degrees would result in the turret pointing forwards on the robot.
+   */
+  protected static final Angle kTrackingOffset = Revolutions.of(0);
 
-  // Find actual values
+  // MotionMagic configuration
   protected static final double kGearRatio = 38.46;
   protected static final double kMaxSpeed = 32;
   protected static final double kMaxAcceleration = 48;
   protected static final double kMaxJerk = 480;
 
-  // Find actual values
   protected static final Angle kTolerance = Degrees.of(1);
 
-  protected static final double kGear1CANcoderOffset = -0.352051;
-  protected static final double kGear2CANcoderOffset = -0.531006;
-  public static final double kGearRatio1 = 100.0 / 12.0;
-  public static final double kGearRatio2 = (100 * 28.0) / (12.0 * 26.0);
+  // CRT-focused constants
+  protected static final double kEncoder1Offset = -0.352051;
+  protected static final double kEncoder2Offset = -0.531006;
+  protected static final double kEncoder1GearRatio = 100.0 / 12.0;
+  protected static final double kEncoder2GearRatio = (100 * 28.0) / (12.0 * 26.0);
 
 
   // CANcoder configurations
-  protected static final CANcoderConfiguration kGear1CANcoderConfig = new CANcoderConfiguration()
+  protected static final CANcoderConfiguration kEncoder1Config = new CANcoderConfiguration()
       .withMagnetSensor(new MagnetSensorConfigs()
           .withAbsoluteSensorDiscontinuityPoint(1.0)
-          .withMagnetOffset(kGear1CANcoderOffset));
+          .withMagnetOffset(kEncoder1Offset));
 
-  protected static final CANcoderConfiguration kGear2CANcoderConfig = new CANcoderConfiguration()
+  protected static final CANcoderConfiguration kEncoder2Config = new CANcoderConfiguration()
       .withMagnetSensor(new MagnetSensorConfigs()
           .withAbsoluteSensorDiscontinuityPoint(1.0)
-          .withMagnetOffset(kGear2CANcoderOffset)
+          .withMagnetOffset(kEncoder2Offset)
           .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
   // Motor configuration

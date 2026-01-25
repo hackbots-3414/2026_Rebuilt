@@ -4,6 +4,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.aiming.AimParams;
+import frc.robot.aiming.AimStrategy;
+import frc.robot.aiming.PhysicsAim;
 import frc.robot.superstructure.Superstructure.Subsystems;
 import frc.robot.util.FieldUtils;
 
@@ -12,6 +15,7 @@ import frc.robot.util.FieldUtils;
  */
 public class StateManager {
   private final Subsystems subsystems;
+  private final AimStrategy aim = new PhysicsAim(2.0);
 
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
@@ -38,6 +42,10 @@ public class StateManager {
   }
 
   public Trigger shootReady() {
-    return subsystems.drivetrain().tracked();
+    return subsystems.turret().tracked();
+  }
+
+  public AimParams aimParams() {
+    return aim.update(this);
   }
 }
