@@ -74,6 +74,7 @@ public class Superstructure {
   }
 
   public void periodic() {
+    state.periodic();
     subsystems.turret.telemetrize(state);
   }
 }

@@ -15,7 +15,7 @@ import frc.robot.util.FieldUtils;
  */
 public class StateManager {
   private final Subsystems subsystems;
-  private final AimStrategy aim = new PhysicsAim(2.0);
+  public final AimStrategy aim = new PhysicsAim(2.0);
 
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
@@ -46,6 +46,10 @@ public class StateManager {
   }
 
   public AimParams aimParams() {
-    return aim.update(this);
+    return aim.params;
+  }
+
+  public void periodic() {
+    aim.update(this); // This ensures we only cache the parameter object and then cache them.
   }
 }
