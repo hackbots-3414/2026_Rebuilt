@@ -22,6 +22,7 @@ public class DriverBindings implements Binder {
     public void bind(Superstructure superstructure) {
         superstructure.bindDrive(vx, vy, vrot);
 
+        // Turret control
         controller.button(1).toggleOnTrue(superstructure.build(new AimTrack()));
         controller.button(2).whileTrue(superstructure.build(new AimTrack()));
 

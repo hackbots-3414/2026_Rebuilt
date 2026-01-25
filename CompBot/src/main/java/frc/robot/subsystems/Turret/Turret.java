@@ -39,7 +39,6 @@ public class Turret extends SubsystemBase {
     OnboardLogger log = new OnboardLogger("Turret");
     log.registerBoolean("Ready", ready());
     log.registerBoolean("Tracking", () -> tracking);
-    log.registerBoolean("Tracked", tracked());
   }
 
   @Override
@@ -54,8 +53,8 @@ public class Turret extends SubsystemBase {
    */
   public Command track(StateManager state, Supplier<AimParams> aimParams) {
     return Commands.sequence(
-        runOnce(() -> tracking = true),
         this.run(() -> {
+          tracking = true;
           Rotation2d robot = state.robotPose().getRotation();
           Rotation2d relative = aimParams.get().yaw.minus(robot);
           io.setPosition(relative.getMeasure().plus(TurretConstants.kTrackingOffset));
@@ -72,25 +71,39 @@ public class Turret extends SubsystemBase {
         Commands.waitUntil(ready()));
   }
 
+  public Command forwards() {
+    return Commands.sequence(
+        runOnce(() -> io.setPosition(TurretConstants.kTrackingOffset)),
+        Commands.waitUntil(ready()));
+  }
+
   /**
    * Returns a {@link Trigger} that represents whether the turret is currently at its reference
    * position.
    */
-  public Trigger ready() {
+  private Trigger ready() {
     return new Trigger(() -> {
       double delta = inputs.position.minus(inputs.reference).baseUnitMagnitude();
       return Math.abs(delta) <= TurretConstants.kTolerance.baseUnitMagnitude();
     });
   }
 
-  public Trigger tracked() {
-    return ready().and(new Trigger(() -> tracking));
+  public Trigger tracked(StateManager state) {
+    return new Trigger(() -> {
+      double delta = inputs.position.minus(inputs.reference).baseUnitMagnitude();
+      double epsilon = state.aimParams().deltaYaw.getMeasure().baseUnitMagnitude();
+      return Math.abs(delta) <= epsilon && tracking;
+    });
   }
 
   public void telemetrize(StateManager state) {
     Pose2d turretPosition = state.robotPose().transformBy(TurretConstants.kTurretPosition.plus(
         new Transform2d(Translation2d.kZero,
             new Rotation2d(inputs.position.minus(TurretConstants.kTrackingOffset)))));
+    Pose2d turretReference = state.robotPose().transformBy(TurretConstants.kTurretPosition.plus(
+        new Transform2d(Translation2d.kZero,
+            new Rotation2d(inputs.reference.minus(TurretConstants.kTrackingOffset)))));
     FieldManager.getInstance().getField().getObject("turret").setPose(turretPosition);
+    FieldManager.getInstance().getField().getObject("turret-target").setPose(turretPosition);
   }
 }

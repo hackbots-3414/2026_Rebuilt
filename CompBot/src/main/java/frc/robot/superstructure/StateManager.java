@@ -9,6 +9,7 @@ import frc.robot.aiming.AimStrategy;
 import frc.robot.aiming.PhysicsAim;
 import frc.robot.superstructure.Superstructure.Subsystems;
 import frc.robot.util.FieldUtils;
+import frc.robot.util.OnboardLogger;
 
 /**
  * A class representing the robot-wide state variables.
@@ -19,6 +20,11 @@ public class StateManager {
 
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
+    OnboardLogger log = new OnboardLogger("Robot State");
+    log.registerPose("Robot Pose", this::robotPose);
+    log.registerTransform2d("Robot Velocity", this::robotVelocity);
+    log.registerPose3d("Aim Target", this::aimTarget);
+    log.registerBoolean("Shoot Ready", shootReady());
   }
 
   /**
@@ -42,7 +48,7 @@ public class StateManager {
   }
 
   public Trigger shootReady() {
-    return subsystems.turret().tracked();
+    return subsystems.turret().tracked(this);
   }
 
   public AimParams aimParams() {
