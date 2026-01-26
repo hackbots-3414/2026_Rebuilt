@@ -209,5 +209,4 @@ public class Led extends SubsystemBase {
   public void setMode(LED_MODE mode) { // sets mode if mode is not already set
     this.mode = mode;
   }
-
 }
