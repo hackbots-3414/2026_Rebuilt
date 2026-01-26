@@ -1,5 +1,7 @@
 package frc.robot.subsystems.Turret;
 
+import static edu.wpi.first.units.Units.Revolutions;
+
 import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -34,7 +36,7 @@ public class Turret extends SubsystemBase {
     inputs = new TurretIOInputs();
     io.calibrate();
     SmartDashboard.putData("Turret/Home", home());
-    SmartDashboard.putData("Turret/Calibrate", runOnce(io::calibrate));
+    SmartDashboard.putData("Turret/Calibrate", runOnce(io::calibrate).ignoringDisable(true));
 
     OnboardLogger log = new OnboardLogger("Turret");
     log.registerBoolean("Ready", ready());
@@ -44,6 +46,7 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    SmartDashboard.putNumber("Position", inputs.position.in(Revolutions));
     calibrationAlert.set(!inputs.calibrated);
   }
 

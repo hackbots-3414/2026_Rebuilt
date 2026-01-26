@@ -76,7 +76,7 @@ public class TurretConstants {
           .withSupplyCurrentLimit(kSupplyCurrentLimit))
 
       .withSlot0(new Slot0Configs()
-          .withKP(30)
+          .withKP(50)
           .withKI(0)
           .withKD(0)
           .withKS(0.125)

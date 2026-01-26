@@ -1,12 +1,16 @@
 package frc.robot.subsystems.Turret;
 
 import static edu.wpi.first.units.Units.Radians;
+
 import java.util.Optional;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.util.StatusSignalUtil;
 import yams.units.EasyCRT;
 import yams.units.EasyCRTConfig;
@@ -52,8 +56,9 @@ public class TurretIOHardware implements TurretIO {
         gear2CANcoder.getAbsolutePosition(false));
 
     crtConfig = new EasyCRTConfig(
-        gear1CANcoder.getAbsolutePosition(false)::getValue,
-        gear2CANcoder.getAbsolutePosition(false)::getValue)
+      // Note: we explicitly choose to refresh these signals on calibration.
+        gear1CANcoder.getAbsolutePosition()::getValue,
+        gear2CANcoder.getAbsolutePosition()::getValue)
             .withEncoderRatios(TurretConstants.kEncoder1GearRatio, TurretConstants.kEncoder2GearRatio);
 
     crt = new EasyCRT(crtConfig);
@@ -88,6 +93,9 @@ public class TurretIOHardware implements TurretIO {
     Optional<Angle> totalPosition = crt.getAngleOptional();
     boolean isOk = totalPosition.isPresent();
     totalPosition.ifPresent(position -> motor.setPosition(position));
+    if (!isOk) {
+      DriverStation.reportError("Received not-good turret CRT solve: " + crt.getLastStatus(), false);
+    }
     calibrated |= isOk;
   }
 }
