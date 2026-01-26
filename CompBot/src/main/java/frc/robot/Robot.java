@@ -4,80 +4,112 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.HootAutoReplay;
-
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.OnboardLogger;
+import frc.robot.util.StatusSignalUtil;
 
 public class Robot extends TimedRobot {
-    private Command m_autonomousCommand;
+  private Command m_autonomousCommand;
 
-    private final RobotContainer m_robotContainer;
+  private boolean hasStartedVision;
 
-    /* log and replay timestamp and joystick data */
-    private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
-        .withTimestampReplay()
-        .withJoystickReplay();
+  private final RobotContainer robotContainer;
 
-    public Robot() {
-        m_robotContainer = new RobotContainer();
+  private final OnboardLogger oLogger;
+
+  /* log and replay timestamp and joystick data */
+  private final HootAutoReplay timeAndJoystickReplay = new HootAutoReplay()
+      .withTimestampReplay()
+      .withJoystickReplay();
+
+  public Robot() {
+    robotContainer = new RobotContainer();
+
+    if (isSimulation()) {
+      DriverStation.silenceJoystickConnectionWarning(true);
     }
 
-    @Override
-    public void robotPeriodic() {
-        m_timeAndJoystickReplay.update();
-        CommandScheduler.getInstance().run(); 
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
+
+    oLogger = new OnboardLogger("Robot");
+    oLogger.registerMeasurment("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
+  }
+
+  @Override
+  public void robotPeriodic() {
+    FieldManager.getInstance().clearFuel();
+
+    StatusSignalUtil.refreshAll();
+    CommandScheduler.getInstance().run();
+    robotContainer.superstructure.periodic();
+
+    FieldManager.getInstance().drawFuel();
+
+    OnboardLogger.logAll();
+    timeAndJoystickReplay.update();
+  }
+
+  @Override
+  public void disabledInit() {
+    if (!hasStartedVision) {
+      robotContainer.aprilTagVisionHandler.startThread();
+      hasStartedVision = true;
     }
+  }
 
-    @Override
-    public void disabledInit() {}
+  @Override
+  public void disabledPeriodic() {}
 
-    @Override
-    public void disabledPeriodic() {}
+  @Override
+  public void disabledExit() {}
 
-    @Override
-    public void disabledExit() {}
+  @Override
+  public void autonomousInit() {
+    m_autonomousCommand = robotContainer.getAutonomousCommand();
 
-    @Override
-    public void autonomousInit() {
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-        if (m_autonomousCommand != null) {
-            CommandScheduler.getInstance().schedule(m_autonomousCommand);
-        }
+    if (m_autonomousCommand != null) {
+      CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
+  }
 
-    @Override
-    public void autonomousPeriodic() {}
+  @Override
+  public void autonomousPeriodic() {}
 
-    @Override
-    public void autonomousExit() {}
+  @Override
+  public void autonomousExit() {}
 
-    @Override
-    public void teleopInit() {
-        if (m_autonomousCommand != null) {
-            CommandScheduler.getInstance().cancel(m_autonomousCommand);
-        }
+  @Override
+  public void teleopInit() {
+    if (m_autonomousCommand != null) {
+      CommandScheduler.getInstance().cancel(m_autonomousCommand);
     }
+  }
 
-    @Override
-    public void teleopPeriodic() {}
+  @Override
+  public void teleopPeriodic() {}
 
-    @Override
-    public void teleopExit() {}
+  @Override
+  public void teleopExit() {}
 
-    @Override
-    public void testInit() {
-        CommandScheduler.getInstance().cancelAll();
-    }
+  @Override
+  public void testInit() {
+    CommandScheduler.getInstance().cancelAll();
+  }
 
-    @Override
-    public void testPeriodic() {}
+  @Override
+  public void testPeriodic() {}
 
-    @Override
-    public void testExit() {}
+  @Override
+  public void testExit() {}
 
-    @Override
-    public void simulationPeriodic() {}
+  @Override
+  public void simulationPeriodic() {}
 }
