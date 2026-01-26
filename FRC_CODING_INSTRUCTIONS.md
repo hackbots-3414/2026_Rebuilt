@@ -547,6 +547,18 @@ The WPILib command scheduler runs everything in a single thread. This means:
 
 ---
 
+## Repository Contents
+
+### Simulator Configuration Files
+Simulator configuration files (such as `simgui-ds.json`, `simgui.json`, and similar) **should be committed** to the repository. These files:
+- Store joystick mappings and driver station configurations for simulation
+- Ensure consistent simulation experience across all team members
+- Are necessary for the robot simulation to function properly with the expected controls
+
+Do not add these files to `.gitignore`.
+
+---
+
 ## Additional Resources
 
 - Full reference: https://therekrab.github.io/frc-programming-reference/
