@@ -15,11 +15,11 @@ import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOHardware;
 import frc.robot.subsystems.shooter.ShooterIOSim;
-import frc.robot.subsystems.turret.Turret;
-import frc.robot.subsystems.turret.TurretIOHardware;
-import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
+import turret.Turret;
+import turret.TurretIOHardware;
+import turret.TurretIOSim;
 
 public class Superstructure {
   public record Subsystems(

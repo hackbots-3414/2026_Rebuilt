@@ -1,4 +1,4 @@
-package frc.robot.subsystems.turret;
+package turret;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Revolutions;
