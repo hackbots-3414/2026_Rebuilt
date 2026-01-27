@@ -33,6 +33,6 @@ public class IndexerIOSim implements IndexerIO {
     }
 
     public void stop() {
-        motor.setInputVoltage(IndexerConstants.kStopVoltage.baseUnitMagnitude());
+        motor.setInputVoltage(Volts.of(0).baseUnitMagnitude());
     }
 }
