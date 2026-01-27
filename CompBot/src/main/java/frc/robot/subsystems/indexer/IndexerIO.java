@@ -36,4 +36,6 @@ public interface IndexerIO {
   }
 
   public void setVoltage(Voltage voltage);
+
+  public void stop();
 }

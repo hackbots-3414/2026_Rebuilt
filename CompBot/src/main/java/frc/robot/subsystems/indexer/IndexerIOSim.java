@@ -31,4 +31,8 @@ public class IndexerIOSim implements IndexerIO {
     public void setVoltage(Voltage voltage) {
         motor.setInputVoltage(voltage.baseUnitMagnitude());
     }
+
+    public void stop() {
+        motor.setInputVoltage(IndexerConstants.kStopVoltage.baseUnitMagnitude());
+    }
 }

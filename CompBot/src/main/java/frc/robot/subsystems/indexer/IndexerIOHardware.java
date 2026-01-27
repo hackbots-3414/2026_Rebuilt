@@ -51,4 +51,8 @@ public class IndexerIOHardware implements IndexerIO {
             lastVoltage = voltage;
         }
     }
+
+    public void stop() {
+        motor.stopMotor();
+    }
 }
