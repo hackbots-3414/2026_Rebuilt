@@ -17,9 +17,8 @@ public final class IndexerConstants {
   protected static final double kSupplyCurrentLimit = 40.0;
   protected static final double kStatorCurrentLimit = 125.0;
 
-  protected static final Voltage kIntakeVoltage = Volts.of(0.2);
+  protected static final Voltage kIndexVoltage = Volts.of(0.2);
   protected static final Voltage kEjectVoltage = Volts.of(-0.2);
-  protected static final Voltage kStopVoltage = Volts.of(0);
 
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()

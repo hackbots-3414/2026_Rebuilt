@@ -2,7 +2,6 @@
 package frc.robot.subsystems.indexer;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.indexer.IndexerIO.IndexerIOInputs;
 
@@ -19,16 +18,16 @@ public class Indexer extends SubsystemBase {
     io.updateInputs(inputs);
   }
 
-  public Command intake() {
-    return Commands.runOnce(() -> io.setVoltage(IndexerConstants.kIntakeVoltage));
+  public Command index() {
+    return this.run(() -> io.setVoltage(IndexerConstants.kIndexVoltage)).finallyDo (() -> io.stop());
   }
 
   public Command eject() {
-    return Commands.runOnce(() -> io.setVoltage(IndexerConstants.kEjectVoltage));
+    return this.run(() -> io.setVoltage(IndexerConstants.kEjectVoltage)).finallyDo (() -> io.stop());
   }
 
   public Command stop() {
-    return Commands.runOnce(() -> io.stop());
+    return this.run(() -> io.stop()).finallyDo (() -> io.stop());
   }
 
 }
