@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooter;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Revolutions;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -24,7 +25,15 @@ public interface ShooterIO {
     public Voltage flywheelVoltage = Volts.zero();
     public Temperature flywheelTemperature = Celsius.zero();
     public AngularVelocity flywheelVelocity = RotationsPerSecond.zero();
-    public Angle flywheelAngle = Radians.zero();
+
+    public boolean hoodMotorConnected = false;
+    public Current hoodSupplyCurrent = Amps.zero();
+    public Current hoodTorqueCurrent = Amps.zero();
+    public Current hoodStatorCurrent = Amps.zero();
+    public Voltage hoodVoltage = Volts.zero();
+    public Temperature hoodTemperature = Celsius.zero();
+    public AngularVelocity hoodVelocity = RotationsPerSecond.zero();
+    public Angle hoodAngle = Radians.zero();
 
     public ShooterIOInputs() {
       OnboardLogger log = new OnboardLogger("Shooter");
@@ -35,7 +44,15 @@ public interface ShooterIO {
       log.registerMeasurment("Flywheel Voltage", () -> flywheelVoltage, Volts);
       log.registerMeasurment("Flywheel Temperature", () -> flywheelTemperature, Celsius);
       log.registerMeasurment("Flywheel Velocity", () -> flywheelVelocity, RotationsPerSecond);
-      log.registerMeasurment("Flywheel Angle", () -> flywheelAngle, Radians);
+
+      log.registerBoolean("Hood Motor Connected", () -> hoodMotorConnected);
+      log.registerMeasurment("Hood Supply Current", () -> hoodSupplyCurrent, Amps);
+      log.registerMeasurment("Hood Torque Current", () -> hoodTorqueCurrent, Amps);
+      log.registerMeasurment("Hood Stator Current", () -> hoodStatorCurrent, Amps);
+      log.registerMeasurment("Hood Voltage", () -> hoodVoltage, Volts);
+      log.registerMeasurment("Hood Temperature", () -> hoodTemperature, Celsius);
+      log.registerMeasurment("Hood Velocity", () -> hoodVelocity, RotationsPerSecond);
+      log.registerMeasurment("Hood Angle", () -> hoodAngle, Revolutions);
     }
   }
 

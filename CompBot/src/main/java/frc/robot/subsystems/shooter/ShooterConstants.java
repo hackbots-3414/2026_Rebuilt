@@ -1,5 +1,8 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -10,6 +13,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 
 public final class ShooterConstants {
     
@@ -40,6 +45,8 @@ public final class ShooterConstants {
                 .withStatorCurrentLimit(kStatorCurrentLimit));
       
         public static final AngularAcceleration kAcceleration = RotationsPerSecondPerSecond.zero();
+        public static final Distance kRadius = Inches.of(2);
+        public static final AngularVelocity kReverseVelocity = RotationsPerSecond.zero();
     }
     
   public static final class HoodConstants {
@@ -69,5 +76,7 @@ public final class ShooterConstants {
             .withStatorCurrentLimit(kStatorCurrentLimit));
     
     protected static final int kSlot = 0;
+    protected static final AngularVelocity kVelocity = RotationsPerSecond.zero();
+    protected static final AngularAcceleration kAcceleration = RotationsPerSecondPerSecond.zero();
   }
 }
