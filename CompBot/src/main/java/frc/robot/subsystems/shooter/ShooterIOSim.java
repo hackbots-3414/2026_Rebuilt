@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -23,13 +24,16 @@ public class ShooterIOSim implements ShooterIO {
 
   public void updateInputs(ShooterIOInputs inputs) {
     motor.update(Robot.kDefaultPeriod);
-    inputs.motorConnected = true;
-    inputs.supplyCurrent = Amps.of(motor.getCurrentDrawAmps());
-    inputs.voltage = Volts.of(motor.getInputVoltage());
-    inputs.velocity = motor.getAngularVelocity();
+    inputs.flywheelMotorConnected = true;
+    inputs.flywheelSupplyCurrent = Amps.of(motor.getCurrentDrawAmps());
+    inputs.flywheelVoltage = Volts.of(motor.getInputVoltage());
+    inputs.flywheelVelocity = motor.getAngularVelocity();
   }
 
   public void setVelocity(AngularVelocity velocity) {
     motor.setAngularVelocity(velocity.baseUnitMagnitude());
+  }
+  public void setAngle(Angle angle) {
+    motor.setAngle(angle.baseUnitMagnitude());
   }
 }
