@@ -9,9 +9,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.subsystems.Turret.TurretIO.TurretIOInputs;
-import frc.robot.subsystems.Turret.TurretIOHardware;
-import frc.robot.subsystems.Turret.TurretIOSim;
 import frc.robot.subsystems.intake.IntakeIO.IntakeIOInputs;
 
 public class Intake extends SubsystemBase {
