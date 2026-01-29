@@ -3,8 +3,11 @@ package frc.robot.subsystems.climber;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.subsystems.climber.ClimberConstants.CLIMBERPOSITIONS_ENUM;
 import frc.robot.util.OnboardLogger;
 import static edu.wpi.first.units.Units.Volts;
+
+
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
 
@@ -19,6 +22,7 @@ public interface ClimberIO {
     public Current statorCurrent = Amps.zero();
     public Voltage voltage = Volts.zero();
     public Temperature temperature = Celsius.zero();
+    public double position = 0;
 
     public ClimberIOInputs() {
       OnboardLogger log = new OnboardLogger("Climber");
@@ -32,5 +36,6 @@ public interface ClimberIO {
   }
 
   void setVoltage(Voltage voltage);
+  void climb(CLIMBERPOSITIONS_ENUM climbLevel);
 }
 

@@ -5,38 +5,54 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.climber.ClimberConstants.CLIMBERPOSITIONS_ENUM;
 import frc.robot.subsystems.climber.ClimberIO.ClimberIOInputs;
 
 public class Climber extends SubsystemBase {
     private final ClimberIO io;
     private final ClimberIOInputs inputs = new ClimberIOInputs();
-    private int climbLevel = 0;
 
     public Climber(ClimberIO io) {
       this.io = io;
-      SmartDashboard.putData("Climber/Climb", climb());
+      SmartDashboard.putData("Climber/ClimbTo0", climb(CLIMBERPOSITIONS_ENUM.LEVEL0));
+      SmartDashboard.putData("Climber/ClimbTo1", climb(CLIMBERPOSITIONS_ENUM.LEVEL1));
+      SmartDashboard.putData("Climber/ClimbTo2", climb(CLIMBERPOSITIONS_ENUM.LEVEL2));
+      SmartDashboard.putData("Climber/ClimbTo3", climb(CLIMBERPOSITIONS_ENUM.LEVEL3));
     }
     
     @Override
     public void periodic() {
       io.updateInputs(inputs);
-      SmartDashboard.putNumber("ClimbLevel", climbLevel);
+      SmartDashboard.putNumber("Climber/ClimbLevel", inputs.position);
     }
     
-    public int climb(int climbLevel) {
-      this.climbLevel = climbLevel;
-      if (climbLevel == 0) {
-        climbLevel = 1;
-      } else if (climbLevel == 1) {
-        System.out.println("Climber is already at max level!");
-      }
-      return climbLevel;
-    }
    
-    public Command climb () {
-      climbLevel = 1;
+    public Command climb (CLIMBERPOSITIONS_ENUM climbLevel) {
       return Commands.sequence(
-        runOnce(this::climb)
+        this.runOnce(() -> io.climb(climbLevel)),
+        Commands.waitUntil(ready(climbLevel))
       );
+    }
+
+    private Trigger ready(CLIMBERPOSITIONS_ENUM climbLevel) {
+      switch (climbLevel) {
+        case LEVEL0:
+        return new Trigger(() -> {
+          return 0.5 <= Math.abs(inputs.position - 0);
+        });
+        case LEVEL1:
+        return new Trigger(() -> {
+          return 0.5 <= Math.abs(inputs.position - ClimberConstants.kLevelOnePosition);
+        });
+        case LEVEL2:
+        return new Trigger(() -> {
+          return 0.5 <= Math.abs(inputs.position - ClimberConstants.kLevelTwoPosition);
+        });
+        default:
+        return new Trigger(() -> {
+          return 0.5 <= Math.abs(inputs.position - ClimberConstants.kLevelThreePosition);
+        });
+      }
     }
 }

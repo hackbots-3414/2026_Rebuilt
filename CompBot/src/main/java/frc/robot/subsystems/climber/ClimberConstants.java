@@ -13,6 +13,24 @@ public final class ClimberConstants {
   protected static final double kSupplyCurrentLimit = 40.0;
   protected static final double kStatorCurrentLimit = 125.0;
 
+  protected static enum CLIMBERPOSITIONS_ENUM {
+    LEVEL0,
+    LEVEL1,
+    LEVEL2,
+    LEVEL3
+  }
+
+  protected static final double kLevelZeroPosition = 0.0;
+  protected static final double kLevelOnePosition = 1.0;
+  protected static final double kLevelTwoPosition = 2.0;
+  protected static final double kLevelThreePosition = 3.0;
+
+  protected static final double delta = 0.5;
+
+  protected static final double kMaxSpeed = 32;
+  protected static final double kMaxAcceleration = 48;
+  protected static final double kMaxVelocity = 480;
+
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
           .withNeutralMode(NeutralModeValue.Brake)
