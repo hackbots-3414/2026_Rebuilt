@@ -25,7 +25,7 @@ public final class ClimberConstants {
   protected static final double kLevelTwoPosition = 2.0;
   protected static final double kLevelThreePosition = 3.0;
 
-  protected static final double delta = 0.5;
+  protected static final double kDelta = 0.5;
 
   protected static final double kMaxSpeed = 32;
   protected static final double kMaxAcceleration = 48;
