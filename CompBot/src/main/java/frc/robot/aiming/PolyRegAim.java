@@ -53,7 +53,7 @@ public class PolyRegAim extends ExperimentalAim {
   }
 
   private double sample(double[] coeffs, double x) {
-    if (coeffs.length != degree) {
+    if (coeffs.length != degree + 1) {
       return Double.NaN; // there was an error
     }
     double y = 0;

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Turret;
+package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Revolutions;
 
@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.FieldManager;
 import frc.robot.aiming.AimParams;
-import frc.robot.subsystems.Turret.TurretIO.TurretIOInputs;
+import frc.robot.subsystems.turret.TurretIO.TurretIOInputs;
 import frc.robot.superstructure.StateManager;
 import frc.robot.util.OnboardLogger;
 
@@ -107,6 +107,6 @@ public class Turret extends SubsystemBase {
         new Transform2d(Translation2d.kZero,
             new Rotation2d(inputs.reference.minus(TurretConstants.kTrackingOffset)))));
     FieldManager.getInstance().getField().getObject("turret").setPose(turretPosition);
-    FieldManager.getInstance().getField().getObject("turret-target").setPose(turretPosition);
+    FieldManager.getInstance().getField().getObject("turret-target").setPose(turretReference);
   }
 }
