@@ -7,10 +7,11 @@ import edu.wpi.first.units.measure.Voltage;
 
 public class IntakeIOSim implements IntakeIO {
   private Current current = Amps.zero();
-  private Voltage voltage;
+  private Voltage voltageRoller;
+  private Voltage voltageDrop;
 
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.motorConnected = true;
+    inputs.motorRollerConnected = true;
     inputs.torqueCurrent = current;
   }
 
@@ -18,10 +19,12 @@ public class IntakeIOSim implements IntakeIO {
     this.current = current;
   }
 
-  public void setVoltage(Voltage voltage){
-    this.voltage = voltage;
-    }
+  public void setRollerVoltage(Voltage voltage){
+    this.voltageRoller = voltage;
+  }
 
- 
+  public void setDropVoltage(Voltage voltage){
+    this.voltageDrop = voltage;
+  }
 
 }

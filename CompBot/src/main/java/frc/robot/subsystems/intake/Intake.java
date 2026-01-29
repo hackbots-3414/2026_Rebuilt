@@ -30,12 +30,22 @@ public class Intake extends SubsystemBase {
     io.setCurrent(voltage);
   }
 
+
+  public Command dropIntake() {
+    return runOnce(() -> io.setDropVoltage(IntakeConstants.kDropVoltage));
+  }
+
+  public Command raiseIntake() {
+    return runOnce(() -> io.setDropVoltage(IntakeConstants.kRaiseVoltage));
+  }
+
+  // Starts rollers 
   public Command intakeFuel() {
-    return runOnce(() -> io.setVoltage(IntakeConstants.kIntakeVoltage));    
+    return runOnce(() -> io.setRollerVoltage(IntakeConstants.kIntakeVoltage));    
   }
 
   public Command reverse() {
-    return runOnce(() -> io.setVoltage(IntakeConstants.kEjectVoltage)); // process of ejecting
+    return runOnce(() -> io.setRollerVoltage(IntakeConstants.kEjectVoltage)); // process of ejecting
   }
 
   public Trigger detectJam(boolean hasFuel ){

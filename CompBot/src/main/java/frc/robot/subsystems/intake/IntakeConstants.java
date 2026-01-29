@@ -11,14 +11,19 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Voltage;
 
 public class IntakeConstants {
-  protected static final int kMotorID = 60;
-  protected static final int kcanrangeID = 25;
+    protected static final int kMotorRollerID = 60;
+    protected static final int kMotorDropID = 61;
+    protected static final int kcanrangeID = 25;
 
     protected static final double kSupplyCurrentLimit = 40.0;
     protected static final double kStatorCurrentLimit = 125.0;
 
     protected static final Voltage kIntakeVoltage =  Volts.of(5.0);
     protected static final Voltage kEjectVoltage = Volts.of(-5);
+
+    protected static final Voltage kDropVoltage = Volts.of(5.0);
+    protected static final Voltage kRaiseVoltage = Volts.of(-5.0);
+    
 
     protected static final double canrangeMax = 6;
 

@@ -23,29 +23,35 @@ public interface IntakeIO {
     public void updateInputs (IntakeIOInputs inputs);
 
     class IntakeIOInputs {
-      public boolean motorConnected = false;
+      public boolean motorRollerConnected = false;
+      public boolean motorDropConnected = false;      
       public boolean hasFuel = false;
       public Current supplyCurrent = Amps.zero();
       public Current torqueCurrent = Amps.zero();
       public Current statorCurrent = Amps.zero();
       public AngularVelocity velocity = RadiansPerSecond.of(0) ;
-      public Voltage voltage = Volts.zero();
+      public Voltage voltageRoller = Volts.zero();
+      public Voltage voltageDrop = Volts.zero();
       public Temperature temperature = Celsius.zero();
 
       public IntakeIOInputs() {
         OnboardLogger log = new OnboardLogger("Intake");
-        log.registerBoolean("Motor Connected", () -> motorConnected);
+        log.registerBoolean("Roller Motor Connected", () -> motorRollerConnected);
+        log.registerBoolean("Drop Motor Connected", () -> motorDropConnected);
         log.registerMeasurment("Supply Current", () -> supplyCurrent, Amps);
         log.registerMeasurment("Torque Current", () -> torqueCurrent, Amps);
         log.registerMeasurment("Stator Current", () -> statorCurrent, Amps);
-        log.registerMeasurment("Voltage", () -> voltage, Volts);
+        log.registerMeasurment("Roller Voltage", () -> voltageRoller, Volts);
+        log.registerMeasurment("Drop Voltage", () -> voltageDrop, Volts);
         log.registerMeasurment("Temperature", () -> temperature, Celsius);
       }
   }
 
   public void setCurrent (Current current);
 
-  public void setVoltage (Voltage voltage);
+  public void setRollerVoltage (Voltage voltage);
+
+  public void setDropVoltage(Voltage voltage);
 
 }
 
