@@ -2,19 +2,14 @@ package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
+import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-
-import com.ctre.phoenix6.StatusSignal;
-
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.VelocityUnit;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.OnboardLogger;
 
@@ -24,13 +19,15 @@ public interface IntakeIO {
 
     class IntakeIOInputs {
       public boolean motorConnected = false;
-      public boolean hasFuel = false;
       public Current supplyCurrent = Amps.zero();
       public Current torqueCurrent = Amps.zero();
       public Current statorCurrent = Amps.zero();
       public AngularVelocity velocity = RadiansPerSecond.of(0) ;
       public Voltage voltage = Volts.zero();
       public Temperature temperature = Celsius.zero();
+      public boolean canrangeConnected = false;
+      public Distance canrangeDistance = Meters.zero();
+      public boolean canrangeDetected = false;
 
       public IntakeIOInputs() {
         OnboardLogger log = new OnboardLogger("Intake");
@@ -40,12 +37,12 @@ public interface IntakeIO {
         log.registerMeasurment("Stator Current", () -> statorCurrent, Amps);
         log.registerMeasurment("Voltage", () -> voltage, Volts);
         log.registerMeasurment("Temperature", () -> temperature, Celsius);
+        log.registerBoolean("CANrange Connected", () -> canrangeConnected);
+        log.registerMeasurment("CANrange Distance", () -> canrangeDistance, Centimeters);
+        log.registerBoolean("CANrange Detected", () -> canrangeDetected);
       }
   }
 
   public void setCurrent (Current current);
-
-  public void setVoltage (Voltage voltage);
-
 }
 
