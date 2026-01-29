@@ -476,6 +476,46 @@ public class Shooter extends SubsystemBase {
 - Easy testing without hardware
 - Multiple implementations of same interface
 
+### CTRE Status Signal Registration (Critical)
+
+When using CTRE Phoenix 6 devices in hardware IO classes, you **must** register your status signals with `StatusSignalUtil` or they will never be updated. This is a common oversight that causes sensors to return stale/zero values.
+
+```java
+// Hardware Implementation - CORRECT
+public class ShooterIOHardware implements ShooterIO {
+    private final TalonFX motor;
+
+    public ShooterIOHardware() {
+        motor = new TalonFX(ShooterConstants.kMotorID);
+        motor.getConfigurator().apply(ShooterConstants.kMotorConfig);
+
+        // CRITICAL: Register status signals for batch refresh
+        StatusSignalUtil.registerRioSignals(
+            motor.getSupplyCurrent(false),
+            motor.getTorqueCurrent(false),
+            motor.getStatorCurrent(false),
+            motor.getMotorVoltage(false),
+            motor.getDeviceTemp(false),
+            motor.getVelocity(false)
+        );
+    }
+
+    @Override
+    public void updateInputs(Inputs inputs) {
+        // Signals are refreshed automatically via StatusSignalUtil.refreshAll()
+        inputs.supplyCurrent = motor.getSupplyCurrent(false).getValue();
+        inputs.velocity = motor.getVelocity(false).getValue();
+        // ... etc
+    }
+}
+```
+
+**Key Points:**
+- Call `StatusSignalUtil.registerRioSignals()` (or `registerCANivoreSignals()` for CANivore bus) in the constructor
+- Pass `false` to signal getter methods to use cached values (e.g., `motor.getVelocity(false)`)
+- `StatusSignalUtil.refreshAll()` is called once per robot loop to batch-refresh all registered signals
+- Forgetting to register signals means they will **never update** and return stale/default values
+
 ### Non-Subsystem Code (Vision, Utilities, etc.)
 
 Not all robot code follows the command-based subsystem pattern. Some components intentionally operate outside this paradigm:
