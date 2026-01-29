@@ -59,14 +59,8 @@ public class ClimberIOHardware implements ClimberIO {
       case LEVEL0:
       motor.setControl(control.withPosition(ClimberConstants.kLevelZeroPosition));
         break;
-      case LEVEL1:
+      default:
       motor.setControl(control.withPosition(ClimberConstants.kLevelOnePosition));
-        break;
-      case LEVEL2:
-      motor.setControl(control.withPosition(ClimberConstants.kLevelTwoPosition));
-        break;
-      case LEVEL3:
-      motor.setControl(control.withPosition(ClimberConstants.kLevelThreePosition));
         break;
     }
   }

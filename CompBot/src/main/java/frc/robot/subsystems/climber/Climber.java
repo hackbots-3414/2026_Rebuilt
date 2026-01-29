@@ -17,8 +17,6 @@ public class Climber extends SubsystemBase {
     this.io = io;
     SmartDashboard.putData("Climber/ClimbTo0", climb(CLIMBERPOSITIONS_ENUM.LEVEL0));
     SmartDashboard.putData("Climber/ClimbTo1", climb(CLIMBERPOSITIONS_ENUM.LEVEL1));
-    SmartDashboard.putData("Climber/ClimbTo2", climb(CLIMBERPOSITIONS_ENUM.LEVEL2));
-    SmartDashboard.putData("Climber/ClimbTo3", climb(CLIMBERPOSITIONS_ENUM.LEVEL3));
   }
 
   @Override
@@ -26,7 +24,7 @@ public class Climber extends SubsystemBase {
     io.updateInputs(inputs);
     SmartDashboard.putNumber("Climber/ClimbLevel", inputs.position);
   }
-  // TODO: FIX THIS
+  
   public Command climb(CLIMBERPOSITIONS_ENUM climbLevel) {
     switch (climbLevel) {
       case LEVEL0:
@@ -35,27 +33,11 @@ public class Climber extends SubsystemBase {
               this.runOnce(() -> io.climb(climbLevel)),
               Commands.waitUntil(ready(climbLevel)));
         }
-      case LEVEL1:
+      default:
         if (Math.abs(inputs.position - ClimberConstants.kLevelZeroPosition) <= ClimberConstants.kDelta) {
           return Commands.sequence(
               this.runOnce(() -> io.climb(climbLevel)),
               Commands.waitUntil(ready(climbLevel)));
-        }
-      case LEVEL2:
-        if (Math.abs(inputs.position - ClimberConstants.kLevelOnePosition) <= ClimberConstants.kDelta) {
-          return Commands.sequence(
-              this.runOnce(() -> io.climb(climbLevel)),
-              Commands.waitUntil(ready(climbLevel)));
-        } else {
-          System.out.println(Math.abs(inputs.position - ClimberConstants.kLevelOnePosition) <= ClimberConstants.kDelta);
-        }
-      case LEVEL3:
-        if (Math.abs(inputs.position - ClimberConstants.kLevelTwoPosition) <= ClimberConstants.kDelta) {
-          return Commands.sequence(
-              this.runOnce(() -> io.climb(climbLevel)),
-              Commands.waitUntil(ready(climbLevel)));
-        } else {
-          System.out.println(Math.abs(inputs.position - ClimberConstants.kLevelTwoPosition) <= ClimberConstants.kDelta);
         }
     }
 
@@ -70,17 +52,9 @@ public class Climber extends SubsystemBase {
         return new Trigger(() -> {
           return ClimberConstants.kDelta >= Math.abs(inputs.position - 0);
         });
-      case LEVEL1:
-        return new Trigger(() -> {
-          return ClimberConstants.kDelta >= Math.abs(inputs.position - ClimberConstants.kLevelOnePosition);
-        });
-      case LEVEL2:
-        return new Trigger(() -> {
-          return ClimberConstants.kDelta >= Math.abs(inputs.position - ClimberConstants.kLevelTwoPosition);
-        });
       default:
         return new Trigger(() -> {
-          return ClimberConstants.kDelta >= Math.abs(inputs.position - ClimberConstants.kLevelThreePosition);
+          return ClimberConstants.kDelta >= Math.abs(inputs.position - ClimberConstants.kLevelOnePosition);
         });
     }
   }

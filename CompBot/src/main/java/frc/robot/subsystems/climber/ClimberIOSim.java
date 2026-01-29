@@ -39,15 +39,8 @@ public class ClimberIOSim implements ClimberIO {
       case LEVEL0:
       position = ClimberConstants.kLevelZeroPosition;
         break;
-      case LEVEL1:
+      default:
       position = ClimberConstants.kLevelOnePosition;
-        break;
-      case LEVEL2:
-      position = ClimberConstants.kLevelTwoPosition;
-        break;
-      case LEVEL3:
-      position = ClimberConstants.kLevelThreePosition;
-        break;
     }
   }
 }

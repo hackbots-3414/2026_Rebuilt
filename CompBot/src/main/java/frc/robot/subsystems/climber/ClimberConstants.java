@@ -15,15 +15,11 @@ public final class ClimberConstants {
 
   protected static enum CLIMBERPOSITIONS_ENUM {
     LEVEL0,
-    LEVEL1,
-    LEVEL2,
-    LEVEL3
+    LEVEL1
   }
 
   protected static final double kLevelZeroPosition = 0.0;
   protected static final double kLevelOnePosition = 1.0;
-  protected static final double kLevelTwoPosition = 2.0;
-  protected static final double kLevelThreePosition = 3.0;
 
   protected static final double kDelta = 0.5;
 
