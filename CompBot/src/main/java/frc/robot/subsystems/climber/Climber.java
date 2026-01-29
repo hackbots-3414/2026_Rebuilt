@@ -64,19 +64,19 @@ public class Climber extends SubsystemBase {
     switch (climbLevel) {
       case LEVEL0:
         return new Trigger(() -> {
-          return 0.5 <= Math.abs(inputs.position - 0);
+          return ClimberConstants.kDelta >= Math.abs(inputs.position - 0);
         });
       case LEVEL1:
         return new Trigger(() -> {
-          return 0.5 <= Math.abs(inputs.position - ClimberConstants.kLevelOnePosition);
+          return ClimberConstants.kDelta >= Math.abs(inputs.position - ClimberConstants.kLevelOnePosition);
         });
       case LEVEL2:
         return new Trigger(() -> {
-          return 0.5 <= Math.abs(inputs.position - ClimberConstants.kLevelTwoPosition);
+          return ClimberConstants.kDelta >= Math.abs(inputs.position - ClimberConstants.kLevelTwoPosition);
         });
       default:
         return new Trigger(() -> {
-          return 0.5 <= Math.abs(inputs.position - ClimberConstants.kLevelThreePosition);
+          return ClimberConstants.kDelta >= Math.abs(inputs.position - ClimberConstants.kLevelThreePosition);
         });
     }
   }
