@@ -26,36 +26,40 @@ public class Climber extends SubsystemBase {
     io.updateInputs(inputs);
     SmartDashboard.putNumber("Climber/ClimbLevel", inputs.position);
   }
-
+  // TODO: FIX THIS
   public Command climb(CLIMBERPOSITIONS_ENUM climbLevel) {
     switch (climbLevel) {
       case LEVEL0:
-        if (inputs.position - ClimberConstants.kLevelOnePosition >= ClimberConstants.kDelta) {
+        if (Math.abs(inputs.position - ClimberConstants.kLevelOnePosition) <= ClimberConstants.kDelta) {
           return Commands.sequence(
               this.runOnce(() -> io.climb(climbLevel)),
               Commands.waitUntil(ready(climbLevel)));
         }
       case LEVEL1:
-        if (Math.abs(inputs.position - ClimberConstants.kLevelZeroPosition) >= ClimberConstants.kDelta) {
+        if (Math.abs(inputs.position - ClimberConstants.kLevelZeroPosition) <= ClimberConstants.kDelta) {
           return Commands.sequence(
               this.runOnce(() -> io.climb(climbLevel)),
               Commands.waitUntil(ready(climbLevel)));
         }
       case LEVEL2:
-        if (Math.abs(inputs.position - ClimberConstants.kLevelOnePosition) >= ClimberConstants.kDelta) {
+        if (Math.abs(inputs.position - ClimberConstants.kLevelOnePosition) <= ClimberConstants.kDelta) {
           return Commands.sequence(
               this.runOnce(() -> io.climb(climbLevel)),
               Commands.waitUntil(ready(climbLevel)));
+        } else {
+          System.out.println(Math.abs(inputs.position - ClimberConstants.kLevelOnePosition) <= ClimberConstants.kDelta);
         }
       case LEVEL3:
-        if (Math.abs(inputs.position - ClimberConstants.kLevelTwoPosition) >= ClimberConstants.kDelta) {
+        if (Math.abs(inputs.position - ClimberConstants.kLevelTwoPosition) <= ClimberConstants.kDelta) {
           return Commands.sequence(
               this.runOnce(() -> io.climb(climbLevel)),
               Commands.waitUntil(ready(climbLevel)));
+        } else {
+          System.out.println(Math.abs(inputs.position - ClimberConstants.kLevelTwoPosition) <= ClimberConstants.kDelta);
         }
     }
 
-    //If not in the right place to climb, do nothing
+    // If not in the right place to climb, do nothing
     return Commands.none();
 
   }
