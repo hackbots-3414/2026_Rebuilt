@@ -26,18 +26,19 @@ public class Intake extends SubsystemBase {
 
   public Command intake() {
     return startEnd(
-        () -> io.setCurrent(IntakeConstants.kIntakeCurrent),
-        () -> io.setCurrent(Amps.zero()));
+        () -> io.setIntakeCurrent(IntakeConstants.kIntakeCurrent),
+        () -> io.setIntakeCurrent(Amps.zero()));
   }
 
   public Command reverse() {
     return startEnd(
-        () -> io.setCurrent(IntakeConstants.kEjectCurrent),
-        () -> io.setCurrent(Amps.zero()));
+        () -> io.setIntakeCurrent(IntakeConstants.kEjectCurrent),
+        () -> io.setIntakeCurrent(Amps.zero()));
   }
 
   public Trigger detectJam() {
     return new Trigger(
-        () -> (inputs.supplyCurrent.in(Amps) > IntakeConstants.kStatorCurrentLimit) && hasFuel);
+        () -> (inputs.intakeSupplyCurrent.in(Amps) > IntakeConstants.kJamStatorThreshold.in(Amps))
+            && hasFuel);
   }
 }

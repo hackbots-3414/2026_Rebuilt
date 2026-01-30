@@ -84,7 +84,7 @@ public class Turret extends SubsystemBase {
    * Returns a {@link Trigger} that represents whether the turret is currently at its reference
    * position.
    */
-  private Trigger ready() {
+  public Trigger ready() {
     return new Trigger(() -> {
       double delta = inputs.position.minus(inputs.reference).baseUnitMagnitude();
       return Math.abs(delta) <= TurretConstants.kTolerance.baseUnitMagnitude();
