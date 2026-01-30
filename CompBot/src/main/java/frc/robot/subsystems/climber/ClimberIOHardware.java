@@ -7,20 +7,20 @@ import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.subsystems.climber.ClimberConstants.CLIMBERPOSITIONS_ENUM;
 import frc.robot.util.StatusSignalUtil;
 
 public class ClimberIOHardware implements ClimberIO {
   private final TalonFX motor;
 
-  private final DynamicMotionMagicVoltage control;
+  private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(ClimberConstants.kCruiseVelocity, ClimberConstants.kJerk, ClimberConstants.kAcceleration);
+
   private Voltage lastVoltage = Volts.zero();
 
   public ClimberIOHardware() {
     motor = new TalonFX(ClimberConstants.kMotorID);
     motor.getConfigurator().apply(ClimberConstants.kMotorConfig);
-    control = new DynamicMotionMagicVoltage(ClimberConstants.kMaxSpeed, ClimberConstants.kMaxVelocity, ClimberConstants.kMaxAcceleration);
 
     StatusSignalUtil.registerRioSignals(
         motor.getSupplyCurrent(false),
@@ -28,7 +28,8 @@ public class ClimberIOHardware implements ClimberIO {
         motor.getStatorCurrent(false),
         motor.getMotorVoltage(false),
         motor.getDeviceTemp(false),
-        motor.getVelocity(false));
+        motor.getVelocity(false),
+        motor.getPosition(false));
   }
 
   public void updateInputs(ClimberIOInputs inputs) {
@@ -44,7 +45,7 @@ public class ClimberIOHardware implements ClimberIO {
     inputs.statorCurrent = motor.getStatorCurrent(false).getValue();
     inputs.voltage = motor.getMotorVoltage(false).getValue();
     inputs.temperature = motor.getDeviceTemp(false).getValue();
-    inputs.position = motor.getPosition().getValueAsDouble();
+    inputs.position = motor.getPosition(false).getValue();
   }
 
   public void setVoltage(Voltage voltage) {
@@ -54,14 +55,12 @@ public class ClimberIOHardware implements ClimberIO {
     }
   }
 
-  public void climb(CLIMBERPOSITIONS_ENUM climbLevel) {
-    switch(climbLevel) {
-      case LEVEL0:
-      motor.setControl(control.withPosition(ClimberConstants.kLevelZeroPosition));
-        break;
-      default:
+  public void setPosition(Angle position) {
+    if (position == ClimberConstants.kUnclimbedPosition) {
+      motor.setControl(control.withPosition(ClimberConstants.kUnclimbedPosition));
+    } else {
       motor.setControl(control.withPosition(ClimberConstants.kLevelOnePosition));
-        break;
+
     }
   }
 }
