@@ -1,6 +1,5 @@
 package frc.robot.subsystems.climber;
 
-import static edu.wpi.first.units.Units.Radian;
 import static edu.wpi.first.units.Units.Radians;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -23,19 +22,17 @@ public final class ClimberConstants {
     Level1(Radians.of(Math.PI));
 
     protected final Angle position;
+
     private ClimberPositions(Angle posiiton) {
       this.position = posiiton;
     }
   }
 
-  protected static final Angle kUnclimbedPosition = Radians.zero();
-  protected static final Angle kLevelOnePosition = Radians.of(Math.PI);
+  protected static final Angle kTolerance = Radians.of(Math.PI / 4);
 
-  protected static final Angle kError = Radians.of(Math.PI/4);
-
-  protected static final double kCruiseVelocity = 32;
-  protected static final double kAcceleration = 48;
-  protected static final double kJerk = 480;
+  protected static final double kPosition = 24;
+  protected static final double kVelocity = 32;
+  protected static final double kAcceleration = 40;
 
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()

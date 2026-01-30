@@ -37,7 +37,7 @@ public class Climber extends SubsystemBase {
   public Trigger ready(ClimberPositions climbLevel) {
 
     return new Trigger(() -> {
-      return ClimberConstants.kError.in(Radians) >= Math
+      return ClimberConstants.kTolerance.in(Radians) >= Math
           .abs(inputs.position.in(Radians) - climbLevel.position.in(Radians));
     });
   }

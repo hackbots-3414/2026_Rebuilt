@@ -3,7 +3,7 @@ package frc.robot.subsystems.climber;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
+import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -14,7 +14,7 @@ import frc.robot.util.StatusSignalUtil;
 public class ClimberIOHardware implements ClimberIO {
   private final TalonFX motor;
 
-  private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(ClimberConstants.kCruiseVelocity, ClimberConstants.kJerk, ClimberConstants.kAcceleration);
+  private final DynamicMotionMagicTorqueCurrentFOC control = new DynamicMotionMagicTorqueCurrentFOC(ClimberConstants.kPosition, ClimberConstants.kVelocity, ClimberConstants.kAcceleration);
 
   private Voltage lastVoltage = Volts.zero();
 
@@ -56,12 +56,7 @@ public class ClimberIOHardware implements ClimberIO {
   }
 
   public void setPosition(Angle position) {
-    if (position == ClimberConstants.kUnclimbedPosition) {
-      motor.setControl(control.withPosition(ClimberConstants.kUnclimbedPosition));
-    } else {
-      motor.setControl(control.withPosition(ClimberConstants.kLevelOnePosition));
-
-    }
+      motor.setControl(control.withPosition(position));
   }
 }
 
