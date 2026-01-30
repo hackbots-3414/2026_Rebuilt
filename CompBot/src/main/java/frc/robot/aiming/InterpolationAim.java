@@ -27,7 +27,7 @@ public class InterpolationAim extends ExperimentalAim {
 
   public AimParams predict(StateManager state, AimParams params) {
     Translation3d offset = state.aimTarget().getTranslation()
-        .minus(new Translation3d(state.robotPose().getTranslation()));
+        .minus(state.turretPose().getTranslation());
     double xyDistance = offset.toTranslation2d().getNorm();
     params.velocity = MetersPerSecond.of(velocityMap.get(xyDistance));
     params.pitch = Rotation2d.fromRadians(pitchMap.get(xyDistance));

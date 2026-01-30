@@ -22,7 +22,7 @@ public class PhysicsAim extends AimStrategy {
 
   public AimParams update(StateManager state) {
     Translation3d offset = state.aimTarget().getTranslation()
-        .minus(new Translation3d(state.robotPose().getTranslation()));
+        .minus(state.turretPose().getTranslation());
     double dx = offset.getX();
     double dy = offset.getY();
     double dz = offset.getZ();

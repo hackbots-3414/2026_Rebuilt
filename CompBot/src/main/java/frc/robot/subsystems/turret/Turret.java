@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Revolutions;
 
 import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -108,5 +109,9 @@ public class Turret extends SubsystemBase {
             new Rotation2d(inputs.reference.minus(TurretConstants.kTrackingOffset)))));
     FieldManager.getInstance().getField().getObject("turret").setPose(turretPosition);
     FieldManager.getInstance().getField().getObject("turret-target").setPose(turretReference);
+  }
+
+  public Pose3d turretPose(StateManager state) {
+    return new Pose3d(state.robotPose()).transformBy(TurretConstants.kOffset);
   }
 }

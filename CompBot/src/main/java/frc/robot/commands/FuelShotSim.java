@@ -40,7 +40,7 @@ public class FuelShotSim implements CommandBuilder {
     public FuelSim() {}
 
     public void launch(StateManager state, AimParams params) {
-      position = new Translation3d(state.robotPose().getTranslation());
+      position = state.turretPose().getTranslation();
       final double error = 0.15;
       // field-relative velocity, but with the robot as the origin
       Translation3d veloR = new Translation3d(

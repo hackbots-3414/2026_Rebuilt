@@ -39,7 +39,7 @@ public class PolyRegAim extends ExperimentalAim {
 
   public AimParams predict(StateManager state, AimParams params) {
     Translation3d offset = state.aimTarget().getTranslation()
-        .minus(new Translation3d(state.robotPose().getTranslation()));
+        .minus(state.turretPose().getTranslation());
     double xyDistance = offset.toTranslation2d().getNorm();
     // Calculate angles and field-relative fuel velocity
     Rotation2d yaw = Rotation2d.fromRadians(Math.atan2(offset.getY(), offset.getX()));

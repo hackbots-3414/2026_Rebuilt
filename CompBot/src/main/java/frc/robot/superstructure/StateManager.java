@@ -58,4 +58,8 @@ public class StateManager {
   public void periodic() {
     aim.update(this); // This ensures we only cache the parameter object and then cache them.
   }
+
+  public Pose3d turretPose() {
+    return subsystems.turret().turretPose(this);
+  }
 }

@@ -1,6 +1,7 @@
 package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Revolutions;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -14,7 +15,9 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.Angle;
 
 public class TurretConstants {
@@ -88,4 +91,10 @@ public class TurretConstants {
           .withMotionMagicAcceleration(kMaxAcceleration)
           .withMotionMagicJerk(kMaxJerk));
 
+  /** The turret's relative position on the robot */
+  protected static final Transform3d kOffset = new Transform3d(
+      Inches.of(-4.4),
+      Inches.of(4.4),
+      Inches.of(22.5),
+      Rotation3d.kZero);
 }
