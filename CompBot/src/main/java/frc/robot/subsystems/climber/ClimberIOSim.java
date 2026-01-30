@@ -29,6 +29,7 @@ public class ClimberIOSim implements ClimberIO {
     inputs.motorConnected = true;
     inputs.supplyCurrent = Amps.of(motor.getCurrentDrawAmps());
     inputs.voltage = Volts.of(motor.getInputVoltage());
+    inputs.velocity = motor.getAngularVelocity();
   }
 
   public void setVoltage(Voltage voltage) {
