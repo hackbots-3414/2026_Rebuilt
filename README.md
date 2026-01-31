@@ -29,7 +29,7 @@ Repo for the 2026 game season
 |----|----|
 | Climb | 1 |
 | Feeder | 2 |
-| Intake 1  | 5 |
+| Intake Motor  | 5 |
 | Intake Deploy | 6 |
 | Turret Spin | 51 |
 | Shooter | 55 |
