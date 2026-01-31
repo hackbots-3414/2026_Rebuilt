@@ -41,7 +41,8 @@ public class ClimberIOHardware implements ClimberIO {
         motor.getStatorCurrent(false),
         motor.getMotorVoltage(false),
         motor.getDeviceTemp(false),
-        motor.getVelocity(false));
+        motor.getVelocity(false),
+        motor.getPosition(false));
     inputs.supplyCurrent = motor.getSupplyCurrent(false).getValue();
     inputs.torqueCurrent = motor.getTorqueCurrent(false).getValue();
     inputs.statorCurrent = motor.getStatorCurrent(false).getValue();
