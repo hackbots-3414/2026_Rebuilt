@@ -55,7 +55,6 @@ public class FuelShotSim implements CommandBuilder {
       for (int i = 0;i < resolution;i ++) {
         // Update position
         position = position.plus(velocity.times(dt / (double)resolution));
-        // Update velocity
         // Calculate the drag force / mass: 0.5 * 1.225 * pi * 0.075^2 * 0.47 * v^2 * 2
         double Fd = -0.5 * 1.225 * Math.PI * 0.075 * 0.075 * 0.47 * velocity.getNorm() * 2;
         Translation3d acceleration = velocity.times(Fd).plus(gravity);

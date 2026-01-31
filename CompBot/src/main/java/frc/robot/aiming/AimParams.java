@@ -12,6 +12,7 @@ import frc.robot.util.OnboardLogger;
  * a shot is generated, meaning that this is what is applied to each subystem.
  */
 public class AimParams {
+  public AimStatus status = AimStatus.Impossible;
   /** the launch angle of the fuel out of the robot. */
   public Rotation2d pitch = Rotation2d.kZero;
   /**
@@ -32,12 +33,28 @@ public class AimParams {
   private OnboardLogger ologger = new OnboardLogger("AimParams");
 
   public AimParams() {
+    ologger.registerString("Status", () -> status.toString());
     ologger.registerMeasurment("Pitch", () -> pitch.getMeasure(), Degrees);
     ologger.registerMeasurment("Yaw", () -> yaw.getMeasure(), Degrees);
     ologger.registerMeasurment("Velocity", () -> velocity, MetersPerSecond);
     ologger.registerMeasurment("Error/Pitch", () -> deltaPitch.getMeasure(), Degrees);
     ologger.registerMeasurment("Error/Yaw", () -> deltaYaw.getMeasure(), Degrees);
     ologger.registerMeasurment("Error/Velocity", () -> deltaVelocity, MetersPerSecond);
+  }
+
+  public enum AimStatus {
+    Impossible,
+    Ideal,
+    PitchConstrained;
+
+    public boolean isOk() {
+      return !this.equals(Impossible);
+    }
+  }
+
+  /** Returns whether the aim parameters calculated are feasible */
+  public boolean isOk() {
+    return status.isOk();
   }
 }
 

@@ -16,7 +16,7 @@ import frc.robot.util.OnboardLogger;
  */
 public class StateManager {
   private final Subsystems subsystems;
-  public final AimStrategy aim = new PhysicsAim(2.0);
+  public final AimStrategy aim = new PhysicsAim(2.0, 49.5, 72.0);
 
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
@@ -24,6 +24,7 @@ public class StateManager {
     log.registerPose("Robot Pose", this::robotPose);
     log.registerTransform2d("Robot Velocity", this::robotVelocity);
     log.registerPose3d("Aim Target", this::aimTarget);
+    log.registerPose3d("Turret Position", this::turretPose);
     log.registerBoolean("Shoot Ready", shootReady());
   }
 
@@ -48,7 +49,7 @@ public class StateManager {
   }
 
   public Trigger shootReady() {
-    return subsystems.turret().tracked(this);
+    return subsystems.turret().tracked(this).and(aim.params::isOk);
   }
 
   public AimParams aimParams() {
