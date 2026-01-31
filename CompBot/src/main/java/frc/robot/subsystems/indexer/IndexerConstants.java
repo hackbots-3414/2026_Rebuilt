@@ -12,7 +12,7 @@ import edu.wpi.first.units.measure.Voltage;
 
 public final class IndexerConstants {
 
-  protected static final int kMotorID = 60;
+  protected static final int kMotorID = 63;
 
   protected static final double kSupplyCurrentLimit = 40.0;
   protected static final double kStatorCurrentLimit = 125.0;

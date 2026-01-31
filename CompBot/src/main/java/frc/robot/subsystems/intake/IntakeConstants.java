@@ -7,7 +7,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class IntakeConstants {
-  protected static final int kMotorID = 60;
+  protected static final int kMotorID = 62;
 
     protected static final double kSupplyCurrentLimit = 40.0;
     protected static final double kStatorCurrentLimit = 125.0;
