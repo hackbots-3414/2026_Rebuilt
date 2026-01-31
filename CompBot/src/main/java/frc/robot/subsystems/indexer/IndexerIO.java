@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -14,6 +15,7 @@ import frc.robot.util.OnboardLogger;
 public interface IndexerIO {
   public void updateInputs(IndexerIOInputs inputs);
 
+  @Logged
   class IndexerIOInputs {
     public boolean motorConnected = false;
     public Current supplyCurrent = Amps.zero();

@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
@@ -13,6 +14,7 @@ import frc.robot.util.OnboardLogger;
 public interface IntakeIO {
     public void updateInputs (IntakeIOInputs inputs);
 
+    @Logged
     class IntakeIOInputs {
       public boolean motorConnected = false;
       public Current supplyCurrent = Amps.zero();

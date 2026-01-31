@@ -8,6 +8,8 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.OnboardLogger;
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.Logged.Importance;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
@@ -18,6 +20,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 public interface ClimberIO {
   void updateInputs(ClimberIOInputs inputs);
 
+  @Logged
   class ClimberIOInputs {
     public boolean motorConnected = false;
     public Current supplyCurrent = Amps.zero();

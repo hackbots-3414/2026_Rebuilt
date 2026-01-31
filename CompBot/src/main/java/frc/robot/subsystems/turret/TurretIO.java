@@ -7,6 +7,8 @@ import static edu.wpi.first.units.Units.Revolutions;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
+
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -16,6 +18,7 @@ import frc.robot.util.OnboardLogger;
 
 public interface TurretIO {
 
+  @Logged
   public class TurretIOInputs {
     public boolean motorConnected = false;
     public boolean calibrated = false;

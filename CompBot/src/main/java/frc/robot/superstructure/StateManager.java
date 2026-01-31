@@ -1,5 +1,6 @@
 package frc.robot.superstructure;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -14,6 +15,7 @@ import frc.robot.util.OnboardLogger;
 /**
  * A class representing the robot-wide state variables.
  */
+@Logged
 public class StateManager {
   private final Subsystems subsystems;
   public final AimStrategy aim = new PhysicsAim(2.0);

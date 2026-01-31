@@ -6,6 +6,15 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.HootAutoReplay;
+import com.ctre.phoenix6.HootEpilogueBackend;
+import com.ctre.phoenix6.Utils;
+
+import edu.wpi.first.epilogue.Epilogue;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.logging.EpilogueBackend;
+import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
+import edu.wpi.first.epilogue.logging.errors.ErrorHandler;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -15,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.OnboardLogger;
 import frc.robot.util.StatusSignalUtil;
 
+@Logged
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
@@ -37,6 +47,22 @@ public class Robot extends TimedRobot {
     }
 
     DataLogManager.start();
+
+    Epilogue.configure(config -> {
+      // Log to both the Phoenix 6 SignalLogger
+      // and NT4 backends
+      config.backend = EpilogueBackend.multi(
+          new HootEpilogueBackend(),
+          new NTEpilogueBackend(NetworkTableInstance.getDefault()));
+
+      if (Utils.isSimulation()) {
+        // Re-throw any errors that occur in simulation
+        config.errorHandler = ErrorHandler.crashOnError();
+      }
+    });
+
+    Epilogue.bind(this);
+
     DriverStation.startDataLog(DataLogManager.getLog());
 
     oLogger = new OnboardLogger("Robot");
@@ -66,10 +92,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+  }
 
   @Override
   public void autonomousInit() {
@@ -81,10 +109,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+  }
 
   @Override
   public void teleopInit() {
@@ -94,10 +124,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+  }
 
   @Override
   public void testInit() {
@@ -105,11 +137,14 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
-  public void testExit() {}
+  public void testExit() {
+  }
 
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+  }
 }
