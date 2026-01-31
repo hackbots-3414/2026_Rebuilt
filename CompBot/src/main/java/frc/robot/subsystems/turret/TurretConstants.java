@@ -20,7 +20,7 @@ import edu.wpi.first.units.measure.Angle;
 public class TurretConstants {
   protected static final Transform2d kTurretPosition = Transform2d.kZero;
 
-  protected static final int kMotorId = 48;
+  protected static final int kMotorId = 51;
   protected static final int kEncoder1Id = 49;
   protected static final int kEncoder2Id = 50;
 
