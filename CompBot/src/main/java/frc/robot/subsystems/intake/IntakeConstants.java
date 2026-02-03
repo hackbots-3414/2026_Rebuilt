@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import com.ctre.phoenix6.configs.CANrangeConfiguration;
@@ -14,6 +15,7 @@ import com.ctre.phoenix6.configs.ToFParamsConfigs;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.UpdateModeValue;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -37,6 +39,7 @@ public class IntakeConstants {
           .withStatorCurrentLimit(120));
 
   protected static final Current kJamStatorThreshold = Amps.of(70);
+  protected static final AngularVelocity kJamVelocityThreshold = RotationsPerSecond.of(0.3);
 
   protected static final CANrangeConfiguration kCANrangeConfig = new CANrangeConfiguration()
       .withFovParams(new FovParamsConfigs()
@@ -72,5 +75,17 @@ public class IntakeConstants {
 
     protected static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(0.4);
     protected static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(4);
+
+    public static enum DeployPosition {
+      Stow(Rotations.zero()),
+      Deployed(Rotations.of(1.0));
+
+      protected final Angle position;
+      private DeployPosition(Angle position) {
+        this.position = position;
+      }
+    }
+
+    protected static final Angle kTolerance = Rotations.of(0.02);
   }
 }
