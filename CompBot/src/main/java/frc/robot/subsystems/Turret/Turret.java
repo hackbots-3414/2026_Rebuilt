@@ -107,6 +107,6 @@ public class Turret extends SubsystemBase {
         new Transform2d(Translation2d.kZero,
             new Rotation2d(inputs.reference.minus(TurretConstants.kTrackingOffset)))));
     FieldManager.getInstance().getField().getObject("turret").setPose(turretPosition);
-    FieldManager.getInstance().getField().getObject("turret-target").setPose(turretPosition);
+    FieldManager.getInstance().getField().getObject("turret-target").setPose(turretReference);
   }
 }
