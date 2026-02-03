@@ -37,7 +37,7 @@ public class PolyRegAim extends ExperimentalAim {
     pitchCoeffs = fitter.fit(pitchData);
   }
 
-  public AimParams predict(StateManager state, AimParams params) {
+  public AimParams predict(StateManager state) {
     Translation3d offset = state.aimTarget().getTranslation()
         .minus(state.turretPose().getTranslation());
     double xyDistance = offset.toTranslation2d().getNorm();
@@ -46,6 +46,7 @@ public class PolyRegAim extends ExperimentalAim {
     Rotation2d pitch = Rotation2d.fromRadians(sample(pitchCoeffs, xyDistance));
     LinearVelocity velocity = MetersPerSecond.of(sample(velocityCoeffs, xyDistance));
     // Apply calculations
+    AimParams params = new AimParams();
     params.yaw = yaw;
     params.pitch = pitch;
     params.velocity = velocity;

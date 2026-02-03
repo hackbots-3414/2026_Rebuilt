@@ -1,9 +1,14 @@
 package frc.robot.superstructure;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimParams;
 import frc.robot.aiming.AimStrategy;
 import frc.robot.aiming.PhysicsAim;
@@ -16,7 +21,13 @@ import frc.robot.util.OnboardLogger;
  */
 public class StateManager {
   private final Subsystems subsystems;
-  public final AimStrategy aim = new PhysicsAim(2.0, 49.5, 72.0);
+  private final AimStrategy aim = new PhysicsAim(
+      new AimConstraints(
+          Rotation2d.fromDegrees(49.5),
+          Rotation2d.fromDegrees(72.0),
+          MetersPerSecond.of(18)),
+      2, 10);
+  private AimParams params = AimParams.kImpossible;
 
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
@@ -26,6 +37,15 @@ public class StateManager {
     log.registerPose3d("Aim Target", this::aimTarget);
     log.registerPose3d("Turret Position", this::turretPose);
     log.registerBoolean("Shoot Ready", shootReady());
+
+    log.registerString("Aim params/Status", () -> params.status.toString());
+    log.registerMeasurment("Aim params/Pitch", () -> params.pitch.getMeasure(), Degrees);
+    log.registerMeasurment("Aim params/Yaw", () -> params.yaw.getMeasure(), Degrees);
+    log.registerMeasurment("Aim params/Velocity", () -> params.velocity, MetersPerSecond);
+    log.registerMeasurment("Aim params/Error/Pitch", () -> params.deltaPitch.getMeasure(), Degrees);
+    log.registerMeasurment("Aim params/Error/Yaw", () -> params.deltaYaw.getMeasure(), Degrees);
+    log.registerMeasurment("Aim params/Error/Velocity", () -> params.deltaVelocity,
+        MetersPerSecond);
   }
 
   /**
@@ -49,15 +69,15 @@ public class StateManager {
   }
 
   public Trigger shootReady() {
-    return subsystems.turret().tracked(this).and(aim.params::isOk);
+    return subsystems.turret().tracked(this).and(() -> params.isOk());
   }
 
   public AimParams aimParams() {
-    return aim.params;
+    return params;
   }
 
   public void periodic() {
-    aim.update(this); // This ensures we only cache the parameter object and then cache them.
+    params = aim.update(this);
   }
 
   public Pose3d turretPose() {

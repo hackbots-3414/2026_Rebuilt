@@ -1,38 +1,97 @@
 package frc.robot.aiming;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.aiming.AimParams.AimStatus;
 import frc.robot.superstructure.StateManager;
 
 public class PhysicsAim extends AimStrategy {
-  private final double finalDescentSpeed;
-  private final double maxShooterVelocity;
+  private static final int ITERATIONS = 5;
 
-  private final Rotation2d minShooterAngle;
-  private final Rotation2d maxShooterAngle;
+  private final AimConstraints constraints;
 
-  public PhysicsAim(double finalDescentSpeed, double minShooterAngle, double maxShooterAngle) {
-    if (finalDescentSpeed <= 0) {
-      finalDescentSpeed = 1.0;
-      DriverStation.reportWarning(
-          "Positive final descent speed required, but nonpositive number found; assigning value of 1.",
-          false);
-    }
-    this.finalDescentSpeed = finalDescentSpeed;
-    this.minShooterAngle = Rotation2d.fromDegrees(minShooterAngle);
-    this.maxShooterAngle = Rotation2d.fromDegrees(maxShooterAngle);
-    this.maxShooterVelocity = Double.POSITIVE_INFINITY;
+  private final double minDescentVelocity;
+  private final double maxDescentVelocity;
+
+  public PhysicsAim(AimConstraints constraints, double minDescentVelocity,
+      double maxDescentVelocity) {
+    this.constraints = constraints;
+    this.minDescentVelocity = minDescentVelocity;
+    this.maxDescentVelocity = maxDescentVelocity;
   }
 
   public AimParams update(StateManager state) {
-    params.status = AimStatus.Impossible;
-
     Translation3d offset = state.aimTarget().getTranslation()
         .minus(state.turretPose().getTranslation());
+    Translation2d robotVelocity = state.robotVelocity().getTranslation();
+
+    // Calculate the pitch values for the minimum and maximum possible v_zf values:
+    AimParams minParams = quicksolve(offset, robotVelocity, minDescentVelocity);
+    AimParams maxParams = quicksolve(offset, robotVelocity, maxDescentVelocity);
+
+    double minPitch = minParams.pitch.getRadians();
+    double maxPitch = maxParams.pitch.getRadians();
+
+    boolean solutionExists = minPitch <= constraints.maxShooterAngle().getRadians()
+        && maxPitch >= constraints.minShooterAngle().getRadians();
+
+    if (!solutionExists) {
+      return AimParams.kImpossible;
+    }
+
+    boolean minWorks = constraints.check(minParams);
+    if (minWorks) {
+      return minParams.withStatus(AimStatus.Possible);
+    }
+
+    double lower = minDescentVelocity;
+    double upper = maxDescentVelocity;
+
+    AimParams best = AimParams.kImpossible;
+
+    for (int i = 0; i < ITERATIONS; i++) {
+      double guess = 0.5 * (lower + upper);
+      AimParams output = quicksolve(offset, robotVelocity, guess);
+      boolean ok = constraints.check(output);
+      if (ok) {
+        // We're just optimizing, so we won't stop yet.
+        upper = guess;
+        best = output.withStatus(AimStatus.Possible);
+      }
+      double pitch = output.pitch.getRadians();
+      if (pitch > constraints.maxShooterAngle().getRadians()) {
+        // Too high
+        upper = guess;
+      }
+      if (pitch < constraints.minShooterAngle().getRadians()) {
+        // Too low
+        lower = guess;
+      }
+    }
+
+    if (best.status == AimStatus.Impossible) {
+      return AimParams.kImpossible;
+    }
+
+    // If yaw says to shoot in the wrong direction we don't listen, even if it would work.
+    Rotation2d towardsTarget = Rotation2d.fromRadians(Math.atan2(offset.getY(), offset.getX()));
+    double diff = MathUtil.angleModulus(Math.abs(towardsTarget.minus(best.yaw).getRadians()));
+    if (diff > 0.8 * Math.PI) { // We aren't really pointed at the target.
+      return AimParams.kImpossible;
+    }
+
+    return best;
+  }
+
+  public static AimParams quicksolve(
+      Translation3d offset,
+      Translation2d robotVelocity,
+      double finalDescentSpeed) {
+
+    AimParams params = new AimParams();
 
     double dx = offset.getX();
     double dy = offset.getY();
@@ -51,41 +110,12 @@ public class PhysicsAim extends AimStrategy {
     double vz = 9.81 * t - finalDescentSpeed;
 
     // Compensate for robot velocity
-    Translation2d robotVelocity = state.robotVelocity().getTranslation();
     vx -= robotVelocity.getX();
     vy -= robotVelocity.getY();
 
     double v = Math.sqrt(vx * vx + vy * vy + vz * vz);
     Rotation2d yaw = Rotation2d.fromRadians(Math.atan2(vy, vx));
     Rotation2d pitch = Rotation2d.fromRadians(Math.asin(vz / v));
-
-    if (v > maxShooterVelocity) {
-      params.status = AimStatus.Impossible;
-      return params;
-    }
-
-    params.status = AimStatus.Ideal;
-
-    if (pitch.getRadians() < minShooterAngle.getRadians()) {
-      pitch = minShooterAngle;
-      // Use pitch-constrainted SOTM
-      params.status = AimStatus.PitchConstrained;
-      Translation2d transformedVelocity =
-          transformVelocity(offset.toTranslation2d(), state.robotVelocity().getTranslation());
-      double vr = transformedVelocity.getX();
-      double dh = Math.hypot(dx, dy);
-      double velocity = constrainedSOTM(dh, dz, pitch, vr);
-      if (velocity == Double.NaN) {
-        params.status = AimStatus.Impossible;
-        return params;
-      }
-      double vh = velocity * pitch.getCos();
-      t = dh / (vh + vr);
-      Translation2d fuelVelocity =
-          offset.toTranslation2d().div(t).minus(state.robotVelocity().getTranslation());
-      yaw = Rotation2d.fromRadians(Math.atan2(fuelVelocity.getY(), fuelVelocity.getX()));
-      v = velocity;
-    }
 
     params.velocity = MetersPerSecond.of(v);
     params.pitch = pitch;
@@ -94,30 +124,4 @@ public class PhysicsAim extends AimStrategy {
     return params;
   }
 
-  /** Returns the necessary velocity for some given pitch */
-  private double constrainedSOTM(double dx, double dz, Rotation2d pitch, double vr) {
-    double a = pitch.getCos() * (dz * pitch.getCos() - dx * pitch.getSin());
-    double b = vr * (2 * dz * pitch.getCos() - dx * pitch.getSin());
-    double c = dz * vr * vr + 0.5 * 9.81 * dx * dx;
-
-    // Solve the quadratic equation ax^2 + bx + c = 0
-    double discriminant = b * b - 4 * a * c;
-
-    double solution = (-b - Math.sqrt(discriminant)) / (2 * a);
-    return solution;
-  }
-
-  /**
-   * Returns the transformed velocity so that +x is towards the target and +y is counterclockwise
-   * tangential to the target
-   */
-  private Translation2d transformVelocity(Translation2d offset, Translation2d velocity) {
-    double thetaR = Math.atan2(offset.getY(), offset.getX());
-    double thetaV = Math.atan2(velocity.getY(), velocity.getX());
-    double theta = thetaR - thetaV;
-
-    double parallel = velocity.getNorm() * Math.sin(theta);
-    double perpendicular = velocity.getNorm() * Math.cos(theta);
-    return new Translation2d(perpendicular, parallel);
-  }
 }

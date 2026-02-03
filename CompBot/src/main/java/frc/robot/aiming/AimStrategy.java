@@ -7,8 +7,6 @@ import frc.robot.superstructure.StateManager;
  * necessary for a given robot configuration
  */
 public abstract class AimStrategy {
-  public AimParams params = new AimParams();
-
   /**
    * Updates the AimParams with the new calculated shot based on the robot's state
    *

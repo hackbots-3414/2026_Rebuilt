@@ -11,10 +11,10 @@ public abstract class ExperimentalAim extends AimStrategy {
    * Predicts the aim parameters for a static shot from the given position. Velocity should NOT be
    * considered in the implementation of this method.
    */
-  public abstract AimParams predict(StateManager state, AimParams params);
+  public abstract AimParams predict(StateManager state);
 
   public final AimParams update(StateManager state) {
-    params = predict(state, params);
+    AimParams params = predict(state);
     double feulVelocity = params.velocity.in(MetersPerSecond);
     // Break up initial velocity
     double vx = feulVelocity * params.pitch.getCos() * params.yaw.getCos();
