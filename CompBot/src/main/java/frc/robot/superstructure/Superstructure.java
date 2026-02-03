@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.commands.CommandBuilder;
 import frc.robot.generated.TestBotTunerConstants;
-import frc.robot.subsystems.Turret.Turret;
-import frc.robot.subsystems.Turret.TurretIOHardware;
-import frc.robot.subsystems.Turret.TurretIOSim;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIOHardware;
+import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIOHardware;
@@ -18,6 +18,9 @@ import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOHardware;
 import frc.robot.subsystems.shooter.ShooterIOSim;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretIOHardware;
+import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
@@ -27,7 +30,8 @@ public class Superstructure {
       Turret turret,
       Shooter shooter,
       Indexer indexer,
-      Intake intake) {
+      Intake intake,
+      Climber climber) {
   }
 
   private final Subsystems subsystems;
@@ -39,7 +43,8 @@ public class Superstructure {
     Shooter shooter = new Shooter(Robot.isReal() ? new ShooterIOHardware() : new ShooterIOSim());
     Indexer indexer = new Indexer(Robot.isReal() ? new IndexerIOHardware() : new IndexerIOSim());
     Intake intake = new Intake(Robot.isReal() ? new IntakeIOHardware() : new IntakeIOSim());
-    subsystems = new Subsystems(drivetrain, turret, shooter, indexer, intake);
+    Climber climber = new Climber(Robot.isReal() ? new ClimberIOHardware() : new ClimberIOSim());
+    subsystems = new Subsystems(drivetrain, turret, shooter, indexer, intake, climber);
     state = new StateManager(subsystems);
   }
 

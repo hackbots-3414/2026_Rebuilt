@@ -202,9 +202,9 @@ public class SingleInputPoseEstimator implements Runnable {
     double y = pose.getY();
     double z = pose.getZ();
     double xMax = LocalizationConstants.kXYMargin.magnitude()
-        + FieldConstants.kFieldLength.magnitude();
-    double yMax = LocalizationConstants.kXYMargin.magnitude()
         + FieldConstants.kFieldWidth.magnitude();
+    double yMax = LocalizationConstants.kXYMargin.magnitude()
+        + FieldConstants.kFieldLength.magnitude();
     double xyMin = -LocalizationConstants.kXYMargin.magnitude();
     double zMax = LocalizationConstants.kZMargin.magnitude();
     double zMin = -LocalizationConstants.kZMargin.magnitude();
