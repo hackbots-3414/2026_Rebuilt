@@ -1,14 +1,13 @@
 package frc.robot.aiming;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.superstructure.StateManager;
 
-public class PhysicsAim implements AimStrategy {
+public class PhysicsAim extends AimStrategy {
   private final double finalDescentSpeed;
 
   public PhysicsAim(double finalDescentSpeed) {
@@ -21,10 +20,9 @@ public class PhysicsAim implements AimStrategy {
     this.finalDescentSpeed = finalDescentSpeed;
   }
 
-  public AimParams update(StateManager state, AimParams params) {
-    Pose3d target = state.aimTarget();
-    Translation3d offset =
-        target.getTranslation().minus(new Translation3d(state.robotPose().getTranslation()));
+  public AimParams update(StateManager state) {
+    Translation3d offset = state.aimTarget().getTranslation()
+        .minus(new Translation3d(state.robotPose().getTranslation()));
     double dx = offset.getX();
     double dy = offset.getY();
     double dz = offset.getZ();

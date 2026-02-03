@@ -2,8 +2,25 @@ package frc.robot.superstructure;
 
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
 import frc.robot.commands.CommandBuilder;
+import frc.robot.generated.TestBotTunerConstants;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIOHardware;
+import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIOHardware;
+import frc.robot.subsystems.indexer.IndexerIOSim;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOHardware;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIOHardware;
+import frc.robot.subsystems.shooter.ShooterIOSim;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretIOHardware;
+import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
@@ -11,14 +28,26 @@ import frc.robot.vision.localization.TimestampedPoseEstimate;
  * This class is important
  */
 public class Superstructure {
-  public record Subsystems(Drivetrain drivetrain) {
+  public record Subsystems(
+      Drivetrain drivetrain,
+      Turret turret,
+      Shooter shooter,
+      Indexer indexer,
+      Intake intake,
+      Climber climber) {
   }
 
   private final Subsystems subsystems;
   public final StateManager state;
 
-  public Superstructure(Drivetrain drivetrain) {
-    subsystems = new Subsystems(drivetrain);
+  public Superstructure() {
+    Drivetrain drivetrain = TestBotTunerConstants.createDrivetrain();
+    Turret turret = new Turret(Robot.isReal() ? new TurretIOHardware() : new TurretIOSim());
+    Shooter shooter = new Shooter(Robot.isReal() ? new ShooterIOHardware() : new ShooterIOSim());
+    Indexer indexer = new Indexer(Robot.isReal() ? new IndexerIOHardware() : new IndexerIOSim());
+    Intake intake = new Intake(Robot.isReal() ? new IntakeIOHardware() : new IntakeIOSim());
+    Climber climber = new Climber(Robot.isReal() ? new ClimberIOHardware() : new ClimberIOSim());
+    subsystems = new Subsystems(drivetrain, turret, shooter, indexer, intake, climber);
     state = new StateManager(subsystems);
   }
 
@@ -50,5 +79,10 @@ public class Superstructure {
 
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
     subsystems.drivetrain().addPoseEstimate(estimate);
+  }
+
+  public void periodic() {
+    state.periodic();
+    subsystems.turret.telemetrize(state);
   }
 }

@@ -1,12 +1,11 @@
 package frc.robot.subsystems.drivetrain;
 
+
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -36,12 +35,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.FieldManager;
 import frc.robot.Robot;
 import frc.robot.aiming.AimParams;
 import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.generated.TestBotTunerConstants.TunerSwerveDrivetrain;
+import frc.robot.util.OnboardLogger;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
 public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
@@ -159,6 +158,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       startSimThread();
     }
     poseLogEntry = StructLogEntry.create(DataLogManager.getLog(), "Robot Pose", Pose2d.struct);
+    state = getState();
+    OnboardLogger ologger = new OnboardLogger("Drivetrain");
+    ologger.registerBoolean("Received vision udpate", () -> hasReceivedVisionUpdate);
   }
 
   /**
@@ -257,7 +259,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
    * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
    * @param timestampSeconds The timestamp of the vision measurement in seconds.
    * @param visionMeasurementStdDevs Standard deviations of the vision pose measurement in the form
-   *        [x, y, theta]ᵀ, with units in meters and radians.
+   *        [x, y, theta]^T, with units in meters and radians.
    */
   @Override
   public void addVisionMeasurement(
@@ -282,7 +284,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   public Command teleopDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot) {
     return this.applyRequest(() -> {
       // Recalculate the *real* vx and vy to be operator-dependent
-      Translation2d operatorRelative = new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
+      Translation2d operatorRelative =
+          new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
       Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
       if (rotationOverride.isPresent()) {
         return driveOverride
@@ -345,6 +348,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public Trigger tracked() {
     return new Trigger(() -> rotationOverride.isPresent()
-        && rotationOverride.get().yaw.relativeTo(robotPose().getRotation()).getDegrees() < 5);
+        && Math.abs(rotationOverride.get().yaw.relativeTo(robotPose().getRotation())
+            .getDegrees()) < rotationOverride.get().deltaYaw.getDegrees());
   }
 }

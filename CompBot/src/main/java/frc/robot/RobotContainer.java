@@ -8,8 +8,6 @@ import frc.autogen.Autogen;
 import frc.robot.binding.Binder;
 import frc.robot.binding.DriverBindings;
 import frc.robot.binding.RobotBindings;
-import frc.robot.commands.VisionTest;
-import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 
@@ -24,12 +22,11 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
-    superstructure = new Superstructure(TestBotTunerConstants.createDrivetrain());
+    superstructure = new Superstructure();
     driver.bind(superstructure);
     robot.bind(superstructure);
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();
 
-    SmartDashboard.putData("VISION TEST", superstructure.build(new VisionTest()));
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
     autoChooser = Autogen.autoChooser();
