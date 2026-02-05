@@ -8,11 +8,12 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import frc.robot.superstructure.StateManager;
 
-public class InterpolationAim extends ExperimentalAim {
+public class InterpolationAim extends EmpiricalAim {
   private final InterpolatingDoubleTreeMap pitchMap;
   private final InterpolatingDoubleTreeMap velocityMap;
 
-  public InterpolationAim(List<AimMeasurement> measurements) {
+  public InterpolationAim(AimConstraints constraints, List<AimMeasurement> measurements) {
+    super(constraints);
     pitchMap = new InterpolatingDoubleTreeMap();
     velocityMap = new InterpolatingDoubleTreeMap();
     for (AimMeasurement measurement : measurements) {

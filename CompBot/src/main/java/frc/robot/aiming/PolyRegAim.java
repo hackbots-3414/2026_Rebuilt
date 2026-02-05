@@ -11,7 +11,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.LinearVelocity;
 import frc.robot.superstructure.StateManager;
 
-public class PolyRegAim extends ExperimentalAim {
+public class PolyRegAim extends EmpiricalAim {
   private static final int degree = 4;
   private static final int maxIterations = Integer.MAX_VALUE;
 
@@ -22,7 +22,8 @@ public class PolyRegAim extends ExperimentalAim {
   private final double[] velocityCoeffs;
   private final double[] pitchCoeffs;
 
-  public PolyRegAim(List<AimMeasurement> measurements) {
+  public PolyRegAim(AimConstraints constraints, List<AimMeasurement> measurements) {
+    super(constraints);
     List<WeightedObservedPoint> velocityData = new ArrayList<>(measurements.size());
     List<WeightedObservedPoint> pitchData = new ArrayList<>(measurements.size());
     for (AimMeasurement measurement : measurements) {

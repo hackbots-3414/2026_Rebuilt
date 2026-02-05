@@ -8,7 +8,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.aiming.AimParams.AimStatus;
 import frc.robot.superstructure.StateManager;
 
-public class PhysicsAim extends AimStrategy {
+public class PhysicsAim implements AimStrategy {
   private static final int ITERATIONS = 5;
 
   private final AimConstraints constraints;

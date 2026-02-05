@@ -1,11 +1,8 @@
 package frc.robot.aiming;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.DataLogManager;
-import frc.robot.util.OnboardLogger;
 
 /**
  * The parameters of a shooter at a particlar moment in time. This is the type that is returned when
