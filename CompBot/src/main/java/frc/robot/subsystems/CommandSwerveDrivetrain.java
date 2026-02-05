@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
-import frc.robot.generated.TestBotTunerConstants.TunerSwerveDrivetrain;
+import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -219,7 +219,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.dynamic(direction);
     }
+    public Command sysIdQuasistaticSteer(SysIdRoutine.Direction direction) {
+        return m_sysIdRoutineSteer.quasistatic(direction);
+    }
 
+    public Command sysIdDynamicSteer(SysIdRoutine.Direction direction) {
+        return m_sysIdRoutineSteer.dynamic(direction);
+    }
     @Override
     public void periodic() {
         /*
