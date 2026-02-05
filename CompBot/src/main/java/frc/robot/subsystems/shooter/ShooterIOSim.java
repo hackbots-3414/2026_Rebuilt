@@ -13,11 +13,11 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Robot;
 
 public class ShooterIOSim implements ShooterIO {
-  private final DCMotorSim flywheelMotor;
+  private final DCMotorSim shooterMotor;
   private final DCMotorSim hoodMotor;
 
   public ShooterIOSim() {
-    flywheelMotor = new DCMotorSim(
+    shooterMotor = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 2, 10),
         DCMotor.getKrakenX60Foc(1),
         0.01,
@@ -30,11 +30,11 @@ public class ShooterIOSim implements ShooterIO {
   }
 
   public void updateInputs(ShooterIOInputs inputs) {
-    flywheelMotor.update(Robot.kDefaultPeriod);
-    inputs.flywheelMotorConnected = true;
-    inputs.flywheelSupplyCurrent = Amps.of(flywheelMotor.getCurrentDrawAmps());
-    inputs.flywheelVoltage = Volts.of(flywheelMotor.getInputVoltage());
-    inputs.flywheelVelocity = flywheelMotor.getAngularVelocity();
+    shooterMotor.update(Robot.kDefaultPeriod);
+    inputs.shooter1MotorConnected = true;
+    inputs.shooter1StatorCurrent = Amps.of(shooterMotor.getCurrentDrawAmps());
+    inputs.shooter1Voltage = Volts.of(shooterMotor.getInputVoltage());
+    inputs.shooter1Velocity = shooterMotor.getAngularVelocity();
 
     hoodMotor.update(Robot.kDefaultPeriod);
     inputs.hoodMotorConnected = true;
@@ -45,7 +45,7 @@ public class ShooterIOSim implements ShooterIO {
   }
 
   public void setVelocity(AngularVelocity velocity) {
-    flywheelMotor.setAngularVelocity(velocity.in(RadiansPerSecond));
+    shooterMotor.setAngularVelocity(velocity.in(RadiansPerSecond));
   }
 
   public void setAngle(Angle angle) {

@@ -10,7 +10,6 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.aiming.AimParams;
-import frc.robot.subsystems.shooter.ShooterConstants.FlywheelConstants;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 
 public class Shooter extends SubsystemBase {
@@ -29,11 +28,11 @@ public class Shooter extends SubsystemBase {
   public Command shoot(Supplier<AimParams> params) {
     return this.run(() -> {
       io.setAngle(params.get().yaw.getMeasure());
-      io.setVelocity(RadiansPerSecond.of(params.get().velocity.in(MetersPerSecond) * 2 / FlywheelConstants.kRadius.in(Meters)));
+      io.setVelocity(RadiansPerSecond.of(params.get().velocity.in(MetersPerSecond) * ShooterConstants.kSpeedTransferPercentage * ShooterConstants.kRadius.in(Meters)));
     });
   }
 
   public Command reverse() {
-    return this.startEnd(() -> io.setVelocity(FlywheelConstants.kReverseVelocity), () -> io.setVelocity(RadiansPerSecond.zero()));
+    return this.startEnd(() -> io.setVelocity(ShooterConstants.kReverseVelocity), () -> io.setVelocity(RadiansPerSecond.zero()));
   }
 }
