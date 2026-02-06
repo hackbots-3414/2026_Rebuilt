@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -31,13 +32,16 @@ public final class ShooterConstants {
 
     protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
             .withSlot0(new Slot0Configs()
-                    .withKA(1.5)
+                    .withKA(0.6)
                     .withKS(0)
                     .withKV(0)
 
-                    .withKP(0)
+                    .withKP(8.0)
                     .withKI(0)
                     .withKD(0))
+
+            .withMotionMagic(new MotionMagicConfigs()
+                .withMotionMagicAcceleration(4.0))
 
             .withMotorOutput(new MotorOutputConfigs()
                     .withNeutralMode(NeutralModeValue.Coast)
@@ -73,17 +77,21 @@ public final class ShooterConstants {
                 .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                         .withForwardSoftLimitEnable(true)
                         .withReverseSoftLimitEnable(true)
-                        .withForwardSoftLimitThreshold(0.06)
+                        .withForwardSoftLimitThreshold(0.065)
                         .withReverseSoftLimitThreshold(0.0))
 
                 .withSlot0(new Slot0Configs()
-                        .withKA(0.0)
+                        .withKA(0.2)
                         .withKS(0)
-                        .withKV(0)
+                        .withKV(10)
 
-                        .withKP(0.0)
+                        .withKP(40.0)
                         .withKI(0)
                         .withKD(0))
+                
+                .withMotionMagic(new MotionMagicConfigs()
+                        .withMotionMagicCruiseVelocity(3.0)
+                        .withMotionMagicAcceleration(4))
 
                 .withMotorOutput(new MotorOutputConfigs()
                         .withNeutralMode(NeutralModeValue.Brake)
@@ -97,8 +105,8 @@ public final class ShooterConstants {
 
           protected static final CANcoderConfiguration kCANcoderConfig = new CANcoderConfiguration()
             .withMagnetSensor(new MagnetSensorConfigs()
-                .withAbsoluteSensorDiscontinuityPoint(1.0)
-                .withMagnetOffset(-0.144043));
+                .withAbsoluteSensorDiscontinuityPoint(0.7) // We'll never get to this point
+                .withMagnetOffset(0.24755859375));
 
 
         protected static final int kSlot = 0;
