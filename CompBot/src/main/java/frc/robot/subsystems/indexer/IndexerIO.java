@@ -15,27 +15,27 @@ public interface IndexerIO {
   public void updateInputs(IndexerIOInputs inputs);
 
   class IndexerIOInputs {
-    public boolean motorConnected = false;
-    public Current supplyCurrent = Amps.zero();
-    public Current torqueCurrent = Amps.zero();
-    public Current statorCurrent = Amps.zero();
-    public Voltage voltage = Volts.zero();
-    public Temperature temperature = Celsius.zero();
-    public AngularVelocity velocity = RotationsPerSecond.zero();
+    public boolean feedMotorConnected = false;
+    public Current feedSupplyCurrent = Amps.zero();
+    public Current feedTorqueCurrent = Amps.zero();
+    public Current feedStatorCurrent = Amps.zero();
+    public Voltage feedVoltage = Volts.zero();
+    public Temperature feedTemperature = Celsius.zero();
+    public AngularVelocity feedVelocity = RotationsPerSecond.zero();
 
     public IndexerIOInputs() {
       OnboardLogger log = new OnboardLogger("Indexer");
-      log.registerBoolean("Motor Connected", () -> motorConnected);
-      log.registerMeasurment("Supply Current", () -> supplyCurrent, Amps);
-      log.registerMeasurment("Torque Current", () -> torqueCurrent, Amps);
-      log.registerMeasurment("Stator Current", () -> statorCurrent, Amps);
-      log.registerMeasurment("Voltage", () -> voltage, Volts);
-      log.registerMeasurment("Temperature", () -> temperature, Celsius);
-      log.registerMeasurment("Velocity", () -> velocity, RotationsPerSecond);
+      log.registerBoolean("Feeder Motor Connected", () -> feedMotorConnected);
+      log.registerMeasurment("Feeder Supply Current", () -> feedSupplyCurrent, Amps);
+      log.registerMeasurment("Feeder Torque Current", () -> feedTorqueCurrent, Amps);
+      log.registerMeasurment("Feeder Stator Current", () -> feedStatorCurrent, Amps);
+      log.registerMeasurment("Feeder Voltage", () -> feedVoltage, Volts);
+      log.registerMeasurment("Feeder Temperature", () -> feedTemperature, Celsius);
+      log.registerMeasurment("Feeder Velocity", () -> feedVelocity, RotationsPerSecond);
     }
   }
 
-  public void setVoltage(Voltage voltage);
+  public void setFeedVoltage(Voltage voltage);
 
   public void stop();
 }

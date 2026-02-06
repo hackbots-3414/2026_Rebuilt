@@ -12,22 +12,25 @@ import edu.wpi.first.units.measure.Voltage;
 
 public final class IndexerConstants {
 
-  protected static final int kMotorID = 60;
+  public static final class FeederConstants {
+    protected static final int kMotorID = 2;
 
-  protected static final double kSupplyCurrentLimit = 40.0;
-  protected static final double kStatorCurrentLimit = 125.0;
+    protected static final double kSupplyCurrentLimit = 40.0;
+    protected static final double kStatorCurrentLimit = 125.0;
 
-  protected static final Voltage kIndexVoltage = Volts.of(0.2);
-  protected static final Voltage kEjectVoltage = Volts.of(-0.2);
+    protected static final Voltage kIndexVoltage = Volts.of(0.2);
+    protected static final Voltage kEjectVoltage = Volts.of(-0.2);
 
-  protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
-      .withMotorOutput(new MotorOutputConfigs()
-          .withNeutralMode(NeutralModeValue.Brake)
-          .withInverted(InvertedValue.Clockwise_Positive))
+    protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
+        .withMotorOutput(new MotorOutputConfigs()
+            .withNeutralMode(NeutralModeValue.Brake)
+            .withInverted(InvertedValue.Clockwise_Positive))
 
-      .withCurrentLimits(new CurrentLimitsConfigs()
-          .withSupplyCurrentLimitEnable(true)
-          .withStatorCurrentLimitEnable(true)
-          .withSupplyCurrentLimit(kSupplyCurrentLimit)
-          .withStatorCurrentLimit(kStatorCurrentLimit));
+        .withCurrentLimits(new CurrentLimitsConfigs()
+            .withSupplyCurrentLimitEnable(true)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimit(kSupplyCurrentLimit)
+            .withStatorCurrentLimit(kStatorCurrentLimit));
+  }
+
 }
