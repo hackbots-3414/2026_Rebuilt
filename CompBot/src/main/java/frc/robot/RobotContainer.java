@@ -25,8 +25,10 @@ public class RobotContainer {
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
+    
   }
-
+  
+  
   public Command getAutonomousCommand() {
     return Commands.none();
   }

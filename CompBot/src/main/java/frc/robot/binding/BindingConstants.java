@@ -10,7 +10,7 @@ public class BindingConstants {
         public static final int kRotAxis = 3;
 
         public static final boolean kFlipX = false;
-        public static final boolean kFlipY = true;
+        public static final boolean kFlipY = false;
         public static final boolean kFlipRot = false;
     }
 

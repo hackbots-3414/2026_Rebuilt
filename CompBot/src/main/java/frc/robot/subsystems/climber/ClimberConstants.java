@@ -18,7 +18,7 @@ public final class ClimberConstants {
 
   protected static final int kMotorID = 60;
 
-  protected static final double kSupplyCurrentLimit = 40.0;
+  protected static final double kSupplyCurrentLimit =   0.0;
   protected static final double kStatorCurrentLimit = 125.0;
 
   protected static enum ClimberPositions {

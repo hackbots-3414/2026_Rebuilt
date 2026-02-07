@@ -30,16 +30,18 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.FieldManager;
 import frc.robot.Robot;
 import frc.robot.aiming.AimParams;
-import frc.robot.generated.TestBotTunerConstants;
-import frc.robot.generated.TestBotTunerConstants.TunerSwerveDrivetrain;
+import frc.robot.generated.TunerConstants;
+import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.util.OnboardLogger;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
@@ -54,7 +56,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean m_hasAppliedOperatorPerspective = false;
 
-  private double maxSpeed = 1.0 * TestBotTunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+  private double maxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   private double maxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -161,6 +163,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     state = getState();
     OnboardLogger ologger = new OnboardLogger("Drivetrain");
     ologger.registerBoolean("Received vision udpate", () -> hasReceivedVisionUpdate);
+    sysIDCommands();
   }
 
   /**
@@ -194,6 +197,14 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutineToApply.dynamic(direction);
   }
+
+   public Command sysIdQuasistaticSteer(SysIdRoutine.Direction direction) {
+        return m_sysIdRoutineSteer.quasistatic(direction);
+    }
+
+    public Command sysIdDynamicSteer(SysIdRoutine.Direction direction) {
+        return m_sysIdRoutineSteer.dynamic(direction);
+    }
 
   @Override
   public void periodic() {
@@ -350,5 +361,17 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return new Trigger(() -> rotationOverride.isPresent()
         && Math.abs(rotationOverride.get().yaw.relativeTo(robotPose().getRotation())
             .getDegrees()) < rotationOverride.get().deltaYaw.getDegrees());
+  }
+
+  private void sysIDCommands(){
+    SmartDashboard.putData("sysID/dynamic forward steer", sysIdDynamicSteer(Direction.kForward));
+    SmartDashboard.putData("sysID/dynamic reverse steer", sysIdDynamicSteer(Direction.kReverse));
+    SmartDashboard.putData("sysID/dynamic forward drive", sysIdDynamic(Direction.kForward));
+    SmartDashboard.putData("sysID/dynamic reverse drive", sysIdDynamic(Direction.kReverse));
+    SmartDashboard.putData("sysID/quasistatic forward drive", sysIdQuasistatic(Direction.kForward));
+    SmartDashboard.putData("sysID/quasistatic reverse drive", sysIdQuasistatic(Direction.kReverse));
+    SmartDashboard.putData("sysID/quasistatic reverse steer", sysIdQuasistaticSteer(Direction.kReverse));
+    SmartDashboard.putData("sysID/ quasistatic forward steer", sysIdQuasistaticSteer(Direction.kForward));
+
   }
 }

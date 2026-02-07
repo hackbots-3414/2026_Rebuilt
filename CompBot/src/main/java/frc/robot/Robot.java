@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     if (!hasStartedVision) {
-      robotContainer.aprilTagVisionHandler.startThread();
+      // robotContainer.aprilTagVisionHandler.startThread();
       hasStartedVision = true;
     }
   }
