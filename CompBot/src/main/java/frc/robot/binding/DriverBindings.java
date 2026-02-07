@@ -25,7 +25,5 @@ public class DriverBindings implements Binder {
         // Turret control
         controller.button(1).toggleOnTrue(superstructure.build(new AimTrack()));
         controller.button(2).whileTrue(superstructure.build(new AimTrack()));
-
-        superstructure.state.shootReady().whileTrue(superstructure.build(new FuelShotSim()).repeatedly());
     }
 }
