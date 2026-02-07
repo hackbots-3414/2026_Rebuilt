@@ -21,7 +21,7 @@ public class ClimberIOHardware implements ClimberIO {
   private Voltage lastVoltage = Volts.zero();
 
   public ClimberIOHardware() {
-    motor = new TalonFX(ClimberConstants.kMotorID);
+    motor = new TalonFX(ClimberConstants.kMotorId);
     motor.getConfigurator().apply(ClimberConstants.kMotorConfig);
 
     StatusSignalUtil.registerRioSignals(

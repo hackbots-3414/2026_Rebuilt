@@ -12,7 +12,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.AngularAcceleration;
 
 public final class ShooterConstants {
-  protected static final int kMotorID = 60;
+  protected static final int kMotorId = 60;
 
   protected static final double kSupplyCurrentLimit = 40.0;
   protected static final double kStatorCurrentLimit = 125.0;

@@ -18,7 +18,7 @@ public class ShooterIOHardware implements ShooterIO {
           .withAcceleration(ShooterConstants.kAcceleration);
 
   public ShooterIOHardware() {
-    motor = new TalonFX(ShooterConstants.kMotorID);
+    motor = new TalonFX(ShooterConstants.kMotorId);
     motor.getConfigurator().apply(ShooterConstants.kMotorConfig);
 
     StatusSignalUtil.registerRioSignals(

@@ -14,7 +14,7 @@ public class IntakeIOHardware implements IntakeIO {
     private final TorqueCurrentFOC control = new TorqueCurrentFOC(0);
 
     public IntakeIOHardware() {
-        motor = new TalonFX(IntakeConstants.kMotorID);
+        motor = new TalonFX(IntakeConstants.kMotorId);
         motor.getConfigurator().apply(IntakeConstants.kMotorConfig);
     }
 

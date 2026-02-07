@@ -23,6 +23,14 @@ public interface IndexerIO {
     public Temperature feedTemperature = Celsius.zero();
     public AngularVelocity feedVelocity = RotationsPerSecond.zero();
 
+    public boolean spindexerMotorConnected = false;
+    public Current spindexerSupplyCurrent = Amps.zero();
+    public Current spindexerTorqueCurrent = Amps.zero();
+    public Current spindexerStatorCurrent = Amps.zero();
+    public Voltage spindexerVoltage = Volts.zero();
+    public Temperature spindexerTemperature = Celsius.zero();
+    public AngularVelocity spindexerVelocity = RotationsPerSecond.zero();
+
     public IndexerIOInputs() {
       OnboardLogger log = new OnboardLogger("Indexer");
       log.registerBoolean("Feeder Motor Connected", () -> feedMotorConnected);
@@ -32,10 +40,17 @@ public interface IndexerIO {
       log.registerMeasurment("Feeder Voltage", () -> feedVoltage, Volts);
       log.registerMeasurment("Feeder Temperature", () -> feedTemperature, Celsius);
       log.registerMeasurment("Feeder Velocity", () -> feedVelocity, RotationsPerSecond);
+
+      log.registerBoolean("Spindexer Motor Connected", () -> spindexerMotorConnected);
+      log.registerMeasurment("Spindexer Supply Current", () -> spindexerSupplyCurrent, Amps);
+      log.registerMeasurment("Spindexer Torque Current", () -> spindexerTorqueCurrent, Amps);
+      log.registerMeasurment("Spindexer Stator Current", () -> spindexerStatorCurrent, Amps);
+      log.registerMeasurment("Spindexer Voltage", () -> spindexerVoltage, Volts);
+      log.registerMeasurment("Spindexer Temperature", () -> spindexerTemperature, Celsius);
+      log.registerMeasurment("Spindexer Velocity", () -> spindexerVelocity, RotationsPerSecond);
     }
   }
 
   public void setFeedVoltage(Voltage voltage);
-
-  public void stop();
+  public void setSpindexerVoltage(Voltage voltage);
 }

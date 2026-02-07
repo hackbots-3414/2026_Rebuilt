@@ -10,10 +10,16 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Robot;
 
 public class IndexerIOSim implements IndexerIO {
-    private final DCMotorSim motor;
+    private final DCMotorSim feeder;
+    private final DCMotorSim spindexer;
 
     public IndexerIOSim() {
-        motor = new DCMotorSim(
+        feeder = new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 2, 10),
+            DCMotor.getKrakenX60Foc(1),
+            0.01,
+            0.02);
+        spindexer = new DCMotorSim(
             LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 2, 10),
             DCMotor.getKrakenX60Foc(1),
             0.01,
@@ -21,18 +27,18 @@ public class IndexerIOSim implements IndexerIO {
     }
 
     public void updateInputs(IndexerIOInputs inputs) {
-        motor.update(Robot.kDefaultPeriod);
+        feeder.update(Robot.kDefaultPeriod);
+        spindexer.update(Robot.kDefaultPeriod);
+        
         inputs.feedMotorConnected = true;
-        inputs.feedSupplyCurrent = Amps.of(motor.getCurrentDrawAmps());
-        inputs.feedVoltage = Volts.of(motor.getInputVoltage());
-        inputs.feedVelocity = motor.getAngularVelocity();
+        inputs.feedSupplyCurrent = Amps.of(feeder.getCurrentDrawAmps());
+        inputs.feedVoltage = Volts.of(feeder.getInputVoltage());
+        inputs.feedVelocity = feeder.getAngularVelocity();
     }
 
     public void setFeedVoltage(Voltage voltage) {
-        motor.setInputVoltage(voltage.baseUnitMagnitude());
+        feeder.setInputVoltage(voltage.baseUnitMagnitude());
     }
 
-    public void stop() {
-        motor.setInputVoltage(Volts.of(0).baseUnitMagnitude());
-    }
+    public void setSpindexerVoltage(Voltage voltage) {}
 }

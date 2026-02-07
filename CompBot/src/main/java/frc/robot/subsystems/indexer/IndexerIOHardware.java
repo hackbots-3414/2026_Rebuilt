@@ -1,59 +1,86 @@
 package frc.robot.subsystems.indexer;
 
-import static edu.wpi.first.units.Units.Volts;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.indexer.IndexerConstants.FeederConstants;
+import frc.robot.subsystems.indexer.IndexerConstants.SpindexerConstants;
 import frc.robot.util.StatusSignalUtil;
 
 public class IndexerIOHardware implements IndexerIO {
-    private final TalonFX feedMotor;
+  private final TalonFX feeder;
+  private final TalonFX spindexer;
 
-    private Voltage lastFeedVoltage = Volts.zero();
+  private final VoltageOut feederControl = new VoltageOut(0.0);
+  private final VoltageOut spindexerControl = new VoltageOut(0.0);
 
-    public IndexerIOHardware() {
-        feedMotor = new TalonFX(FeederConstants.kMotorID);
-        feedMotor.getConfigurator().apply(FeederConstants.kMotorConfig);
+  public IndexerIOHardware() {
+    feeder = new TalonFX(FeederConstants.kMotorId);
+    feeder.getConfigurator().apply(FeederConstants.kMotorConfig);
 
-        StatusSignalUtil.registerRioSignals(
-            feedMotor.getSupplyCurrent(false),
-            feedMotor.getTorqueCurrent(false),
-            feedMotor.getStatorCurrent(false),
-            feedMotor.getMotorVoltage(false),
-            feedMotor.getDeviceTemp(false),
-            feedMotor.getVelocity(false)
-        );
+    spindexer = new TalonFX(SpindexerConstants.kMotorId);
+    spindexer.getConfigurator().apply(SpindexerConstants.kMotorConfig);
+
+    StatusSignalUtil.registerRioSignals(
+        feeder.getSupplyCurrent(false),
+        feeder.getTorqueCurrent(false),
+        feeder.getStatorCurrent(false),
+        feeder.getMotorVoltage(false),
+        feeder.getDeviceTemp(false),
+        feeder.getVelocity(false),
+
+        spindexer.getSupplyCurrent(false),
+        spindexer.getTorqueCurrent(false),
+        spindexer.getStatorCurrent(false),
+        spindexer.getMotorVoltage(false),
+        spindexer.getDeviceTemp(false),
+        spindexer.getVelocity(false));
+  }
+
+  public void updateInputs(IndexerIOInputs inputs) {
+    inputs.feedMotorConnected = BaseStatusSignal.isAllGood(
+        feeder.getSupplyCurrent(false),
+        feeder.getTorqueCurrent(false),
+        feeder.getStatorCurrent(false),
+        feeder.getMotorVoltage(false),
+        feeder.getDeviceTemp(false),
+        feeder.getVelocity(false));
+    inputs.feedSupplyCurrent = feeder.getSupplyCurrent(false).getValue();
+    inputs.feedTorqueCurrent = feeder.getTorqueCurrent(false).getValue();
+    inputs.feedStatorCurrent = feeder.getStatorCurrent(false).getValue();
+    inputs.feedVoltage = feeder.getMotorVoltage(false).getValue();
+    inputs.feedTemperature = feeder.getDeviceTemp(false).getValue();
+    inputs.feedVelocity = feeder.getVelocity(false).getValue();
+
+    inputs.spindexerMotorConnected = BaseStatusSignal.isAllGood(
+        spindexer.getSupplyCurrent(false),
+        spindexer.getTorqueCurrent(false),
+        spindexer.getStatorCurrent(false),
+        spindexer.getMotorVoltage(false),
+        spindexer.getDeviceTemp(false),
+        spindexer.getVelocity(false));
+    inputs.spindexerSupplyCurrent = spindexer.getSupplyCurrent(false).getValue();
+    inputs.spindexerTorqueCurrent = spindexer.getTorqueCurrent(false).getValue();
+    inputs.spindexerStatorCurrent = spindexer.getStatorCurrent(false).getValue();
+    inputs.spindexerVoltage = spindexer.getMotorVoltage(false).getValue();
+    inputs.spindexerTemperature = spindexer.getDeviceTemp(false).getValue();
+    inputs.spindexerVelocity = spindexer.getVelocity(false).getValue();
+  }
+
+  public void setFeedVoltage(Voltage voltage) {
+    if (!voltage.equals(feederControl.getOutputMeasure())) {
+      feeder.setControl(feederControl.withOutput(voltage));
     }
+  }
 
-    public void updateInputs(IndexerIOInputs inputs) {
-        inputs.feedMotorConnected = BaseStatusSignal.isAllGood(
-            feedMotor.getSupplyCurrent(false),
-            feedMotor.getTorqueCurrent(false),
-            feedMotor.getStatorCurrent(false),
-            feedMotor.getMotorVoltage(false),
-            feedMotor.getDeviceTemp(false),
-            feedMotor.getVelocity(false)
-        );
-        inputs.feedSupplyCurrent = feedMotor.getSupplyCurrent(false).getValue();
-        inputs.feedTorqueCurrent = feedMotor.getTorqueCurrent(false).getValue();
-        inputs.feedStatorCurrent = feedMotor.getStatorCurrent(false).getValue();
-        inputs.feedVoltage = feedMotor.getMotorVoltage(false).getValue();
-        inputs.feedTemperature = feedMotor.getDeviceTemp(false).getValue();
-        inputs.feedVelocity = feedMotor.getVelocity(false).getValue();
+  public void setSpindexerVoltage(Voltage voltage) {
+    if (!voltage.equals(spindexerControl.getOutputMeasure())) {
+      feeder.setControl(spindexerControl.withOutput(voltage));
     }
+  }
 
-    public void setFeedVoltage(Voltage voltage) {
-        if (!voltage.equals(lastFeedVoltage)) {
-            feedMotor.setControl(new VoltageOut(voltage));
-            lastFeedVoltage = voltage;
-        }
-    }
-
-    public void stop() {
-        feedMotor.stopMotor();
-    }
+  public void stop() {
+    feeder.stopMotor();
+  }
 }
