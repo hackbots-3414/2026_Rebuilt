@@ -19,7 +19,7 @@ public class AutopilotConstants {
     public static final Autopilot kAutopilot = new Autopilot(kProfile);
 
     public static final class HeadingGains {
-        protected static final double kP = 30.0;
+        protected static final double kP = 4.0;
         protected static final double kI = 0.0;
         protected static final double kD = 0.0;
     }

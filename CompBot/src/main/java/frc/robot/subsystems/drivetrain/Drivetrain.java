@@ -393,4 +393,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         }
       });
   }
+
+  public Command resetOdometry(Pose2d pose) {
+    return this.runOnce(() -> resetPose(pose)).ignoringDisable(true);
+  }
 }
