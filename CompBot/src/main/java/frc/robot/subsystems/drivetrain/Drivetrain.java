@@ -60,13 +60,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity);
-  private final SwerveRequest.FieldCentricFacingAngle driveOverride =
-      new SwerveRequest.FieldCentricFacingAngle()
-          .withDriveRequestType(DriveRequestType.Velocity)
-          .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
-          .withHeadingPID(30, 0, 0);
-
-  private Optional<AimParams> rotationOverride = Optional.empty();
 
   private SwerveDriveState state;
   private final StructLogEntry<Pose2d> poseLogEntry;
@@ -287,12 +280,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       Translation2d operatorRelative =
           new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
       Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
-      if (rotationOverride.isPresent()) {
-        return driveOverride
-            .withVelocityX(fieldRelative.getX())
-            .withVelocityY(fieldRelative.getY())
-            .withTargetDirection(rotationOverride.get().yaw);
-      }
       return drive
           .withVelocityX(fieldRelative.getX())
           .withVelocityY(fieldRelative.getY())
@@ -335,20 +322,5 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   public Command rotate() {
     return this.applyRequest(
         () -> new SwerveRequest.RobotCentric().withRotationalRate(0.5 * Math.PI));
-  }
-
-  public Command track(Supplier<AimParams> params) {
-    return Commands.run(() -> rotationOverride = Optional.of(params.get()))
-        .finallyDo(() -> rotationOverride = Optional.empty());
-  }
-
-  public Optional<AimParams> aimParams() {
-    return rotationOverride;
-  }
-
-  public Trigger tracked() {
-    return new Trigger(() -> rotationOverride.isPresent()
-        && Math.abs(rotationOverride.get().yaw.relativeTo(robotPose().getRotation())
-            .getDegrees()) < rotationOverride.get().deltaYaw.getDegrees());
   }
 }
