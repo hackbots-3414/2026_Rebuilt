@@ -5,6 +5,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.aiming.AimParams.AimStatus;
 import frc.robot.superstructure.StateManager;
 
@@ -102,6 +103,7 @@ public class PhysicsAim implements AimStrategy {
     double b = -finalDescentSpeed;
     double c = -dz;
     double discriminant = b * b - 4 * a * c;
+    DataLogManager.log("disc: " + discriminant);
     double t = (-b + Math.sqrt(discriminant)) / (2 * a);
 
     // Solve for the initial velocity components given the time

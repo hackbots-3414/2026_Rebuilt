@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimParams;
@@ -63,9 +62,11 @@ public class StateManager {
   }
 
   public Pose3d aimTarget() {
-    // For now, just assume that we're targeting the nearest hub.
-    // TODO: add feeding logic as well.
-    return FieldUtils.hub();
+    if (FieldUtils.inAllianceZone(robotPose())) {
+      return FieldUtils.hub();
+    } else {
+      return FieldUtils.feedTarget();
+    }
   }
 
   public Trigger shootReady() {
