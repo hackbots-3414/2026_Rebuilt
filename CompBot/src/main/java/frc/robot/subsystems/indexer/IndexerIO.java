@@ -52,5 +52,6 @@ public interface IndexerIO {
   }
 
   public void setFeedVoltage(Voltage voltage);
+
   public void setSpindexerVoltage(Voltage voltage);
 }
