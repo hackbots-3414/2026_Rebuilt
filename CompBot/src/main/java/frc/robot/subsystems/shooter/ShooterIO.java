@@ -72,7 +72,7 @@ public interface ShooterIO {
       log.registerMeasurment("Hood Voltage", () -> hoodVoltage, Volts);
       log.registerMeasurment("Hood Temperature", () -> hoodTemperature, Celsius);
       log.registerMeasurment("Hood Velocity", () -> hoodVelocity, RotationsPerSecond);
-      log.registerMeasurment("Hood Angle", () -> hoodAngle, Revolutions);
+      log.registerMeasurment("Hood Position", () -> hoodAngle, Revolutions);
 
       log.registerBoolean("Hood CANcoder Connected", () -> hoodCANcoderConnected);
       log.registerMeasurment("Hood CANcoder Position", () -> hoodCANcoderPosition, Rotations);
