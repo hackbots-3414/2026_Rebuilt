@@ -1,8 +1,7 @@
 package frc.robot.subsystems.shooter;
 
-import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.Follower;
@@ -22,6 +21,7 @@ public class ShooterIOHardware implements ShooterIO {
   private final CANcoder hoodCANcoder;
 
   private AngularVelocity lastVelocity = RotationsPerSecond.zero();
+  private Angle lastAngle = Rotations.zero();
 
   private final MotionMagicVelocityTorqueCurrentFOC shooterControl =
       new MotionMagicVelocityTorqueCurrentFOC(0);
@@ -116,7 +116,7 @@ public class ShooterIOHardware implements ShooterIO {
     inputs.hoodVoltage = hoodMotor.getMotorVoltage(false).getValue();
     inputs.hoodTemperature = hoodMotor.getDeviceTemp(false).getValue();
     inputs.hoodVelocity = hoodMotor.getVelocity(false).getValue();
-    inputs.hoodAngle = hoodMotor.getPosition(false).getValue();
+    inputs.hoodPosition = hoodMotor.getPosition(false).getValue();
 
     inputs.hoodCANcoderConnected = BaseStatusSignal.isAllGood(
         hoodCANcoder.getPosition(false));
@@ -131,7 +131,9 @@ public class ShooterIOHardware implements ShooterIO {
   }
 
   public void setAngle(Angle angle) {
-    Angle mechanismAngle = angle.minus(HoodConstants.kOffset);
-    hoodMotor.setControl(hoodControl.withPosition(mechanismAngle));
+    if (!angle.equals(lastAngle)) {
+      hoodMotor.setControl(hoodControl.withPosition(angle));
+      lastAngle = angle;
+    }
   }
 }

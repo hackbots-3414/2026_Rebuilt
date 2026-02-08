@@ -48,7 +48,8 @@ public class StateManager {
   }
 
   public Trigger shootReady() {
-    return subsystems.turret().tracked(this);
+    return subsystems.turret().tracked(this::aimParams)
+        .and(subsystems.shooter().tracked(this::aimParams));
   }
 
   public AimParams aimParams() {

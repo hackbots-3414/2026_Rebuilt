@@ -2,18 +2,15 @@ package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.CommandBasedTest;
 import frc.robot.aiming.AimParams;
+import frc.robot.subsystems.shooter.ShooterConstants.HoodConstants;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 
 public class ShooterTest extends CommandBasedTest {
@@ -34,7 +31,7 @@ public class ShooterTest extends CommandBasedTest {
     // These methods should have been called from the running command.
     verify(mockShooterIO).setVelocity(ShooterConstants.kMaxRotationalSpeed
         .times(params.velocity.div(ShooterConstants.kMaxLinearSpeed)));
-    verify(mockShooterIO).setAngle(Degrees.of(35));
+    verify(mockShooterIO).setAngle(Degrees.of(35).minus(HoodConstants.kOffset));
 
     CommandScheduler.getInstance().schedule(shooter.reverse());
     CommandScheduler.getInstance().run();

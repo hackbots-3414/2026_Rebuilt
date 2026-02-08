@@ -23,20 +23,20 @@ public class AimParams {
   /** the velocity that the fuel should be ejected out at, relative to the robot. */
   public LinearVelocity velocity = MetersPerSecond.zero();
   /** the tolerated error in the shot's pitch */
-  public Rotation2d deltaPitch = Rotation2d.fromDegrees(2);
+  public Rotation2d deltaPitch = Rotation2d.fromDegrees(4);
   /** the tolerated error in the shot's yaw */
   public Rotation2d deltaYaw = Rotation2d.fromDegrees(2);
   /** the tolerated error in the shot's velocity */
-  public LinearVelocity deltaVelocity = MetersPerSecond.of(0.05);
+  public LinearVelocity deltaVelocity = MetersPerSecond.of(0.35);
 
   private OnboardLogger ologger = new OnboardLogger("AimParams");
 
   public AimParams() {
-    ologger.registerMeasurment("Pitch", () -> pitch.getMeasure(), Degrees);
-    ologger.registerMeasurment("Yaw", () -> yaw.getMeasure(), Degrees);
-    ologger.registerMeasurment("Velocity", () -> velocity, MetersPerSecond);
-    ologger.registerMeasurment("Error/Pitch", () -> deltaPitch.getMeasure(), Degrees);
-    ologger.registerMeasurment("Error/Yaw", () -> deltaYaw.getMeasure(), Degrees);
-    ologger.registerMeasurment("Error/Velocity", () -> deltaVelocity, MetersPerSecond);
+    ologger.registerMeasurement("Pitch", () -> pitch.getMeasure(), Degrees);
+    ologger.registerMeasurement("Yaw", () -> yaw.getMeasure(), Degrees);
+    ologger.registerMeasurement("Velocity", () -> velocity, MetersPerSecond);
+    ologger.registerMeasurement("Error/Pitch", () -> deltaPitch.getMeasure(), Degrees);
+    ologger.registerMeasurement("Error/Yaw", () -> deltaYaw.getMeasure(), Degrees);
+    ologger.registerMeasurement("Error/Velocity", () -> deltaVelocity, MetersPerSecond);
   }
 }
