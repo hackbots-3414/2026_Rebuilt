@@ -1,8 +1,10 @@
 package frc.robot.aiming;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.LinearVelocity;
+import frc.robot.util.OnboardLogger;
 
 /**
  * The parameters of a shooter at a particlar moment in time. This is the type that is returned when
@@ -22,11 +24,11 @@ public class AimParams {
   /** the velocity that the fuel should be ejected out at, relative to the robot. */
   public LinearVelocity velocity = MetersPerSecond.zero();
   /** the tolerated error in the shot's pitch */
-  public Rotation2d deltaPitch = Rotation2d.fromDegrees(2);
+  public Rotation2d deltaPitch = Rotation2d.fromDegrees(4);
   /** the tolerated error in the shot's yaw */
   public Rotation2d deltaYaw = Rotation2d.fromDegrees(2);
   /** the tolerated error in the shot's velocity */
-  public LinearVelocity deltaVelocity = MetersPerSecond.of(0.05);
+  public LinearVelocity deltaVelocity = MetersPerSecond.of(0.35);
 
   public enum AimStatus {
     /** The program has not yet evaluated the valididty of this parameters object */
@@ -52,5 +54,13 @@ public class AimParams {
     this.status = status;
     return this;
   }
+  public AimParams() {
+    OnboardLogger log = new OnboardLogger("Aim Params");
+    log.registerMeasurement("Pitch", () -> pitch.getMeasure(), Degrees);
+    log.registerMeasurement("Yaw", () -> yaw.getMeasure(), Degrees);
+    log.registerMeasurement("Velocity", () -> velocity, MetersPerSecond);
+    log.registerMeasurement("Error/Pitch", () -> deltaPitch.getMeasure(), Degrees);
+    log.registerMeasurement("Error/Yaw", () -> deltaYaw.getMeasure(), Degrees);
+    log.registerMeasurement("Error/Velocity", () -> deltaVelocity, MetersPerSecond);
+  }
 }
-

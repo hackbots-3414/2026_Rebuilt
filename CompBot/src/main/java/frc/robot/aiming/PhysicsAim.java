@@ -103,7 +103,6 @@ public class PhysicsAim implements AimStrategy {
     double b = -finalDescentSpeed;
     double c = -dz;
     double discriminant = b * b - 4 * a * c;
-    DataLogManager.log("disc: " + discriminant);
     double t = (-b + Math.sqrt(discriminant)) / (2 * a);
 
     // Solve for the initial velocity components given the time

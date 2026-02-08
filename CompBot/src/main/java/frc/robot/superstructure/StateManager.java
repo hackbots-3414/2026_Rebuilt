@@ -26,6 +26,7 @@ public class StateManager {
           Rotation2d.fromDegrees(72.0),
           MetersPerSecond.of(18)),
       2, 10);
+
   private AimParams params = AimParams.kImpossible;
 
   public StateManager(Subsystems subsystems) {
@@ -38,12 +39,12 @@ public class StateManager {
     log.registerBoolean("Shoot Ready", shootReady());
 
     log.registerString("Aim params/Status", () -> params.status.toString());
-    log.registerMeasurment("Aim params/Pitch", () -> params.pitch.getMeasure(), Degrees);
-    log.registerMeasurment("Aim params/Yaw", () -> params.yaw.getMeasure(), Degrees);
-    log.registerMeasurment("Aim params/Velocity", () -> params.velocity, MetersPerSecond);
-    log.registerMeasurment("Aim params/Error/Pitch", () -> params.deltaPitch.getMeasure(), Degrees);
-    log.registerMeasurment("Aim params/Error/Yaw", () -> params.deltaYaw.getMeasure(), Degrees);
-    log.registerMeasurment("Aim params/Error/Velocity", () -> params.deltaVelocity,
+    log.registerMeasurement("Aim params/Pitch", () -> params.pitch.getMeasure(), Degrees);
+    log.registerMeasurement("Aim params/Yaw", () -> params.yaw.getMeasure(), Degrees);
+    log.registerMeasurement("Aim params/Velocity", () -> params.velocity, MetersPerSecond);
+    log.registerMeasurement("Aim params/Error/Pitch", () -> params.deltaPitch.getMeasure(), Degrees);
+    log.registerMeasurement("Aim params/Error/Yaw", () -> params.deltaYaw.getMeasure(), Degrees);
+    log.registerMeasurement("Aim params/Error/Velocity", () -> params.deltaVelocity,
         MetersPerSecond);
   }
 
@@ -70,7 +71,9 @@ public class StateManager {
   }
 
   public Trigger shootReady() {
-    return subsystems.turret().tracked(this).and(() -> params.isOk());
+    return subsystems.turret().tracked(this::aimParams)
+        .and(subsystems.shooter().tracked(this::aimParams))
+        .and(() -> params.isOk());
   }
 
   public AimParams aimParams() {

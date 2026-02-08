@@ -39,7 +39,6 @@ public class PhysicsAimTest {
     Rotation2d angle2 = Rotation2d.fromDegrees(-180);
     Rotation2d difference = angle1.minus(angle2);
     double diff = MathUtil.angleModulus(difference.getRadians());
-    System.out.println(diff);
     assertTrue(Math.abs(diff) < 1e-3);
   }
 }
