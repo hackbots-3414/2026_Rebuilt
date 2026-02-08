@@ -94,12 +94,12 @@ public class ShooterIOHardware implements ShooterIO {
         shooter2Motor.getDeviceTemp(false),
         shooter2Motor.getVelocity(false));
 
-    inputs.shooter1SupplyCurrent = shooter2Motor.getSupplyCurrent(false).getValue();
-    inputs.shooter1TorqueCurrent = shooter2Motor.getTorqueCurrent(false).getValue();
-    inputs.shooter1StatorCurrent = shooter2Motor.getStatorCurrent(false).getValue();
-    inputs.shooter1Voltage = shooter2Motor.getMotorVoltage(false).getValue();
-    inputs.shooter1Temperature = shooter2Motor.getDeviceTemp(false).getValue();
-    inputs.shooter1Velocity = shooter2Motor.getVelocity(false).getValue();
+    inputs.shooter2SupplyCurrent = shooter2Motor.getSupplyCurrent(false).getValue();
+    inputs.shooter2TorqueCurrent = shooter2Motor.getTorqueCurrent(false).getValue();
+    inputs.shooter2StatorCurrent = shooter2Motor.getStatorCurrent(false).getValue();
+    inputs.shooter2Voltage = shooter2Motor.getMotorVoltage(false).getValue();
+    inputs.shooter2Temperature = shooter2Motor.getDeviceTemp(false).getValue();
+    inputs.shooter2Velocity = shooter2Motor.getVelocity(false).getValue();
 
     inputs.hoodMotorConnected = BaseStatusSignal.isAllGood(
         hoodMotor.getSupplyCurrent(false),
