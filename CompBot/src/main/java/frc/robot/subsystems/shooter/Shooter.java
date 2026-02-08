@@ -36,7 +36,7 @@ public class Shooter extends SubsystemBase {
 
     OnboardLogger log = new OnboardLogger("Shooter");
     log.registerMeasurement("Hood Reference", () -> hoodReference, Rotations);
-    log.registerMeasurement("Shooter Reference", () -> shooterReference, RotationsPerSecond);
+    log.registerMeasurement("Velocity Reference", () -> shooterReference, RotationsPerSecond);
   }
 
   @Override
