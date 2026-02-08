@@ -42,7 +42,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command reverse() {
-    return this.startEnd(() -> io.setVelocity(ShooterConstants.kReverseVelocity),
+    return this.startEnd(
+        () -> io.setVelocity(ShooterConstants.kReverseVelocity),
         () -> io.setVelocity(RadiansPerSecond.zero()));
   }
 }
