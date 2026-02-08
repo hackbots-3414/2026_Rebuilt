@@ -4,13 +4,14 @@ package frc.robot.subsystems.shooter;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.aiming.AimParams;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 
@@ -21,6 +22,11 @@ public class Shooter extends SubsystemBase {
 
   public Shooter(ShooterIO io) {
     this.io = io;
+
+    // When the robot is disabled, set velocity back to zero. This way, when it starts up again, it
+    // won't try to go all the way back to the last commanded velocity.
+    RobotModeTriggers.disabled().onTrue(
+        this.runOnce(() -> io.setVelocity(RotationsPerSecond.zero())).ignoringDisable(true));
   }
 
   @Override
