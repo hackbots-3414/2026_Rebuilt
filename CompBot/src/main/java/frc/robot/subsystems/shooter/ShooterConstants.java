@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -19,7 +18,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -39,7 +37,7 @@ public final class ShooterConstants {
                     .withKD(0))
 
             .withMotionMagic(new MotionMagicConfigs()
-                .withMotionMagicAcceleration(4.0))
+                .withMotionMagicAcceleration(30.0))
 
             .withMotorOutput(new MotorOutputConfigs()
                     .withNeutralMode(NeutralModeValue.Coast)
@@ -51,9 +49,8 @@ public final class ShooterConstants {
                     .withSupplyCurrentLimit(40)
                     .withStatorCurrentLimit(125));
 
-    public static final AngularAcceleration kAcceleration = RotationsPerSecondPerSecond.zero();
     public static final Distance kRadius = Inches.of(2);
-    public static final AngularVelocity kReverseVelocity = RotationsPerSecond.zero();
+    public static final AngularVelocity kReverseVelocity = RotationsPerSecond.of(30.0);
 
     public static final MotorAlignmentValue kMotor2Alignment = MotorAlignmentValue.Aligned;
 

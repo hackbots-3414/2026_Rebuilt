@@ -22,9 +22,9 @@ public class ShooterIOHardware implements ShooterIO {
   private final CANcoder hoodCANcoder;
 
   private AngularVelocity lastVelocity = RotationsPerSecond.zero();
-  private final MotionMagicVelocityTorqueCurrentFOC shooter1Control =
-      new MotionMagicVelocityTorqueCurrentFOC(0)
-          .withAcceleration(ShooterConstants.kAcceleration);
+
+  private final MotionMagicVelocityTorqueCurrentFOC shooterControl =
+      new MotionMagicVelocityTorqueCurrentFOC(0);
   private final DynamicMotionMagicTorqueCurrentFOC hoodControl =
       new DynamicMotionMagicTorqueCurrentFOC(0, 0, 0)
           .withSlot(ShooterConstants.HoodConstants.kSlot);
@@ -125,7 +125,7 @@ public class ShooterIOHardware implements ShooterIO {
 
   public void setVelocity(AngularVelocity velocity) {
     if (!velocity.equals(lastVelocity)) {
-      shooter1Motor.setControl(shooter1Control.withVelocity(velocity));
+      shooter1Motor.setControl(shooterControl.withVelocity(velocity));
       lastVelocity = velocity;
     }
   }
