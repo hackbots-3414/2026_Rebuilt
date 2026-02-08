@@ -28,6 +28,10 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
   }
 
+  /**
+   * This command tells the shooter to begin to track the desired target. When this command ends, it
+   * does NOT turn off the shooter; we don't want to have to get all the way back up to speed.
+   */
   public Command shoot(Supplier<AimParams> params) {
     return this.run(() -> {
       // The hood's angle is normal to the angle of the ball, i.e. the hood angle is 90 degrees
@@ -41,6 +45,7 @@ public class Shooter extends SubsystemBase {
     });
   }
 
+  /** Runs the shooter in reverse, to potentially remove any jams. */
   public Command reverse() {
     return this.startEnd(
         () -> io.setVelocity(ShooterConstants.kReverseVelocity),
