@@ -2,6 +2,7 @@ package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.Follower;
@@ -21,11 +22,12 @@ public class ShooterIOHardware implements ShooterIO {
   private final CANcoder hoodCANcoder;
 
   private AngularVelocity lastVelocity = RotationsPerSecond.zero();
-  private final MotionMagicVelocityTorqueCurrentFOC shooter1Control = new MotionMagicVelocityTorqueCurrentFOC(0)
-      .withAcceleration(ShooterConstants.kAcceleration);
-  private final DynamicMotionMagicTorqueCurrentFOC hoodControl = new DynamicMotionMagicTorqueCurrentFOC(Radians.zero(),
-      HoodConstants.kVelocity, HoodConstants.kAcceleration)
-      .withSlot(ShooterConstants.HoodConstants.kSlot);
+  private final MotionMagicVelocityTorqueCurrentFOC shooter1Control =
+      new MotionMagicVelocityTorqueCurrentFOC(0)
+          .withAcceleration(ShooterConstants.kAcceleration);
+  private final DynamicMotionMagicTorqueCurrentFOC hoodControl =
+      new DynamicMotionMagicTorqueCurrentFOC(0, 0, 0)
+          .withSlot(ShooterConstants.HoodConstants.kSlot);
 
   public ShooterIOHardware() {
     shooter1Motor = new TalonFX(ShooterConstants.kMotor1Id);
@@ -33,7 +35,8 @@ public class ShooterIOHardware implements ShooterIO {
 
     shooter2Motor = new TalonFX(ShooterConstants.kMotor2Id);
     shooter2Motor.getConfigurator().apply(ShooterConstants.kMotorConfig);
-    shooter2Motor.setControl(new Follower(ShooterConstants.kMotor1Id, ShooterConstants.kFlip2));
+    shooter2Motor
+        .setControl(new Follower(ShooterConstants.kMotor1Id, ShooterConstants.kMotor2Alignment));
 
     hoodMotor = new TalonFX(HoodConstants.kMotorID);
     hoodMotor.getConfigurator().apply(HoodConstants.kMotorConfig);
@@ -63,7 +66,7 @@ public class ShooterIOHardware implements ShooterIO {
         hoodMotor.getDeviceTemp(false),
         hoodMotor.getVelocity(false),
         hoodMotor.getPosition(false),
-        
+
         hoodCANcoder.getPosition(false));
   }
 
@@ -116,8 +119,7 @@ public class ShooterIOHardware implements ShooterIO {
     inputs.hoodAngle = hoodMotor.getPosition(false).getValue();
 
     inputs.hoodCANcoderConnected = BaseStatusSignal.isAllGood(
-      hoodCANcoder.getPosition(false)
-    );
+        hoodCANcoder.getPosition(false));
     inputs.hoodCANcoderPosition = hoodCANcoder.getPosition(false).getValue();
   }
 
