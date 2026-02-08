@@ -40,4 +40,3 @@ public class AimParams {
     ologger.registerMeasurment("Error/Velocity", () -> deltaVelocity, MetersPerSecond);
   }
 }
-

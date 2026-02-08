@@ -2,18 +2,14 @@ package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.subsystems.shooter.ShooterConstants.HoodConstants;
 import frc.robot.util.StatusSignalUtil;
 
@@ -133,6 +129,7 @@ public class ShooterIOHardware implements ShooterIO {
   }
 
   public void setAngle(Angle angle) {
-    hoodMotor.setControl(hoodControl.withPosition(angle));
+    Angle mechanismAngle = angle.minus(HoodConstants.kOffset);
+    hoodMotor.setControl(hoodControl.withPosition(mechanismAngle));
   }
 }
