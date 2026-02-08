@@ -3,7 +3,7 @@ package frc.robot.subsystems.shooter;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -25,9 +25,12 @@ public class ShooterIOHardware implements ShooterIO {
 
   private final MotionMagicVelocityTorqueCurrentFOC shooterControl =
       new MotionMagicVelocityTorqueCurrentFOC(0);
-  private final DynamicMotionMagicTorqueCurrentFOC hoodControl =
-      new DynamicMotionMagicTorqueCurrentFOC(0, 0, 0)
-          .withSlot(ShooterConstants.HoodConstants.kSlot);
+
+  // Using zero for the acceleration and jerk tell the control request to just use the
+  // device-configured MotionMagic configs found in the motor configuration. Position doesn't really
+  // matter, because it changes dynamically each time we apply the request.
+  private final DynamicMotionMagicVoltage hoodControl =
+      new DynamicMotionMagicVoltage(0, 0, 0).withSlot(ShooterConstants.HoodConstants.kSlot);
 
   public ShooterIOHardware() {
     shooter1Motor = new TalonFX(ShooterConstants.kMotor1Id);
