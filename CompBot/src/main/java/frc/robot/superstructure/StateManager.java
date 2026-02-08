@@ -31,20 +31,21 @@ public class StateManager {
 
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
-    OnboardLogger log = new OnboardLogger("Robot State");
+    OnboardLogger log = new OnboardLogger("Robot");
     log.registerPose("Robot Pose", this::robotPose);
     log.registerTransform2d("Robot Velocity", this::robotVelocity);
     log.registerPose3d("Aim Target", this::aimTarget);
     log.registerPose3d("Turret Position", this::turretPose);
     log.registerBoolean("Shoot Ready", shootReady());
 
-    log.registerString("Aim params/Status", () -> params.status.toString());
-    log.registerMeasurement("Aim params/Pitch", () -> params.pitch.getMeasure(), Degrees);
-    log.registerMeasurement("Aim params/Yaw", () -> params.yaw.getMeasure(), Degrees);
-    log.registerMeasurement("Aim params/Velocity", () -> params.velocity, MetersPerSecond);
-    log.registerMeasurement("Aim params/Error/Pitch", () -> params.deltaPitch.getMeasure(), Degrees);
-    log.registerMeasurement("Aim params/Error/Yaw", () -> params.deltaYaw.getMeasure(), Degrees);
-    log.registerMeasurement("Aim params/Error/Velocity", () -> params.deltaVelocity,
+    String aimPrefix = "Aim Params/";
+    log.registerString(aimPrefix + "Status", () -> params.status.toString());
+    log.registerMeasurement(aimPrefix + "Pitch", () -> params.pitch.getMeasure(), Degrees);
+    log.registerMeasurement(aimPrefix + "Yaw", () -> params.yaw.getMeasure(), Degrees);
+    log.registerMeasurement(aimPrefix + "Velocity", () -> params.velocity, MetersPerSecond);
+    log.registerMeasurement(aimPrefix + "Error/Pitch", () -> params.deltaPitch.getMeasure(), Degrees);
+    log.registerMeasurement(aimPrefix + "Error/Yaw", () -> params.deltaYaw.getMeasure(), Degrees);
+    log.registerMeasurement(aimPrefix + "Error/Velocity", () -> params.deltaVelocity,
         MetersPerSecond);
   }
 

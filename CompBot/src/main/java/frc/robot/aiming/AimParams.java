@@ -54,13 +54,4 @@ public class AimParams {
     this.status = status;
     return this;
   }
-  public AimParams() {
-    OnboardLogger log = new OnboardLogger("Aim Params");
-    log.registerMeasurement("Pitch", () -> pitch.getMeasure(), Degrees);
-    log.registerMeasurement("Yaw", () -> yaw.getMeasure(), Degrees);
-    log.registerMeasurement("Velocity", () -> velocity, MetersPerSecond);
-    log.registerMeasurement("Error/Pitch", () -> deltaPitch.getMeasure(), Degrees);
-    log.registerMeasurement("Error/Yaw", () -> deltaYaw.getMeasure(), Degrees);
-    log.registerMeasurement("Error/Velocity", () -> deltaVelocity, MetersPerSecond);
-  }
 }
