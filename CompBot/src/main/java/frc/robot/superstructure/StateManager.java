@@ -37,6 +37,8 @@ public class StateManager {
     log.registerPose3d("Aim Target", this::aimTarget);
     log.registerPose3d("Turret Position", this::turretPose);
     log.registerBoolean("Shoot Ready", shootReady());
+    log.registerBoolean("Turret Tracked", subsystems.turret().tracked(this::aimParams));
+    log.registerBoolean("Shooter Tracked", subsystems.shooter().tracked(this::aimParams));
 
     String aimPrefix = "Aim Params/";
     log.registerString(aimPrefix + "Status", () -> params.status.toString());
