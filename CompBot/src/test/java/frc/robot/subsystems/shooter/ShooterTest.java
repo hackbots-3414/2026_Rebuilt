@@ -1,7 +1,8 @@
 package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,15 @@ public class ShooterTest extends CommandBasedTest {
   @Test
   public void shooterTest() {
     ShooterIO mockShooterIO = mock(ShooterIO.class);
+
+    doAnswer(invocation -> {
+      ShooterIOInputs inputs = invocation.getArgument(0, ShooterIOInputs.class);
+      inputs.shooter1Velocity = ShooterConstants.kMaxRotationalSpeed;
+      inputs.hoodPosition = Degrees.of(35).minus(HoodConstants.kOffset);
+      // It's a void method, so we're supposed to return null.
+      return null;
+    }).when(mockShooterIO).updateInputs(Mockito.any(ShooterIOInputs.class));
+
     Shooter shooter = new Shooter(mockShooterIO);
     CommandScheduler.getInstance().run();
     // Ensure we update the inputs every periodic run
@@ -24,7 +34,7 @@ public class ShooterTest extends CommandBasedTest {
 
     AimParams params = new AimParams();
     params.pitch = Rotation2d.fromDegrees(55);
-    params.velocity = MetersPerSecond.of(5.0);
+    params.velocity = ShooterConstants.kMaxLinearSpeed;
 
     CommandScheduler.getInstance().schedule(shooter.shoot(() -> params));
     CommandScheduler.getInstance().run();
@@ -36,5 +46,7 @@ public class ShooterTest extends CommandBasedTest {
     CommandScheduler.getInstance().schedule(shooter.reverse());
     CommandScheduler.getInstance().run();
     verify(mockShooterIO).setVelocity(ShooterConstants.kReverseVelocity);
+
+    assertTrue(shooter.tracked(() -> params));
   }
 }
