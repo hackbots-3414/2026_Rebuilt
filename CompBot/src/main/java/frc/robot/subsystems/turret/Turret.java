@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Revolutions;
 
 import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -54,13 +55,13 @@ public class Turret extends SubsystemBase {
    * Returns a {@link Command} that will continually attempt to listen to the {@link AimParams}
    * object that is supplied, accounting for the robot's rotation.
    */
-  public Command track(StateManager state, Supplier<AimParams> aimParams) {
+  public Command track(StateManager state) {
     return Commands.sequence(
         this.run(() -> {
           tracking = true;
           Rotation2d robot = state.robotPose().getRotation();
-          Rotation2d relative = aimParams.get().yaw.minus(robot);
-          io.setPosition(relative.getMeasure().plus(TurretConstants.kTrackingOffset));
+          Rotation2d relative = state.aimParams().yaw.minus(robot);
+          io.setPosition(relative.getMeasure().plus(TurretConstants.kForwards));
         }))
     .finallyDo(() -> tracking = false);
   }
@@ -76,7 +77,7 @@ public class Turret extends SubsystemBase {
 
   public Command forwards() {
     return Commands.sequence(
-        runOnce(() -> io.setPosition(TurretConstants.kTrackingOffset)),
+        runOnce(() -> io.setPosition(TurretConstants.kForwards)),
         Commands.waitUntil(ready()));
   }
 
@@ -91,10 +92,10 @@ public class Turret extends SubsystemBase {
     });
   }
 
-  public Trigger tracked(StateManager state) {
+  public Trigger tracked(Supplier<AimParams> params) {
     return new Trigger(() -> {
       double delta = inputs.position.minus(inputs.reference).baseUnitMagnitude();
-      double epsilon = state.aimParams().deltaYaw.getMeasure().baseUnitMagnitude();
+      double epsilon = params.get().deltaYaw.getMeasure().baseUnitMagnitude();
       return Math.abs(delta) <= epsilon && tracking;
     });
   }
@@ -102,11 +103,15 @@ public class Turret extends SubsystemBase {
   public void telemetrize(StateManager state) {
     Pose2d turretPosition = state.robotPose().transformBy(TurretConstants.kTurretPosition.plus(
         new Transform2d(Translation2d.kZero,
-            new Rotation2d(inputs.position.minus(TurretConstants.kTrackingOffset)))));
+            new Rotation2d(inputs.position.minus(TurretConstants.kForwards)))));
     Pose2d turretReference = state.robotPose().transformBy(TurretConstants.kTurretPosition.plus(
         new Transform2d(Translation2d.kZero,
-            new Rotation2d(inputs.reference.minus(TurretConstants.kTrackingOffset)))));
+            new Rotation2d(inputs.reference.minus(TurretConstants.kForwards)))));
     FieldManager.getInstance().getField().getObject("turret").setPose(turretPosition);
     FieldManager.getInstance().getField().getObject("turret-target").setPose(turretReference);
+  }
+
+  public Pose3d turretPose(StateManager state) {
+    return new Pose3d(state.robotPose()).transformBy(TurretConstants.kOffset);
   }
 }

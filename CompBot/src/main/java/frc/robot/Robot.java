@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
     DriverStation.startDataLog(DataLogManager.getLog());
 
     oLogger = new OnboardLogger("Robot");
-    oLogger.registerMeasurment("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
+    oLogger.registerMeasurement("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
   }
 
   @Override

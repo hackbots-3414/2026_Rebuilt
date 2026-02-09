@@ -1,6 +1,7 @@
 package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Revolutions;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -14,7 +15,9 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.Angle;
 
 public class TurretConstants {
@@ -32,7 +35,7 @@ public class TurretConstants {
    * robot. For example, if this value was 30 degrees, then setting the turret's position to 30
    * degrees would result in the turret pointing forwards on the robot.
    */
-  protected static final Angle kTrackingOffset = Revolutions.of(0.25);
+  protected static final Angle kForwards = Revolutions.of(0.25);
 
   // MotionMagic configuration
   protected static final double kGearRatio = 38.46;
@@ -88,4 +91,10 @@ public class TurretConstants {
           .withMotionMagicAcceleration(kMaxAcceleration)
           .withMotionMagicJerk(kMaxJerk));
 
+  /** The turret's relative position on the robot */
+  protected static final Transform3d kOffset = new Transform3d(
+      Inches.of(-4.4),
+      Inches.of(4.4),
+      Inches.of(22.5),
+      Rotation3d.kZero);
 }

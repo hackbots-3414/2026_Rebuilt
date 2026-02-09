@@ -15,7 +15,6 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 
 public final class ClimberConstants {
-
   protected static final int kMotorId = 60;
 
   protected static final double kSupplyCurrentLimit = 40.0;

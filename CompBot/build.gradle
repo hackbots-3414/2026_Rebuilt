@@ -8,6 +8,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+repositories {
+    mavenCentral()
+}
+
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -57,6 +61,10 @@ wpi.java.debugJni = false
 // Set this to true to enable desktop support.
 def includeDesktopSupport = true
 
+configurations {
+    mockitoAgent
+}
+
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 5.
 dependencies {
@@ -81,6 +89,11 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.mockito:mockito-core:5.+'
+    
+    mockitoAgent('org.mockito:mockito-core:5.+') {
+        transitive = false
+    }
 
     // adding logging support, latest for slf4j and logback (they work together)
     implementation "org.slf4j:slf4j-api:2.0.1"
@@ -91,6 +104,7 @@ dependencies {
 test {
     useJUnitPlatform()
     systemProperty 'junit.jupiter.extensions.autodetection.enabled', 'true'
+    jvmArgs += "-javaagent:${configurations.mockitoAgent.asPath}"
 }
 
 // Simulation configuration (e.g. environment variables).

@@ -34,20 +34,20 @@ public interface IndexerIO {
     public IndexerIOInputs() {
       OnboardLogger log = new OnboardLogger("Indexer");
       log.registerBoolean("Feeder Motor Connected", () -> feedMotorConnected);
-      log.registerMeasurment("Feeder Supply Current", () -> feedSupplyCurrent, Amps);
-      log.registerMeasurment("Feeder Torque Current", () -> feedTorqueCurrent, Amps);
-      log.registerMeasurment("Feeder Stator Current", () -> feedStatorCurrent, Amps);
-      log.registerMeasurment("Feeder Voltage", () -> feedVoltage, Volts);
-      log.registerMeasurment("Feeder Temperature", () -> feedTemperature, Celsius);
-      log.registerMeasurment("Feeder Velocity", () -> feedVelocity, RotationsPerSecond);
+      log.registerMeasurement("Feeder Supply Current", () -> feedSupplyCurrent, Amps);
+      log.registerMeasurement("Feeder Torque Current", () -> feedTorqueCurrent, Amps);
+      log.registerMeasurement("Feeder Stator Current", () -> feedStatorCurrent, Amps);
+      log.registerMeasurement("Feeder Voltage", () -> feedVoltage, Volts);
+      log.registerMeasurement("Feeder Temperature", () -> feedTemperature, Celsius);
+      log.registerMeasurement("Feeder Velocity", () -> feedVelocity, RotationsPerSecond);
 
       log.registerBoolean("Spindexer Motor Connected", () -> spindexerMotorConnected);
-      log.registerMeasurment("Spindexer Supply Current", () -> spindexerSupplyCurrent, Amps);
-      log.registerMeasurment("Spindexer Torque Current", () -> spindexerTorqueCurrent, Amps);
-      log.registerMeasurment("Spindexer Stator Current", () -> spindexerStatorCurrent, Amps);
-      log.registerMeasurment("Spindexer Voltage", () -> spindexerVoltage, Volts);
-      log.registerMeasurment("Spindexer Temperature", () -> spindexerTemperature, Celsius);
-      log.registerMeasurment("Spindexer Velocity", () -> spindexerVelocity, RotationsPerSecond);
+      log.registerMeasurement("Spindexer Supply Current", () -> spindexerSupplyCurrent, Amps);
+      log.registerMeasurement("Spindexer Torque Current", () -> spindexerTorqueCurrent, Amps);
+      log.registerMeasurement("Spindexer Stator Current", () -> spindexerStatorCurrent, Amps);
+      log.registerMeasurement("Spindexer Voltage", () -> spindexerVoltage, Volts);
+      log.registerMeasurement("Spindexer Temperature", () -> spindexerTemperature, Celsius);
+      log.registerMeasurement("Spindexer Velocity", () -> spindexerVelocity, RotationsPerSecond);
     }
   }
 

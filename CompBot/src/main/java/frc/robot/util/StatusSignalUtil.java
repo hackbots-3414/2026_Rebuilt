@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.StatusSignalCollection;
 
 /**
  * A class with helper static methods to register status signals. This class lets all status signals
