@@ -31,13 +31,13 @@ public interface TurretIO {
     public TurretIOInputs() {
       OnboardLogger log = new OnboardLogger("Turret");
       log.registerBoolean("Calibrated", () -> calibrated);
-      log.registerMeasurment("Voltage", () -> voltage, Volts);
-      log.registerMeasurment("Supply Current", () -> supplyCurrent, Amps);
-      log.registerMeasurment("Stator Current", () -> statorCurrent, Amps);
-      log.registerMeasurment("Torque Current", () -> torqueCurrent, Amps);
-      log.registerMeasurment("Temperature", () -> temperature, Celsius);
-      log.registerMeasurment("Velocity", () -> velocity, RevolutionsPerSecond);
-      log.registerMeasurment("Position", () -> position, Revolutions);
+      log.registerMeasurement("Voltage", () -> voltage, Volts);
+      log.registerMeasurement("Supply Current", () -> supplyCurrent, Amps);
+      log.registerMeasurement("Stator Current", () -> statorCurrent, Amps);
+      log.registerMeasurement("Torque Current", () -> torqueCurrent, Amps);
+      log.registerMeasurement("Temperature", () -> temperature, Celsius);
+      log.registerMeasurement("Velocity", () -> velocity, RevolutionsPerSecond);
+      log.registerMeasurement("Position", () -> position, Revolutions);
     }
   }
 

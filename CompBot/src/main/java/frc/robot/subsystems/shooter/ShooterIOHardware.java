@@ -1,19 +1,15 @@
 package frc.robot.subsystems.shooter;
 
-import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.subsystems.shooter.ShooterConstants.HoodConstants;
 import frc.robot.util.StatusSignalUtil;
 
@@ -25,11 +21,16 @@ public class ShooterIOHardware implements ShooterIO {
   private final CANcoder hoodCANcoder;
 
   private AngularVelocity lastVelocity = RotationsPerSecond.zero();
-  private final MotionMagicVelocityTorqueCurrentFOC shooter1Control = new MotionMagicVelocityTorqueCurrentFOC(0)
-      .withAcceleration(ShooterConstants.kAcceleration);
-  private final DynamicMotionMagicTorqueCurrentFOC hoodControl = new DynamicMotionMagicTorqueCurrentFOC(Radians.zero(),
-      HoodConstants.kVelocity, HoodConstants.kAcceleration)
-      .withSlot(ShooterConstants.HoodConstants.kSlot);
+  private Angle lastAngle = Rotations.zero();
+
+  private final MotionMagicVelocityTorqueCurrentFOC shooterControl =
+      new MotionMagicVelocityTorqueCurrentFOC(0);
+
+  // Using zero for the acceleration and jerk tell the control request to just use the
+  // device-configured MotionMagic configs found in the motor configuration. Position doesn't really
+  // matter, because it changes dynamically each time we apply the request.
+  private final DynamicMotionMagicVoltage hoodControl =
+      new DynamicMotionMagicVoltage(0, 0, 0).withSlot(ShooterConstants.HoodConstants.kSlot);
 
   public ShooterIOHardware() {
     shooter1Motor = new TalonFX(ShooterConstants.kMotor1Id);
@@ -37,7 +38,8 @@ public class ShooterIOHardware implements ShooterIO {
 
     shooter2Motor = new TalonFX(ShooterConstants.kMotor2Id);
     shooter2Motor.getConfigurator().apply(ShooterConstants.kMotorConfig);
-    shooter2Motor.setControl(new Follower(ShooterConstants.kMotor1Id, ShooterConstants.kFlip2));
+    shooter2Motor
+        .setControl(new Follower(ShooterConstants.kMotor1Id, ShooterConstants.kMotor2Alignment));
 
     hoodMotor = new TalonFX(HoodConstants.kMotorID);
     hoodMotor.getConfigurator().apply(HoodConstants.kMotorConfig);
@@ -67,7 +69,7 @@ public class ShooterIOHardware implements ShooterIO {
         hoodMotor.getDeviceTemp(false),
         hoodMotor.getVelocity(false),
         hoodMotor.getPosition(false),
-        
+
         hoodCANcoder.getPosition(false));
   }
 
@@ -95,12 +97,12 @@ public class ShooterIOHardware implements ShooterIO {
         shooter2Motor.getDeviceTemp(false),
         shooter2Motor.getVelocity(false));
 
-    inputs.shooter1SupplyCurrent = shooter2Motor.getSupplyCurrent(false).getValue();
-    inputs.shooter1TorqueCurrent = shooter2Motor.getTorqueCurrent(false).getValue();
-    inputs.shooter1StatorCurrent = shooter2Motor.getStatorCurrent(false).getValue();
-    inputs.shooter1Voltage = shooter2Motor.getMotorVoltage(false).getValue();
-    inputs.shooter1Temperature = shooter2Motor.getDeviceTemp(false).getValue();
-    inputs.shooter1Velocity = shooter2Motor.getVelocity(false).getValue();
+    inputs.shooter2SupplyCurrent = shooter2Motor.getSupplyCurrent(false).getValue();
+    inputs.shooter2TorqueCurrent = shooter2Motor.getTorqueCurrent(false).getValue();
+    inputs.shooter2StatorCurrent = shooter2Motor.getStatorCurrent(false).getValue();
+    inputs.shooter2Voltage = shooter2Motor.getMotorVoltage(false).getValue();
+    inputs.shooter2Temperature = shooter2Motor.getDeviceTemp(false).getValue();
+    inputs.shooter2Velocity = shooter2Motor.getVelocity(false).getValue();
 
     inputs.hoodMotorConnected = BaseStatusSignal.isAllGood(
         hoodMotor.getSupplyCurrent(false),
@@ -117,22 +119,24 @@ public class ShooterIOHardware implements ShooterIO {
     inputs.hoodVoltage = hoodMotor.getMotorVoltage(false).getValue();
     inputs.hoodTemperature = hoodMotor.getDeviceTemp(false).getValue();
     inputs.hoodVelocity = hoodMotor.getVelocity(false).getValue();
-    inputs.hoodAngle = hoodMotor.getPosition(false).getValue();
+    inputs.hoodPosition = hoodMotor.getPosition(false).getValue();
 
     inputs.hoodCANcoderConnected = BaseStatusSignal.isAllGood(
-      hoodCANcoder.getPosition(false)
-    );
+        hoodCANcoder.getPosition(false));
     inputs.hoodCANcoderPosition = hoodCANcoder.getPosition(false).getValue();
   }
 
   public void setVelocity(AngularVelocity velocity) {
     if (!velocity.equals(lastVelocity)) {
-      shooter1Motor.setControl(shooter1Control.withVelocity(velocity));
+      shooter1Motor.setControl(shooterControl.withVelocity(velocity));
       lastVelocity = velocity;
     }
   }
 
   public void setAngle(Angle angle) {
-    hoodMotor.setControl(hoodControl.withPosition(angle));
+    if (!angle.equals(lastAngle)) {
+      hoodMotor.setControl(hoodControl.withPosition(angle));
+      lastAngle = angle;
+    }
   }
 }

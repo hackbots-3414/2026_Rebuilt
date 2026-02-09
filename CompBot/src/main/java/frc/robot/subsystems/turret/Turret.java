@@ -91,10 +91,10 @@ public class Turret extends SubsystemBase {
     });
   }
 
-  public Trigger tracked(StateManager state) {
+  public Trigger tracked(Supplier<AimParams> params) {
     return new Trigger(() -> {
       double delta = inputs.position.minus(inputs.reference).baseUnitMagnitude();
-      double epsilon = state.aimParams().deltaYaw.getMeasure().baseUnitMagnitude();
+      double epsilon = params.get().deltaYaw.getMeasure().baseUnitMagnitude();
       return Math.abs(delta) <= epsilon && tracking;
     });
   }

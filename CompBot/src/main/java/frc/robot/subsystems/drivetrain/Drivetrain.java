@@ -114,7 +114,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   @SuppressWarnings("unused")
   private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
       new SysIdRoutine.Config(
-          /* This is in radians per second², but SysId only supports "volts per second" */
+          /* This is in radians per second^2, but SysId only supports "volts per second" */
           Volts.of(Math.PI / 6).per(Second),
           /* This is in radians per second, but SysId only supports "volts" */
           Volts.of(Math.PI),
@@ -252,7 +252,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
    * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
    * @param timestampSeconds The timestamp of the vision measurement in seconds.
    * @param visionMeasurementStdDevs Standard deviations of the vision pose measurement in the form
-   *        [x, y, theta]ᵀ, with units in meters and radians.
+   *        [x, y, theta]^T, with units in meters and radians.
    */
   @Override
   public void addVisionMeasurement(
