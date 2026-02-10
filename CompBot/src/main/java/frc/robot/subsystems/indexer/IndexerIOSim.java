@@ -34,11 +34,15 @@ public class IndexerIOSim implements IndexerIO {
     inputs.feedSupplyCurrent = Amps.of(feeder.getCurrentDrawAmps());
     inputs.feedVoltage = Volts.of(feeder.getInputVoltage());
     inputs.feedVelocity = feeder.getAngularVelocity();
+    inputs.spindexerMotorConnected = true;
+    inputs.spindexerVoltage = Volts.of(spindexer.getInputVoltage());
   }
 
   public void setFeedVoltage(Voltage voltage) {
     feeder.setInputVoltage(voltage.baseUnitMagnitude());
   }
 
-  public void setSpindexerVoltage(Voltage voltage) {}
+  public void setSpindexerVoltage(Voltage voltage) {
+    spindexer.setInputVoltage(voltage.baseUnitMagnitude());
+  }
 }
