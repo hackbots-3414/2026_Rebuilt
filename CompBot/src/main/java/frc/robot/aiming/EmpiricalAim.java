@@ -34,13 +34,13 @@ public abstract class EmpiricalAim implements AimStrategy {
     vx -= robotVelocity.getX();
     vy -= robotVelocity.getY();
     // Recalculate velocity
-    LinearVelocity velocity = MetersPerSecond.of(Math.clamp(
+    LinearVelocity velocity = MetersPerSecond.of(clamp(
         Math.sqrt(vx * vx + vy * vy + vz * vz),
         0,
         constraints.maxVelocity().in(MetersPerSecond)));
     // Recalculate angles
     Rotation2d yaw = Rotation2d.fromRadians(Math.atan2(vy, vx));
-    Rotation2d pitch = Rotation2d.fromRadians(Math.clamp(
+    Rotation2d pitch = Rotation2d.fromRadians(clamp(
           Math.asin(vz / velocity.in(MetersPerSecond)),
           constraints.minShooterAngle().getRadians(),
           constraints.maxShooterAngle().getRadians()));
@@ -49,5 +49,9 @@ public abstract class EmpiricalAim implements AimStrategy {
     params.pitch = pitch;
     params.velocity = velocity;
     return params;
+  }
+
+  private double clamp(double value, double min, double max) {
+    return Math.min(Math.max(value, min), max);
   }
 }
