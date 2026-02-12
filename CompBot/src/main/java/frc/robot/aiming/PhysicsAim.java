@@ -1,11 +1,11 @@
 package frc.robot.aiming;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.aiming.AimParams.AimStatus;
+import frc.robot.aiming.AimParams.SpeedControl;
 import frc.robot.superstructure.StateManager;
 
 public class PhysicsAim implements AimStrategy {
@@ -44,7 +44,9 @@ public class PhysicsAim implements AimStrategy {
 
     boolean minWorks = constraints.check(minParams);
     if (minWorks) {
-      return minParams.withStatus(AimStatus.Possible);
+      return minParams
+          .withStatus(AimStatus.Possible)
+          .withSpeedControl(SpeedControl.ProjectileVelocity);
     }
 
     double lower = minDescentVelocity;
@@ -83,7 +85,7 @@ public class PhysicsAim implements AimStrategy {
       return AimParams.kImpossible;
     }
 
-    return best;
+    return best.withSpeedControl(SpeedControl.ProjectileVelocity);
   }
 
   public static AimParams quicksolve(
@@ -117,7 +119,7 @@ public class PhysicsAim implements AimStrategy {
     Rotation2d yaw = Rotation2d.fromRadians(Math.atan2(vy, vx));
     Rotation2d pitch = Rotation2d.fromRadians(Math.asin(vz / v));
 
-    params.velocity = MetersPerSecond.of(v);
+    params.velocity = v;
     params.pitch = pitch;
     params.yaw = yaw;
 

@@ -1,8 +1,6 @@
 package frc.robot.aiming;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.LinearVelocity;
 
 /**
  * The parameters of a shooter at a particlar moment in time. This is the type that is returned when
@@ -11,6 +9,8 @@ import edu.wpi.first.units.measure.LinearVelocity;
 public class AimParams {
   /** The status of the parameters object. */
   public AimStatus status = AimStatus.Unchecked;
+  /** The manner of speed control the paramters requires */
+  public SpeedControl control = SpeedControl.ProjectileVelocity;
   /** the launch angle of the fuel out of the robot. */
   public Rotation2d pitch = Rotation2d.kZero;
   /**
@@ -20,13 +20,13 @@ public class AimParams {
    */
   public Rotation2d yaw = Rotation2d.kZero;
   /** the velocity that the fuel should be ejected out at, relative to the robot. */
-  public LinearVelocity velocity = MetersPerSecond.zero();
+  public double velocity = 0.0;
   /** the tolerated error in the shot's pitch */
   public Rotation2d deltaPitch = Rotation2d.fromDegrees(4);
   /** the tolerated error in the shot's yaw */
   public Rotation2d deltaYaw = Rotation2d.fromDegrees(2);
   /** the tolerated error in the shot's velocity */
-  public LinearVelocity deltaVelocity = MetersPerSecond.of(0.35);
+  public double deltaVelocity = 0.35;
 
   public enum AimStatus {
     /** The program has not yet evaluated the valididty of this parameters object */
@@ -50,6 +50,24 @@ public class AimParams {
 
   public AimParams withStatus(AimStatus status) {
     this.status = status;
+    return this;
+  }
+
+  public enum SpeedControl {
+    /**
+     * The velocity parameter of the {@link AimParams} is the projectile's desired velocity, in
+     * meters per second.
+     */
+    ProjectileVelocity,
+    /**
+     * The velocity parameter of the {@link AimParams} is the shooter's control input, in its
+     * appropriate units.
+     */
+    MechanismControl;
+  }
+
+  public AimParams withSpeedControl(SpeedControl control) {
+    this.control = control;
     return this;
   }
 }

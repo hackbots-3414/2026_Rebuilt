@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldManager;
 import frc.robot.aiming.AimParams;
+import frc.robot.aiming.AimParams.SpeedControl;
 import frc.robot.superstructure.StateManager;
 import frc.robot.superstructure.Superstructure.Subsystems;
 
@@ -41,16 +42,20 @@ public class FuelShotSim implements CommandBuilder {
     public FuelSim() {}
 
     public void launch(StateManager state, AimParams params) {
+      if (params.control != SpeedControl.ProjectileVelocity) {
+        throw new IllegalStateException(
+            "Aim Params in fuel sim doesn't use SpeedControl.ProjectileVelocity speed control");
+      }
       params = state.aimParams();
       position = state.turretPose().getTranslation();
       final double error = 0.15;
       // field-relative velocity, but with the robot as the origin
       Translation3d veloR = new Translation3d(
-          params.pitch.getCos() * params.yaw.getCos() * params.velocity.baseUnitMagnitude()
+          params.pitch.getCos() * params.yaw.getCos() * params.velocity
               + Math.random() * error,
-          params.pitch.getCos() * params.yaw.getSin() * params.velocity.baseUnitMagnitude()
+          params.pitch.getCos() * params.yaw.getSin() * params.velocity
               + Math.random() * error,
-          params.pitch.getSin() * params.velocity.baseUnitMagnitude() + Math.random() * error);
+          params.pitch.getSin() * params.velocity + Math.random() * error);
       velocity = veloR.plus(new Translation3d(state.robotVelocity().getTranslation()));
       target = state.aimTarget().getTranslation();
     }
