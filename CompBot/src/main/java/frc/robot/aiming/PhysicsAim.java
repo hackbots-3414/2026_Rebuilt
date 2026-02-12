@@ -44,8 +44,8 @@ public class PhysicsAim implements AimStrategy {
 
     boolean minWorks = constraints.check(minParams);
     if (minWorks) {
+      minParams.status = AimStatus.Possible;
       return minParams
-          .withStatus(AimStatus.Possible)
           .withSpeedControl(SpeedControl.ProjectileVelocity);
     }
 
@@ -61,16 +61,24 @@ public class PhysicsAim implements AimStrategy {
       if (ok) {
         // We're just optimizing, so we won't stop yet.
         upper = guess;
-        best = output.withStatus(AimStatus.Possible);
+        best = output;
+        best.status = AimStatus.Possible;
+        continue;
       }
       double pitch = output.pitch.getRadians();
       if (pitch > constraints.maxShooterAngle().getRadians()) {
         // Too high
         upper = guess;
+        continue;
       }
       if (pitch < constraints.minShooterAngle().getRadians()) {
         // Too low
         lower = guess;
+        continue;
+      }
+      if (!ok) {
+        // Velocity must exceed the threshold, so let's drop the guess
+        upper = guess;
       }
     }
 

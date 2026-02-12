@@ -16,9 +16,7 @@ public class FuelShotSim implements CommandBuilder {
   public Command singleBuild(Subsystems subsystems, StateManager state) {
     FuelSim sim = new FuelSim();
     return Commands.sequence(
-        Commands.runOnce(() -> {
-          sim.launch(state, state.aimParams());
-        }),
+        Commands.runOnce(() -> sim.launch(state)),
         Commands.run(sim::tick))
         .until(sim::atHub)
         .withName("Fuel Shot (sim)");
@@ -41,12 +39,12 @@ public class FuelShotSim implements CommandBuilder {
 
     public FuelSim() {}
 
-    public void launch(StateManager state, AimParams params) {
+    public void launch(StateManager state) {
+      AimParams params = state.aimParams();
       if (params.control != SpeedControl.ProjectileVelocity) {
         throw new IllegalStateException(
             "Aim Params in fuel sim doesn't use SpeedControl.ProjectileVelocity speed control");
       }
-      params = state.aimParams();
       position = state.turretPose().getTranslation();
       final double error = 0.15;
       // field-relative velocity, but with the robot as the origin

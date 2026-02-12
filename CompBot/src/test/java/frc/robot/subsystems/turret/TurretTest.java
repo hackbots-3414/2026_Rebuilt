@@ -33,7 +33,7 @@ public class TurretTest extends CommandBasedTest {
     verify(mockIO).setPosition(TurretConstants.kForwards);
 
     StateManager mockState = mock(StateManager.class);
-    AimParams params = new AimParams().withStatus(AimStatus.Possible);
+    AimParams params = new AimParams(AimStatus.Possible);
     params.yaw = Rotation2d.fromDegrees(34.14);
     when(mockState.aimParams()).thenReturn(params);
     when(mockState.robotPose()).thenReturn(new Pose2d(Translation2d.kZero, Rotation2d.fromDegrees(10.0)));

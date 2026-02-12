@@ -28,6 +28,12 @@ public class AimParams {
   /** the tolerated error in the shot's velocity */
   public double deltaVelocity = 0.35;
 
+  public AimParams() {}
+  
+  public AimParams(AimStatus status) {
+    this.status = status;
+  }
+
   public enum AimStatus {
     /** The program has not yet evaluated the valididty of this parameters object */
     Unchecked,
@@ -41,16 +47,11 @@ public class AimParams {
     }
   }
 
-  public static final AimParams kImpossible = new AimParams().withStatus(AimStatus.Impossible);
+  public static final AimParams kImpossible = new AimParams(AimStatus.Impossible);
 
   /** Returns whether the aim parameters calculated are feasible */
   public boolean isOk() {
     return status.isOk();
-  }
-
-  public AimParams withStatus(AimStatus status) {
-    this.status = status;
-    return this;
   }
 
   public enum SpeedControl {

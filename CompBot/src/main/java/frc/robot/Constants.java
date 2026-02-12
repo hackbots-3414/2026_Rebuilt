@@ -14,7 +14,7 @@ public class Constants {
     /** The shorter side, corresponds to Y values */
     public static final Distance kFieldWidth = Meters.of(8.069);
     /** The length of the allianze zone, corresponds to X axis */
-    public static final Distance kAllianzeZoneLength = Inches.of(182.11);
+    public static final Distance kAllianceZoneLength = Inches.of(182.11);
     
     public static final Pose3d kBlueHub = new Pose3d(4.632516, 4.011139, 1.83, Rotation3d.kZero);
     public static final Pose3d kFeedTarget = new Pose3d(4.5, 2, 1.0, Rotation3d.kZero);
