@@ -1,15 +1,21 @@
 package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Rotations;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.CommandBasedTest;
 import frc.robot.aiming.AimParams;
 import frc.robot.aiming.AimParams.AimStatus;
@@ -35,6 +41,7 @@ public class TurretTest extends CommandBasedTest {
     params.yaw = Rotation2d.fromDegrees(34.14);
     when(mockState.aimParams()).thenReturn(params);
     when(mockState.robotPose()).thenReturn(new Pose2d(Translation2d.kZero, Rotation2d.fromDegrees(10.0)));
+    when(mockState.shootReady()).thenReturn(new Trigger(() -> false));
 
     CommandScheduler.getInstance().schedule(turret.track(mockState));
     CommandScheduler.getInstance().run();
@@ -43,4 +50,25 @@ public class TurretTest extends CommandBasedTest {
     // angle is correct.
     verify(mockIO).setPosition(Degrees.of(24.14).plus(TurretConstants.kForwards));
   }
+
+  @Test
+  public void angleWrapTest() {
+    double[][] testCases = {
+      {0, 0, -0.75, 0.75, 0},
+      {0, 1.1, 0, 2, 0.1},
+      {1, 0.9, 0.95, 2, 1.9}};
+
+    for (double[] testCase: testCases) {
+      double x, y, min, max, expected;
+      x = testCase[0];
+      y = testCase[1];
+      min = testCase[2];
+      max = testCase[3];
+      expected = testCase[4];
+
+      double out = Turret.findCC(x, y, min, max);
+      assertTrue(Math.abs(out - expected) < 1e-3);
+    }
+  }
+
 }
