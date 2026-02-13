@@ -69,9 +69,4 @@ public class AimParams {
      */
     MechanismControl;
   }
-
-  public AimParams withSpeedControl(SpeedControl control) {
-    this.control = control;
-    return this;
-  }
 }

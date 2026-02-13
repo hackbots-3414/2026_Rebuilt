@@ -45,8 +45,8 @@ public class PhysicsAim implements AimStrategy {
     boolean minWorks = constraints.check(minParams);
     if (minWorks) {
       minParams.status = AimStatus.Possible;
-      return minParams
-          .withSpeedControl(SpeedControl.ProjectileVelocity);
+      minParams.control = SpeedControl.ProjectileVelocity;
+      return minParams;
     }
 
     double lower = minDescentVelocity;
@@ -93,7 +93,8 @@ public class PhysicsAim implements AimStrategy {
       return AimParams.kImpossible;
     }
 
-    return best.withSpeedControl(SpeedControl.ProjectileVelocity);
+    best.control = SpeedControl.ProjectileVelocity;
+    return best;
   }
 
   public static AimParams quicksolve(
