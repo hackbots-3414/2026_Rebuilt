@@ -1,28 +1,108 @@
 package frc.robot.aiming;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.aiming.AimParams.AimStatus;
+import frc.robot.aiming.AimParams.SpeedControl;
 import frc.robot.superstructure.StateManager;
 
-public class PhysicsAim extends AimStrategy {
-  private final double finalDescentSpeed;
+public class PhysicsAim implements AimStrategy {
+  private static final int ITERATIONS = 5;
 
-  public PhysicsAim(double finalDescentSpeed) {
-    if (finalDescentSpeed <= 0) {
-      finalDescentSpeed = 1.0;
-      DriverStation.reportWarning(
-          "Positive final descent speed required, but nonpositive number found; assigning value of 1.",
-          false);
-    }
-    this.finalDescentSpeed = finalDescentSpeed;
+  private final AimConstraints constraints;
+
+  private final double minDescentVelocity;
+  private final double maxDescentVelocity;
+
+  public PhysicsAim(AimConstraints constraints, double minDescentVelocity,
+      double maxDescentVelocity) {
+    this.constraints = constraints;
+    this.minDescentVelocity = minDescentVelocity;
+    this.maxDescentVelocity = maxDescentVelocity;
   }
 
   public AimParams update(StateManager state) {
     Translation3d offset = state.aimTarget().getTranslation()
-        .minus(new Translation3d(state.robotPose().getTranslation()));
+        .minus(state.turretPose().getTranslation());
+    Translation2d robotVelocity = state.robotVelocity().getTranslation();
+
+    // Calculate the pitch values for the minimum and maximum possible v_zf values:
+    AimParams minParams = quicksolve(offset, robotVelocity, minDescentVelocity);
+    AimParams maxParams = quicksolve(offset, robotVelocity, maxDescentVelocity);
+
+    double minPitch = minParams.pitch.getRadians();
+    double maxPitch = maxParams.pitch.getRadians();
+
+    boolean solutionExists = minPitch <= constraints.maxShooterAngle().getRadians()
+        && maxPitch >= constraints.minShooterAngle().getRadians();
+
+    if (!solutionExists) {
+      return AimParams.kImpossible;
+    }
+
+    boolean minWorks = constraints.check(minParams);
+    if (minWorks) {
+      minParams.status = AimStatus.Possible;
+      return minParams
+          .withSpeedControl(SpeedControl.ProjectileVelocity);
+    }
+
+    double lower = minDescentVelocity;
+    double upper = maxDescentVelocity;
+
+    AimParams best = AimParams.kImpossible;
+
+    for (int i = 0; i < ITERATIONS; i++) {
+      double guess = 0.5 * (lower + upper);
+      AimParams output = quicksolve(offset, robotVelocity, guess);
+      boolean ok = constraints.check(output);
+      if (ok) {
+        // We're just optimizing, so we won't stop yet.
+        upper = guess;
+        best = output;
+        best.status = AimStatus.Possible;
+        continue;
+      }
+      double pitch = output.pitch.getRadians();
+      if (pitch > constraints.maxShooterAngle().getRadians()) {
+        // Too high
+        upper = guess;
+        continue;
+      }
+      if (pitch < constraints.minShooterAngle().getRadians()) {
+        // Too low
+        lower = guess;
+        continue;
+      }
+      if (!ok) {
+        // Velocity must exceed the threshold, so let's drop the guess
+        upper = guess;
+      }
+    }
+
+    if (best.status == AimStatus.Impossible) {
+      return AimParams.kImpossible;
+    }
+
+    // If yaw says to shoot in the wrong direction we don't listen, even if it would work.
+    Rotation2d towardsTarget = Rotation2d.fromRadians(Math.atan2(offset.getY(), offset.getX()));
+    double diff = MathUtil.angleModulus(Math.abs(towardsTarget.minus(best.yaw).getRadians()));
+    if (diff > 0.8 * Math.PI) { // We aren't really pointed at the target.
+      return AimParams.kImpossible;
+    }
+
+    return best.withSpeedControl(SpeedControl.ProjectileVelocity);
+  }
+
+  public static AimParams quicksolve(
+      Translation3d offset,
+      Translation2d robotVelocity,
+      double finalDescentSpeed) {
+
+    AimParams params = new AimParams();
+
     double dx = offset.getX();
     double dy = offset.getY();
     double dz = offset.getZ();
@@ -39,20 +119,19 @@ public class PhysicsAim extends AimStrategy {
     double vy = dy / t;
     double vz = 9.81 * t - finalDescentSpeed;
 
-
     // Compensate for robot velocity
-    Translation2d robotVelocity = state.robotVelocity().getTranslation();
     vx -= robotVelocity.getX();
     vy -= robotVelocity.getY();
 
     double v = Math.sqrt(vx * vx + vy * vy + vz * vz);
-    double yaw = Math.atan2(vy, vx);
-    double pitch = Math.asin(vz / v);
+    Rotation2d yaw = Rotation2d.fromRadians(Math.atan2(vy, vx));
+    Rotation2d pitch = Rotation2d.fromRadians(Math.asin(vz / v));
 
-    params.velocity = MetersPerSecond.of(v);
-    params.pitch = Rotation2d.fromRadians(pitch);
-    params.yaw = Rotation2d.fromRadians(yaw);
+    params.velocity = v;
+    params.pitch = pitch;
+    params.yaw = yaw;
 
     return params;
   }
+
 }
