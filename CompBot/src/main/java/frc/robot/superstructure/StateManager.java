@@ -10,6 +10,7 @@ import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimParams;
 import frc.robot.aiming.AimStrategy;
 import frc.robot.aiming.PhysicsAim;
+import frc.robot.aiming.AimParams.AimStatus;
 import frc.robot.superstructure.Superstructure.Subsystems;
 import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
@@ -24,7 +25,7 @@ public class StateManager {
       2,
       10);
 
-  private AimParams params = AimParams.kImpossible;
+  private AimParams params = new AimParams(AimStatus.Unchecked);
 
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
@@ -77,11 +78,14 @@ public class StateManager {
   }
 
   public AimParams aimParams() {
+    if (params.status == AimStatus.Unchecked) {
+      params = aim.update(this);
+    }
     return params;
   }
 
   public void periodic() {
-    params = aim.update(this);
+    params.status = AimStatus.Unchecked;
   }
 
   public Pose3d turretPose() {

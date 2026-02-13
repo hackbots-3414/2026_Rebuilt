@@ -160,7 +160,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     poseLogEntry = StructLogEntry.create(DataLogManager.getLog(), "Robot Pose", Pose2d.struct);
     state = getState();
     OnboardLogger ologger = new OnboardLogger("Drivetrain");
-    ologger.registerBoolean("Received vision udpate", () -> hasReceivedVisionUpdate);
+    ologger.registerBoolean("Received vision update", () -> hasReceivedVisionUpdate);
   }
 
   /**
