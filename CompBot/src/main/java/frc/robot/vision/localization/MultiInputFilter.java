@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import frc.robot.vision.CameraConfig;
 
 public class MultiInputFilter {
+  @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(MultiInputFilter.class);
 
   private HashMap<CameraConfig, Set<Integer>> m_tags = new HashMap<>();

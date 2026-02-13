@@ -17,12 +17,11 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.Angle;
 
 public class TurretConstants {
-  protected static final Transform2d kTurretPosition = Transform2d.kZero;
+  protected static final Transform3d kTurretOffset = new Transform3d(0, 0, 0, Rotation3d.kZero);
 
   protected static final int kMotorId = 48;
   protected static final int kEncoder1Id = 49;

@@ -3,11 +3,11 @@ package frc.robot.subsystems.turret;
 import static edu.wpi.first.units.Units.Revolutions;
 import static edu.wpi.first.units.Units.Rotations;
 import java.util.function.Supplier;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -17,11 +17,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.FieldManager;
 import frc.robot.aiming.AimParams;
 import frc.robot.subsystems.turret.TurretIO.TurretIOInputs;
 import frc.robot.superstructure.StateManager;
 import frc.robot.util.OnboardLogger;
+import frc.robot.vision.localization.LocalizationConstants;
 
 public class Turret extends SubsystemBase {
 
@@ -108,17 +108,6 @@ public class Turret extends SubsystemBase {
     });
   }
 
-  public void telemetrize(StateManager state) {
-    Pose2d turretPosition = state.robotPose().transformBy(TurretConstants.kTurretPosition.plus(
-        new Transform2d(Translation2d.kZero,
-            new Rotation2d(inputs.position.minus(TurretConstants.kForwards)))));
-    Pose2d turretReference = state.robotPose().transformBy(TurretConstants.kTurretPosition.plus(
-        new Transform2d(Translation2d.kZero,
-            new Rotation2d(inputs.reference.minus(TurretConstants.kForwards)))));
-    FieldManager.getInstance().getField().getObject("turret").setPose(turretPosition);
-    FieldManager.getInstance().getField().getObject("turret-target").setPose(turretReference);
-  }
-
   public Pose3d turretPose(StateManager state) {
     return new Pose3d(state.robotPose()).transformBy(TurretConstants.kOffset);
   }
@@ -181,5 +170,13 @@ public class Turret extends SubsystemBase {
       reference = newReference;
     }
     return reference;
+  }
+
+  public Transform3d turretCameraOffset() {
+    // Get turret-relative position
+    Transform3d turretRelative =
+        new Transform3d(Translation3d.kZero, new Rotation3d(new Rotation2d(inputs.position.minus(TurretConstants.kForwards))))
+            .plus(LocalizationConstants.kTurretAoRToTurretCameraOffset);
+    return TurretConstants.kTurretOffset.plus(turretRelative);
   }
 }

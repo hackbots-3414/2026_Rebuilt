@@ -1,17 +1,13 @@
 package frc.robot.vision.localization;
 
 import static edu.wpi.first.units.Units.Milliseconds;
-
 import java.util.function.Supplier;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.FieldManager;
@@ -25,30 +21,31 @@ public class CameraIOAprilTagSim implements CameraIO {
 
   private static final Field2d simField = simSystem.getDebugField();
 
-  private final PhotonCamera m_camera;
-  private final PhotonCameraSim m_cameraSim;
+  private final PhotonCamera camera;
+  private final PhotonCameraSim cameraSim;
 
-  private final Supplier<Pose2d> m_poseSupplier;
+  private final Supplier<Pose2d> poseSupplier;
 
   private final CameraConfig config;
 
   public CameraIOAprilTagSim(CameraConfig config, Supplier<Pose2d> poseSupplier) {
     FieldManager.getInstance().setField(simField);
-    setupSimProps();
     this.config = config;
-    m_poseSupplier = poseSupplier;
-    m_camera = new PhotonCamera(config.cameraName());
-    m_cameraSim = new PhotonCameraSim(m_camera, simProps);
-    m_cameraSim.enableDrawWireframe(true);
-    simSystem.addCamera(m_cameraSim, config.robotToCamera().get());
+    setupSimProps();
+    this.poseSupplier = poseSupplier;
+    camera = new PhotonCamera(config.cameraName());
+    cameraSim = new PhotonCameraSim(camera, simProps);
+    cameraSim.enableDrawWireframe(true);
+    simSystem.addCamera(cameraSim, config.robotToCamera().get());
     SmartDashboard.putBoolean("Vision/" + config.cameraName() + " connected", true);
   }
 
   public void updateInputs(CameraIOInputs inputs) {
+    simSystem.adjustCamera(cameraSim, config.robotToCamera().get());
     inputs.connected =
         SmartDashboard.getBoolean("Vision/" + config.cameraName() + " connected", true);
-    simSystem.update(m_poseSupplier.get());
-    inputs.unreadResults = m_camera.getAllUnreadResults();
+    simSystem.update(poseSupplier.get());
+    inputs.unreadResults = camera.getAllUnreadResults();
   }
 
   private void setupSimProps() {

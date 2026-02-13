@@ -46,6 +46,6 @@ public record CameraConfig(
         fov,
         fovHorizontal,
         robotToCamera,
-        trust);
+        trust.copy());
   }
 }

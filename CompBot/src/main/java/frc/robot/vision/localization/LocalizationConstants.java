@@ -3,7 +3,6 @@ package frc.robot.vision.localization;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Milliseconds;
-import java.util.List;
 import java.util.Set;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -107,4 +106,7 @@ public class LocalizationConstants {
       17, 18, 19, 20, 21, 22, // blue reef tags
       3, 16 // processor tags are okay as well.
   );
+
+  public static final Transform3d kTurretAoRToTurretCameraOffset =
+      new Transform3d(0, 0, 0, Rotation3d.kZero);
 }
