@@ -127,7 +127,7 @@ public class PhysicsAim implements AimStrategy {
     Rotation2d yaw = Rotation2d.fromRadians(Math.atan2(vy, vx));
     Rotation2d pitch = Rotation2d.fromRadians(Math.asin(vz / v));
 
-    params.velocity = v;
+    params.output = v;
     params.pitch = pitch;
     params.yaw = yaw;
 

@@ -62,7 +62,7 @@ public class Shooter extends SubsystemBase {
    */
   public Command shoot(Supplier<AimParams> params) {
     return this.run(() -> {
-      shooterReference = projectileToShooterVelocity(params.get().velocity);
+      shooterReference = projectileToShooterVelocity(params.get().output);
       hoodReference = pitchToHoodAngle(params.get().pitch);
       io.setVelocity(shooterReference);
       io.setAngle(hoodReference);
@@ -79,9 +79,9 @@ public class Shooter extends SubsystemBase {
   public Trigger tracked(Supplier<AimParams> params) {
     return new Trigger(() -> {
       double velocityError = inputs.shooter1Velocity
-          .minus(projectileToShooterVelocity(params.get().velocity)).baseUnitMagnitude();
+          .minus(projectileToShooterVelocity(params.get().output)).baseUnitMagnitude();
       boolean velocityOk =
-          Math.abs(velocityError) <= params.get().deltaVelocity;
+          Math.abs(velocityError) <= params.get().deltaOutput;
 
       double hoodError =
           inputs.hoodPosition.minus(pitchToHoodAngle(params.get().pitch)).baseUnitMagnitude();

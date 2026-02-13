@@ -41,11 +41,11 @@ public class StateManager {
     log.registerString(aimPrefix + "Status", () -> params.status.toString());
     log.registerMeasurement(aimPrefix + "Pitch", () -> params.pitch.getMeasure(), Degrees);
     log.registerMeasurement(aimPrefix + "Yaw", () -> params.yaw.getMeasure(), Degrees);
-    log.registerDouble(aimPrefix + "Velocity", () -> params.velocity);
+    log.registerDouble(aimPrefix + "Velocity", () -> params.output);
     log.registerMeasurement(aimPrefix + "Error/Pitch", () -> params.deltaPitch.getMeasure(),
         Degrees);
     log.registerMeasurement(aimPrefix + "Error/Yaw", () -> params.deltaYaw.getMeasure(), Degrees);
-    log.registerDouble(aimPrefix + "Error/Velocity", () -> params.deltaVelocity);
+    log.registerDouble(aimPrefix + "Error/Velocity", () -> params.deltaOutput);
   }
 
   /**

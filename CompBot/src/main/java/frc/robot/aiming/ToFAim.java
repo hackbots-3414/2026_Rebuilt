@@ -16,7 +16,7 @@ import frc.robot.superstructure.StateManager;
  */
 public class ToFAim implements AimStrategy {
   static final double EPSILON = 1e-3;
-  static final double ITERATIONS = 5;
+  static final int ITERATIONS = 5;
 
   private final AimConstraints constraints;
 
@@ -53,7 +53,7 @@ public class ToFAim implements AimStrategy {
     double distance = 0.0; // This will be overriden immediately
     double tof;
 
-    for (int i = 0;i < ITERATIONS;i ++) {
+    for (int i = 0; i < ITERATIONS; i++) {
       // Predict the ToF for the current shot
       distance = afterShooting.minus(target).getNorm();
       tof = timeMap.get(distance);
@@ -77,7 +77,7 @@ public class ToFAim implements AimStrategy {
 
     AimParams params = new AimParams();
     params.pitch = Rotation2d.fromDegrees(pitch);
-    params.velocity = shooterControl;
+    params.output = shooterControl;
     params.control = SpeedControl.MechanismControl;
     Translation2d finalOffset = target.minus(afterShooting);
     params.yaw = Rotation2d.fromRadians(Math.atan2(finalOffset.getY(), finalOffset.getX()));
