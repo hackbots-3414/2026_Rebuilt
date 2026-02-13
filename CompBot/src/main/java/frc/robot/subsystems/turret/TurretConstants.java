@@ -21,8 +21,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.Angle;
 
 public class TurretConstants {
-  protected static final Transform3d kTurretOffset = new Transform3d(0, 0, 0, Rotation3d.kZero);
-
   protected static final int kMotorId = 48;
   protected static final int kEncoder1Id = 49;
   protected static final int kEncoder2Id = 50;
@@ -93,9 +91,9 @@ public class TurretConstants {
 
   /** The turret's relative position on the robot */
   protected static final Transform3d kOffset = new Transform3d(
-      Inches.of(-4.4),
-      Inches.of(4.4),
-      Inches.of(22.5),
+      -0.11,
+      0.11,
+      0.512,
       Rotation3d.kZero);
 
   // These parameters define the range of valid angles for the turret

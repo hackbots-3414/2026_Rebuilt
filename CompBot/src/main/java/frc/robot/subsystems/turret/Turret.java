@@ -177,6 +177,6 @@ public class Turret extends SubsystemBase {
     Transform3d turretRelative =
         new Transform3d(Translation3d.kZero, new Rotation3d(new Rotation2d(inputs.position.minus(TurretConstants.kForwards))))
             .plus(LocalizationConstants.kTurretAoRToTurretCameraOffset);
-    return TurretConstants.kTurretOffset.plus(turretRelative);
+    return TurretConstants.kOffset.plus(turretRelative);
   }
 }

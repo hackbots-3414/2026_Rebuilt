@@ -108,5 +108,5 @@ public class LocalizationConstants {
   );
 
   public static final Transform3d kTurretAoRToTurretCameraOffset =
-      new Transform3d(0, 0, 0, Rotation3d.kZero);
+      new Transform3d(0.064, -0.02, 0.038, new Rotation3d(0, Units.degreesToRadians(-30), 0));
 }
