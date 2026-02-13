@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.superstructure.Superstructure;
+import frc.robot.vision.CameraConfig;
 import frc.robot.vision.CameraIO;
 import frc.robot.vision.CameraIO.CameraIOInputs;
 
@@ -48,26 +49,23 @@ public class SingleInputPoseEstimator implements Runnable {
 
   private final Alert disconnectedAlert;
 
-  private final String name;
-  private final Transform3d robotToCamera;
+  private final CameraConfig config;
 
   public SingleInputPoseEstimator(
       Superstructure superstructure,
       MultiInputFilter filter,
       CameraIO io,
-      String name,
-      Transform3d robotToCamera,
+      CameraConfig config,
       Consumer<TimestampedPoseEstimate> updateCallback) {
     this.superstructure = superstructure;
     this.io = io;
-    this.name = name;
+    this.config = config;
     inputs = new CameraIOInputs();
     reporter = updateCallback;
-    this.robotToCamera = robotToCamera;
     this.filter = filter;
     disconnectedAlert =
-        new Alert("Vision/Camera Status", name + " disconnected", AlertType.kError);
-    estimator = new PhotonPoseEstimator(LocalizationConstants.kTagLayout,robotToCamera);
+        new Alert("Vision/Camera Status", config.cameraName() + " disconnected", AlertType.kError);
+    estimator = new PhotonPoseEstimator(LocalizationConstants.kTagLayout, robotToCamera());
   }
 
   public void refresh(Pose2d robotPose) {
@@ -81,7 +79,7 @@ public class SingleInputPoseEstimator implements Runnable {
       Set<Integer> tags = result.getTargets().stream()
           .map(target -> target.getFiducialId())
           .collect(Collectors.toSet());
-      filter.addInput(name, tags);
+      filter.addInput(config, tags);
     }
   }
 
@@ -95,6 +93,8 @@ public class SingleInputPoseEstimator implements Runnable {
     estimator.addHeadingData(
         RobotController.getMeasureTime().in(Seconds),
         lastPose.getRotation());
+    // Update the camear's transform
+    estimator.setRobotToCameraTransform(robotToCamera());
     /* take many */
     for (PhotonPipelineResult result : results) {
       combinedHandleResult(result);
@@ -111,10 +111,10 @@ public class SingleInputPoseEstimator implements Runnable {
     // use solvePnP every time if we can
     Optional<EstimatedRobotPose> est = estimator.estimateCoprocMultiTagPose(result);
     if (est.isEmpty()) {
-        est = estimator.estimatePnpDistanceTrigSolvePose(result);
+      est = estimator.estimatePnpDistanceTrigSolvePose(result);
     }
     if (est.isEmpty()) {
-        est = estimator.estimateLowestAmbiguityPose(result);
+      est = estimator.estimateLowestAmbiguityPose(result);
     }
     // Now we are out of options
     if (est.isPresent()) {
@@ -135,10 +135,10 @@ public class SingleInputPoseEstimator implements Runnable {
     Transform3d alt3d = target.getAlternateCameraToTarget();
     Pose3d best = targetPosition3d
         .plus(best3d.inverse())
-        .plus(robotToCamera.inverse());
+        .plus(robotToCamera().inverse());
     Pose3d alt = targetPosition3d
         .plus(alt3d.inverse())
-        .plus(robotToCamera.inverse());
+        .plus(robotToCamera().inverse());
     // final decision maker
     double bestHeading = best.getRotation().getZ();
     double altHeading = alt.getRotation().getZ();
@@ -164,13 +164,14 @@ public class SingleInputPoseEstimator implements Runnable {
   private boolean precheckValidity(PhotonPipelineResult result) {
     double latency = result.metadata.getLatencyMillis() * 1e-3;
     if (latency > LocalizationConstants.kLatencyThreshold) {
-      logger.warn("({}) Refused old vision data, latency of {}", name, latency);
+      logger.warn("({}) Refused old vision data, latency of {}", config.cameraName(), latency);
       return false;
     }
     // Ensure we only accept reef-focused estimates
     return result.hasTargets()
         && (!LocalizationConstants.kEnableTagFilter
-            || LocalizationConstants.kApprovedTagIds.contains(result.getBestTarget().getFiducialId()));
+            || LocalizationConstants.kApprovedTagIds
+                .contains(result.getBestTarget().getFiducialId()));
   }
 
   private Optional<TimestampedPoseEstimate> process(PhotonPipelineResult result, Pose3d pose) {
@@ -219,7 +220,7 @@ public class SingleInputPoseEstimator implements Runnable {
   private Matrix<N3, N1> calculateStdDevs(PhotonPipelineResult result, Pose2d pose) {
     double latency = result.metadata.getLatencyMillis() * 1e-3;
     double multiplier = calculateStdDevMultiplier(result, latency, pose);
-    return LocalizationConstants.kBaseStdDevs.times(multiplier);
+    return config.trust().baseStdDevs().times(multiplier);
   }
 
   private double calculateStdDevMultiplier(
@@ -250,7 +251,8 @@ public class SingleInputPoseEstimator implements Runnable {
     // distance from last pose
     double poseDifferenceError = Math.max(0,
         lastPose.minus(pose).getTranslation().getNorm()
-            - LocalizationConstants.kDifferenceThreshold * superstructure.state.robotVelocity().getTranslation().getNorm());
+            - LocalizationConstants.kDifferenceThreshold
+                * superstructure.state.robotVelocity().getTranslation().getNorm());
     double diffMultiplier = Math.max(1,
         poseDifferenceError * LocalizationConstants.kDifferenceMultiplier);
     double timeMultiplier = Math.max(1, latency * LocalizationConstants.kLatencyMultiplier);
@@ -269,5 +271,9 @@ public class SingleInputPoseEstimator implements Runnable {
 
   public boolean isConnected() {
     return inputs.connected;
+  }
+
+  private Transform3d robotToCamera() {
+    return config.robotToCamera().get();
   }
 }

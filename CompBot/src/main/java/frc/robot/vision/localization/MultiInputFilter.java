@@ -1,5 +1,6 @@
 package frc.robot.vision.localization;
 
+import static edu.wpi.first.units.Units.Radians;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
@@ -12,17 +13,19 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import frc.robot.vision.CameraConfig;
 
 public class MultiInputFilter {
   private final Logger m_logger = LoggerFactory.getLogger(MultiInputFilter.class);
 
-  private HashMap<String, Set<Integer>> m_tags = new HashMap<>();
+  private HashMap<CameraConfig, Set<Integer>> m_tags = new HashMap<>();
+
 
   /**
    * Returns whether a camera at the source is able to "see" the tag with the specified ID, using
    * the known camera horizontal field of view.
    */
-  private boolean verifyTarget(Pose2d source, int tag) {
+  private boolean verifyTarget(Pose2d source, int tag, double fovHorizontal) {
     Optional<Pose3d> tagPose = LocalizationConstants.kTagLayout.getTagPose(tag);
     if (tagPose.isEmpty()) {
       return false;
@@ -33,7 +36,7 @@ public class MultiInputFilter {
     Rotation2d sourceAngle = new Rotation2d(sourceRelative.getX(), sourceRelative.getY());
     Rotation2d tagAngle = new Rotation2d(tagRelative.getX(), tagRelative.getY());
     boolean sourceAngleOk =
-        Math.abs(sourceAngle.getRadians()) <= LocalizationConstants.kHorizontalFov.getRadians() / 2.0;
+        Math.abs(sourceAngle.getRadians()) <=  fovHorizontal / 2.0;
     boolean tagAngleOk = Math.abs(tagAngle.getRadians()) <= Math.PI / 2.0;
     return sourceAngleOk && tagAngleOk;
   }
@@ -41,20 +44,20 @@ public class MultiInputFilter {
   /**
    * Returns whether all targets provided COULD be seen with this camera
    */
-  private boolean verifyTargets(Pose2d source, Set<Integer> targets) {
+  private boolean verifyTargets(Pose2d source, Set<Integer> targets, double fovHorizontal) {
     for (int target : targets) {
-      if (!verifyTarget(source, target)) {
+      if (!verifyTarget(source, target, fovHorizontal)) {
         return false;
       }
     }
     return true;
   }
 
-  public void addInput(String source, Set<Integer> tags) {
-    if (!m_tags.containsKey(source)) {
-      m_tags.put(source, new HashSet<>());
+  public void addInput(CameraConfig config, Set<Integer> tags) {
+    if (!m_tags.containsKey(config)) {
+      m_tags.put(config, new HashSet<>());
     }
-    Set<Integer> visible = m_tags.get(source);
+    Set<Integer> visible = m_tags.get(config);
     visible.addAll(tags);
   }
 
@@ -63,20 +66,16 @@ public class MultiInputFilter {
   }
 
   public boolean verify(Pose2d estimate) {
-    for (Entry<String, Set<Integer>> entry : m_tags.entrySet()) {
-      String sourceName = entry.getKey();
+    for (Entry<CameraConfig, Set<Integer>> entry : m_tags.entrySet()) {
+      CameraConfig sourceConfig = entry.getKey();
       Set<Integer> tags = entry.getValue();
-      if (!LocalizationConstants.kCameras.containsKey(sourceName)) {
-        m_logger.warn("Detected target not on field layout, ignoring");
-        continue;
-      }
-      Transform3d offset = LocalizationConstants.kCameras.get(sourceName);
+      Transform3d offset = sourceConfig.robotToCamera().get();
       Transform2d offset2d = new Transform2d(
           offset.getX(),
           offset.getY(),
           offset.getRotation().toRotation2d());
       Pose2d source = estimate.plus(offset2d);
-      if (!verifyTargets(source, tags)) {
+      if (!verifyTargets(source, tags, sourceConfig.fovHorizontal().in(Radians))) {
         return false;
       }
     }

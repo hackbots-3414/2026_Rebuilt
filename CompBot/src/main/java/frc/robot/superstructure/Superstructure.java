@@ -1,6 +1,10 @@
 package frc.robot.superstructure;
 
+import java.util.List;
 import java.util.function.DoubleSupplier;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.commands.CommandBuilder;
@@ -21,7 +25,9 @@ import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIOHardware;
 import frc.robot.subsystems.turret.TurretIOSim;
+import frc.robot.vision.CameraConfig;
 import frc.robot.vision.localization.AprilTagVisionHandler;
+import frc.robot.vision.localization.LocalizationConstants;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
 public class Superstructure {
@@ -71,7 +77,26 @@ public class Superstructure {
   }
 
   public AprilTagVisionHandler createAprilTagVisionHandler() {
-    return new AprilTagVisionHandler(this);
+    // These configs could be their own things, but I don't feel it rn.
+    List<CameraConfig> configs = List.of(
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam1",
+            () -> new Transform3d(-0.203, -0.321, 0.514,
+                new Rotation3d(0, Units.degreesToRadians(-28.6), Units.degreesToRadians(-53.654)))),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam2",
+            () -> new Transform3d(0.228, -0.281, 0.719,
+                new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(26.3)))),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam3",
+            () -> new Transform3d(0.141, 0.307, 0.730,
+                new Rotation3d(0, Units.degreesToRadians(-5.1), Units.degreesToRadians(141.3)))),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam4",
+            () -> new Transform3d(-0.317, 0.138, 0.441,
+                new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-165.827)))));
+
+    return new AprilTagVisionHandler(this, configs);
   }
 
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {

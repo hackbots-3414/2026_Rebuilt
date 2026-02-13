@@ -1,56 +1,71 @@
 package frc.robot.vision.localization;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Milliseconds;
-
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
+import frc.robot.vision.CameraConfig;
+import frc.robot.vision.CameraTrustConfig;
 
 public class LocalizationConstants {
-  protected static final double kRotationCoefficient = Math.PI * 0.5;
-  protected static final double kTranslationCoefficient = 0.06;
+  public static final CameraConfig kTurretBaseCameraConfig = new CameraConfig(
+      "", // Name
+      480, // Resolution height
+      640, // Resolution width
+      Degrees.of(92), // Diagonal FOV
+      Degrees.of(77.4), // Horizontal FOV
+      () -> Transform3d.kZero, // Pose supplier
+      new CameraTrustConfig(
+          VecBuilder.fill(0.06, 0.06, 0.5 * Math.PI), // Base std devs
+          0.75, // Latency threshold
+          1.3, // Latency multiplier
+          0.5, // Field XY margin
+          1.5, // Field Z margin
+          0.8, // Noisy distance
+          5.0, // Distance multiplier
+          0.2, // Ambiguity threshold
+          0.4, // Ambiguity multiplier
+          0.2, // Ambiguity shifter
+          80, // Target divisor
+          0.1, // Difference threshold
+          200)); // Difference multiplier
 
-  protected static final Vector<N3> kBaseStdDevs =
-      VecBuilder.fill(kTranslationCoefficient, kTranslationCoefficient, kRotationCoefficient);
+  public static final CameraConfig kRegularBaseCameraConfig = new CameraConfig(
+      "", // Name
+      480, // Resolution height
+      640, // Resolution width
+      Degrees.of(92), // Diagonal FOV
+      Degrees.of(77.4), // Horizontal FOV
+      () -> Transform3d.kZero, // Pose supplier
+      new CameraTrustConfig(
+          VecBuilder.fill(0.06, 0.06, 0.5 * Math.PI), // Base std devs
+          0.75, // Latency threshold
+          1.3, // Latency multiplier
+          0.5, // Field XY margin
+          1.5, // Field Z margin
+          0.8, // Noisy distance
+          5.0, // Distance multiplier
+          0.2, // Ambiguity threshold
+          0.4, // Ambiguity multiplier
+          0.2, // Ambiguity shifter
+          80, // Target divisor
+          0.1, // Difference threshold
+          200)); // Difference multiplier
 
   protected static final AprilTagFieldLayout kTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
   protected static final String kEstimationName = "estimation";
   protected static final String kRejectName = "rejected";
-
-  private static final double kCameraHeight = 0.190;
-  private static final double kHorizontalOffset = 0.25; // meters
-  private static final double kLowPitch = Units.degreesToRadians(-15);
-  private static final double kHighPitch = Units.degreesToRadians(-35);
-
-  private static final double yawOffset = 45;
-
-  /**
-   * 1 - back right
-   * 2 - front right
-   * 3 - front left
-   * 4 - back left
-   */
-  public static Map<String, Transform3d> kCameras = Map.ofEntries(
-    Map.entry("cam1", new Transform3d(-0.203, -0.321, 0.514, new Rotation3d(0, Units.degreesToRadians(-28.6), Units.degreesToRadians(-53.654)))),
-    Map.entry("cam2", new Transform3d(0.228, -0.281, 0.719, new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(26.3)))),
-    Map.entry("cam3", new Transform3d(0.141, 0.307, 0.730, new Rotation3d(0, Units.degreesToRadians(-5.1), Units.degreesToRadians(141.3)))),
-    Map.entry("cam4", new Transform3d(-0.317, 0.138, 0.441, new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-165.827))))
-    );
-
 
   /** The tick time for each pose estimator to run */
   protected static final double kPeriodic = 0.02;
@@ -78,8 +93,6 @@ public class LocalizationConstants {
   // Stats about the camera for simulation
   protected static final int kResWidth = 640;
   protected static final int kResHeight = 480;
-  protected static final Rotation2d kFOV = Rotation2d.fromDegrees(92.0);
-  protected static final Rotation2d kHorizontalFov = Rotation2d.fromDegrees(77.4);
 
   // Simulated error:
   protected static final Time kAvgLatency = Milliseconds.of(18);
