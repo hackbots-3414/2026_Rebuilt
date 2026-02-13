@@ -1,4 +1,4 @@
-package frc.robot.subsystems.led;
+package frc.robot.subsystems.ledSubsystem;
 
 public class LedConstants {
     // Offsets & numLEds & IDS
@@ -12,6 +12,7 @@ public class LedConstants {
     public static final int endgameWarning = 30;
     public static final int endgameAlert = 15;
 
+    
 
     public static final String dragonReinsName = "spark";
     public static final String ps5Name= "Dual";
