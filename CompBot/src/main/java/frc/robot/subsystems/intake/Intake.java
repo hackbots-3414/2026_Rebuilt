@@ -53,7 +53,7 @@ public class Intake extends SubsystemBase {
   }
 
   private boolean deployAtPositoin() {
-    return inputs.deployPosition.minus(reference.position).baseUnitMagnitude() <= DeployConstants.kTolerance.baseUnitMagnitude();
+    return Math.abs(inputs.deployPosition.minus(reference.position).baseUnitMagnitude()) <= DeployConstants.kTolerance.baseUnitMagnitude();
   }
 
   /**
