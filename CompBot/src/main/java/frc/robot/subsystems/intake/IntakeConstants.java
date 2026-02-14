@@ -32,7 +32,7 @@ public class IntakeConstants {
 
   protected static final TalonFXConfiguration kIntakeMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
-          .withNeutralMode(NeutralModeValue.Brake)
+          .withNeutralMode(NeutralModeValue.Coast)
           .withInverted(InvertedValue.Clockwise_Positive))
 
       .withCurrentLimits(new CurrentLimitsConfigs()
