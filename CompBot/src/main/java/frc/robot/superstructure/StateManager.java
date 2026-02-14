@@ -11,6 +11,7 @@ import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimParams;
 import frc.robot.aiming.AimStrategy;
 import frc.robot.aiming.PhysicsAim;
+import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;
 import frc.robot.aiming.AimParams.AimStatus;
 import frc.robot.superstructure.Superstructure.Subsystems;
 import frc.robot.util.FieldUtils;
@@ -107,6 +108,10 @@ public class StateManager {
   public void periodic() {
     params = new AimParams(AimStatus.Unchecked);
     predictedParams = new AimParams(AimStatus.Unchecked);
+  }
+
+  public Trigger climbed() {
+    return subsystems.climber().at(ClimbPosition.Climbed);
   }
 
   public Pose3d turretPose() {
