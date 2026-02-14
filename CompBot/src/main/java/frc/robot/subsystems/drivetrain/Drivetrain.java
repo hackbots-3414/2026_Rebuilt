@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -60,13 +61,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity);
-  private final SwerveRequest.FieldCentricFacingAngle driveOverride =
-      new SwerveRequest.FieldCentricFacingAngle()
-          .withDriveRequestType(DriveRequestType.Velocity)
-          .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
-          .withHeadingPID(30, 0, 0);
-
-  private Optional<AimParams> rotationOverride = Optional.empty();
 
   private SwerveDriveState state;
   private final StructLogEntry<Pose2d> poseLogEntry;
@@ -121,7 +115,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   @SuppressWarnings("unused")
   private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
       new SysIdRoutine.Config(
-          /* This is in radians per second², but SysId only supports "volts per second" */
+          /* This is in radians per second^2, but SysId only supports "volts per second" */
           Volts.of(Math.PI / 6).per(Second),
           /* This is in radians per second, but SysId only supports "volts" */
           Volts.of(Math.PI),
@@ -160,7 +154,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     poseLogEntry = StructLogEntry.create(DataLogManager.getLog(), "Robot Pose", Pose2d.struct);
     state = getState();
     OnboardLogger ologger = new OnboardLogger("Drivetrain");
-    ologger.registerBoolean("Received vision udpate", () -> hasReceivedVisionUpdate);
+    ologger.registerBoolean("Received vision update", () -> hasReceivedVisionUpdate);
   }
 
   /**
@@ -287,12 +281,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       Translation2d operatorRelative =
           new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
       Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
-      if (rotationOverride.isPresent()) {
-        return driveOverride
-            .withVelocityX(fieldRelative.getX())
-            .withVelocityY(fieldRelative.getY())
-            .withTargetDirection(rotationOverride.get().yaw);
-      }
       return drive
           .withVelocityX(fieldRelative.getX())
           .withVelocityY(fieldRelative.getY())
@@ -336,19 +324,20 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return this.applyRequest(
         () -> new SwerveRequest.RobotCentric().withRotationalRate(0.5 * Math.PI));
   }
-
-  public Command track(Supplier<AimParams> params) {
-    return Commands.run(() -> rotationOverride = Optional.of(params.get()))
-        .finallyDo(() -> rotationOverride = Optional.empty());
+  
+  private Twist2d predictedTwist() {
+    return new Twist2d(
+        state.Speeds.vxMetersPerSecond * Robot.kDefaultPeriod,
+        state.Speeds.vyMetersPerSecond * Robot.kDefaultPeriod,
+        state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod);
   }
 
-  public Optional<AimParams> aimParams() {
-    return rotationOverride;
+  public Pose2d predictedRobotPose() {
+    return robotPose().exp(predictedTwist());
   }
 
-  public Trigger tracked() {
-    return new Trigger(() -> rotationOverride.isPresent()
-        && Math.abs(rotationOverride.get().yaw.relativeTo(robotPose().getRotation())
-            .getDegrees()) < rotationOverride.get().deltaYaw.getDegrees());
+  public Translation2d predictedRobotVelocity() {
+    return robotVelocity().getTranslation().rotateBy(
+        Rotation2d.fromRadians(state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod));
   }
 }

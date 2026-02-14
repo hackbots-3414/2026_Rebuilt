@@ -18,6 +18,7 @@ import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.util.datalog.StructArrayLogEntry;
 import edu.wpi.first.util.datalog.StructLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 
 /**
  * A utility class to help log structured data to a DataLog without worrying about extra writes or
@@ -56,11 +57,18 @@ public class OnboardLogger {
     doubleEntries.add(new Pair<>(supplier::getAsDouble, entry));
   }
 
-  public <T extends Unit> void registerMeasurment(String name, Supplier<Measure<T>> supplier,
+  public <T extends Unit> void registerMeasurement(String name, Supplier<Measure<T>> supplier,
       T unit) {
     DoubleLogEntry entry = new DoubleLogEntry(datalog, this.name + "/" + name, unit.name());
     doubleEntries
-        .add(new Pair<DoubleSupplier, DoubleLogEntry>(() -> supplier.get().in(unit), entry));
+        .add(new Pair<DoubleSupplier, DoubleLogEntry>(() -> {
+          var val = supplier.get();
+          if (val == null) {
+            DriverStation.reportError("Attempted to read a null measurement for logging: " + this.name + "/" + name, true);
+            return 0;
+          }
+          return supplier.get().in(unit);
+        }, entry));
   }
 
   public void registerBoolean(String name, BooleanSupplier supplier) {
