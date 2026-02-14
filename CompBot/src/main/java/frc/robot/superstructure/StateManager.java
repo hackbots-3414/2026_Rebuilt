@@ -3,10 +3,12 @@ package frc.robot.superstructure;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.aiming.AimParams;
 import frc.robot.aiming.AimStrategy;
 import frc.robot.aiming.PhysicsAim;
+import frc.robot.subsystems.climber.ClimberConstants.ClimberPositions;
 import frc.robot.superstructure.Superstructure.Subsystems;
 import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
@@ -58,5 +60,9 @@ public class StateManager {
 
   public void periodic() {
     aim.update(this); // This ensures we only cache the parameter object and then cache them.
+  }
+
+  public Trigger climbed() {
+    return subsystems.climber().ready(ClimberPositions.Level1);
   }
 }

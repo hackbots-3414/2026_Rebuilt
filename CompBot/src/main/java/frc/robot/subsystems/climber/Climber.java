@@ -33,7 +33,8 @@ public class Climber extends SubsystemBase {
         this.runOnce(() -> io.setPosition(climbLevel.position)),
         Commands.waitUntil(ready(climbLevel)));
   }
-
+  
+  // returns if we are at a given climbLevel
   public Trigger ready(ClimberPositions climbLevel) {
 
     return new Trigger(() -> {
