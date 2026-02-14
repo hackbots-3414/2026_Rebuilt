@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.aiming.AimParams;
 import frc.robot.aiming.AimStrategy;
 import frc.robot.aiming.PhysicsAim;
+import frc.robot.subsystems.climber.ClimberConstants.ClimberPositions;
 import frc.robot.superstructure.Superstructure.Subsystems;
 import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
@@ -57,5 +58,9 @@ public class StateManager {
 
   public void periodic() {
     aim.update(this); // This ensures we only cache the parameter object and then cache them.
+  }
+
+  public Trigger climbed() {
+    return subsystems.climber().at(ClimberPositions.Climbed);
   }
 }
