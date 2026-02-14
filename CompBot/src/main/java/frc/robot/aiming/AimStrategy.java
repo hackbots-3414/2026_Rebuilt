@@ -1,18 +1,15 @@
 package frc.robot.aiming;
 
-import frc.robot.superstructure.StateManager;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 /**
  * An interface representing a method of aim-calculation; i.e. calculating what shot parameters are
  * necessary for a given robot configuration
  */
-public abstract class AimStrategy {
-  public AimParams params = new AimParams();
-
+public interface AimStrategy {
   /**
    * Updates the AimParams with the new calculated shot based on the robot's state
-   *
-   * @param state The {@link frc.robot.superstructure.Superstructure}'s state.
    */
-  public abstract AimParams update(StateManager state);
+  public AimParams update(Pose3d target, Pose3d shooter, Translation2d velocity);
 }
