@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldManager;
 import frc.robot.aiming.AimParams;
+import frc.robot.aiming.AimParams.SpeedControl;
 import frc.robot.superstructure.StateManager;
 import frc.robot.superstructure.Superstructure.Subsystems;
 
@@ -15,9 +16,7 @@ public class FuelShotSim implements CommandBuilder {
   public Command singleBuild(Subsystems subsystems, StateManager state) {
     FuelSim sim = new FuelSim();
     return Commands.sequence(
-        Commands.runOnce(() -> {
-          sim.launch(state, state.aimParams());
-        }),
+        Commands.runOnce(() -> sim.launch(state)),
         Commands.run(sim::tick))
         .until(sim::atHub)
         .withName("Fuel Shot (sim)");
@@ -40,17 +39,21 @@ public class FuelShotSim implements CommandBuilder {
 
     public FuelSim() {}
 
-    public void launch(StateManager state, AimParams params) {
-      params = state.aimParams();
+    public void launch(StateManager state) {
+      AimParams params = state.predictedAimParams();
+      if (params.control != SpeedControl.ProjectileVelocity) {
+        throw new IllegalStateException(
+            "Aim Params in fuel sim doesn't use SpeedControl.ProjectileVelocity speed control");
+      }
       position = state.turretPose().getTranslation();
       final double error = 0.15;
       // field-relative velocity, but with the robot as the origin
       Translation3d veloR = new Translation3d(
-          params.pitch.getCos() * params.yaw.getCos() * params.velocity.baseUnitMagnitude()
+          params.pitch.getCos() * params.yaw.getCos() * params.output
               + Math.random() * error,
-          params.pitch.getCos() * params.yaw.getSin() * params.velocity.baseUnitMagnitude()
+          params.pitch.getCos() * params.yaw.getSin() * params.output
               + Math.random() * error,
-          params.pitch.getSin() * params.velocity.baseUnitMagnitude() + Math.random() * error);
+          params.pitch.getSin() * params.output + Math.random() * error);
       velocity = veloR.plus(new Translation3d(state.robotVelocity().getTranslation()));
       target = state.aimTarget().getTranslation();
     }
@@ -60,8 +63,7 @@ public class FuelShotSim implements CommandBuilder {
         // Update position
         position = position.plus(velocity.times(dt / (double) resolution));
         // Calculate the drag force / mass: 0.5 * 1.225 * pi * 0.075^2 * 0.47 * v^2 * 2
-        // double Fd = -0.5 * 1.225 * Math.PI * 0.075 * 0.075 * 0.47 * velocity.getNorm() * 2;
-        double Fd = 0;
+        double Fd = -0.5 * 1.225 * Math.PI * 0.075 * 0.075 * 0.47 * velocity.getNorm() * 2;
         Translation3d acceleration = velocity.times(Fd).plus(gravity);
         velocity = velocity.plus(acceleration.times(dt / (double) resolution));
       }

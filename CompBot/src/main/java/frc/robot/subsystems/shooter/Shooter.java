@@ -1,6 +1,7 @@
 
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -8,7 +9,6 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -44,10 +44,10 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
   }
 
-  private AngularVelocity projectileToShooterVelocity(LinearVelocity projectileVelocity) {
+  private AngularVelocity projectileToShooterVelocity(double projectileVelocity) {
     // Assume linear relationship between shooter rotational speed and projectile linear speed.
     return ShooterConstants.kMaxRotationalSpeed
-        .times(projectileVelocity.div(ShooterConstants.kMaxLinearSpeed));
+        .times(projectileVelocity / ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond));
   }
 
   private Angle pitchToHoodAngle(Rotation2d pitch) {
@@ -62,7 +62,7 @@ public class Shooter extends SubsystemBase {
    */
   public Command shoot(Supplier<AimParams> params) {
     return this.run(() -> {
-      shooterReference = projectileToShooterVelocity(params.get().velocity);
+      shooterReference = projectileToShooterVelocity(params.get().output);
       hoodReference = pitchToHoodAngle(params.get().pitch);
       io.setVelocity(shooterReference);
       io.setAngle(hoodReference);
@@ -79,9 +79,9 @@ public class Shooter extends SubsystemBase {
   public Trigger tracked(Supplier<AimParams> params) {
     return new Trigger(() -> {
       double velocityError = inputs.shooter1Velocity
-          .minus(projectileToShooterVelocity(params.get().velocity)).baseUnitMagnitude();
+          .minus(projectileToShooterVelocity(params.get().output)).baseUnitMagnitude();
       boolean velocityOk =
-          Math.abs(velocityError) <= params.get().deltaVelocity.baseUnitMagnitude();
+          Math.abs(velocityError) <= params.get().deltaOutput;
 
       double hoodError =
           inputs.hoodPosition.minus(pitchToHoodAngle(params.get().pitch)).baseUnitMagnitude();

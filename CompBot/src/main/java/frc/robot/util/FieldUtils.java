@@ -37,7 +37,7 @@ public class FieldUtils {
 
   public static boolean inAllianceZone(Pose2d robot) {
     Pose2d local = allianceRelativeFlip(robot);
-    return local.getX() <= FieldConstants.kAllianzeZoneLength.in(Meters);
+    return local.getX() <= FieldConstants.kAllianceZoneLength.in(Meters);
   }
 
   public static Pose3d feedTarget() {

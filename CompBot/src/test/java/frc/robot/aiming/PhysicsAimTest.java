@@ -14,10 +14,10 @@ public class PhysicsAimTest {
   public void setStatusTest() {
     AimParams params = new AimParams();
     assertEquals(params.status, AimStatus.Unchecked);
-    params = params.withStatus(AimStatus.Possible);
+    params.status = AimStatus.Possible;
     assertEquals(params.status, AimStatus.Possible);
     assertTrue(params.isOk());
-    params = params.withStatus(AimStatus.Impossible);
+    params.status = AimStatus.Impossible;
     assertEquals(params.status, AimStatus.Impossible);
   }
 

@@ -3,6 +3,7 @@ package frc.robot.subsystems.turret;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Revolutions;
+import static edu.wpi.first.units.Units.Rotations;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -97,4 +98,10 @@ public class TurretConstants {
       Inches.of(4.4),
       Inches.of(22.5),
       Rotation3d.kZero);
+
+  // These parameters define the range of valid angles for the turret
+  protected static final Angle kMinAngle = Rotations.of(-0.75);
+  protected static final Angle kMinTrackingAngle = Rotations.of(-0.5);
+  protected static final Angle kMaxAngle = Rotations.of(0.75);
+  protected static final Angle kMaxTrackingAngle = Rotations.of(0.5);
 }
