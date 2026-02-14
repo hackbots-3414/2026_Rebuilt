@@ -18,8 +18,8 @@ public class Climber extends SubsystemBase {
 
   public Climber(ClimberIO io) {
     this.io = io;
-    SmartDashboard.putData("Climber/ClimbTo0", climb(ClimberPositions.NotClimbed));
-    SmartDashboard.putData("Climber/ClimbTo1", climb(ClimberPositions.Level1));
+    SmartDashboard.putData("Climber/ClimbTo0", go(ClimberPositions.Home));
+    SmartDashboard.putData("Climber/ClimbTo1", go(ClimberPositions.Climbed));
   }
 
   @Override
@@ -28,13 +28,13 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putNumber("Climber/ClimbLevel", inputs.position.in(Degrees));
   }
 
-  public Command climb(ClimberPositions climbLevel) {
+  public Command go(ClimberPositions climbLevel) {
     return Commands.sequence(
         this.runOnce(() -> io.setPosition(climbLevel.position)),
-        Commands.waitUntil(ready(climbLevel)));
+        Commands.waitUntil(at(climbLevel)));
   }
 
-  public Trigger ready(ClimberPositions climbLevel) {
+  public Trigger at(ClimberPositions climbLevel) {
 
     return new Trigger(() -> {
       return ClimberConstants.kTolerance.in(Radians) >= Math

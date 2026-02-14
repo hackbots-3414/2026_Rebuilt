@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.binding.Binder;
 import frc.robot.binding.DriverBindings;
+import frc.robot.binding.RobotBindings;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 
@@ -17,11 +18,12 @@ public class RobotContainer {
   public final Superstructure superstructure;
   public final AprilTagVisionHandler aprilTagVisionHandler;
 
-  public final Binder driver = new DriverBindings();
+  public final Binder driverBinder = new DriverBindings();
+  public final Binder robotBinder = new RobotBindings();
 
   public RobotContainer() {
     superstructure = new Superstructure();
-    driver.bind(superstructure);
+    driverBinder.bind(superstructure);
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
