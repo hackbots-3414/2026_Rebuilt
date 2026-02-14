@@ -62,7 +62,7 @@ public class Turret extends SubsystemBase {
         this.run(() -> {
           tracking = true;
           Rotation2d robot = state.robotPose().getRotation();
-          Rotation2d relative = state.aimParams().yaw.minus(robot);
+          Rotation2d relative = state.predictedAimParams().yaw.minus(robot);
           // We're only in "tracking" mode if we're just trying to get to a happy spot. If everybody
           // else is ready, we don't want to hold up shooting, so we allow the turret access to its
           // full range. We don't generally want to do this, because it would mean that while
@@ -119,8 +119,8 @@ public class Turret extends SubsystemBase {
     FieldManager.getInstance().getField().getObject("turret-target").setPose(turretReference);
   }
 
-  public Pose3d turretPose(StateManager state) {
-    return new Pose3d(state.robotPose()).transformBy(TurretConstants.kOffset);
+  public Pose3d turretPose(Pose2d robotPose) {
+    return new Pose3d(robotPose).transformBy(TurretConstants.kOffset);
   }
 
   /**

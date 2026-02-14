@@ -1,12 +1,12 @@
 package frc.robot.aiming;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.aiming.AimParams.AimStatus;
 import frc.robot.aiming.AimParams.SpeedControl;
-import frc.robot.superstructure.StateManager;
 
 public class PhysicsAim implements AimStrategy {
   private static final int ITERATIONS = 5;
@@ -23,14 +23,12 @@ public class PhysicsAim implements AimStrategy {
     this.maxDescentVelocity = maxDescentVelocity;
   }
 
-  public AimParams update(StateManager state) {
-    Translation3d offset = state.aimTarget().getTranslation()
-        .minus(state.turretPose().getTranslation());
-    Translation2d robotVelocity = state.robotVelocity().getTranslation();
+  public AimParams update(Pose3d target, Pose3d shooter, Translation2d shooterVelocity) {
+    Translation3d offset = target.getTranslation().minus(shooter.getTranslation());
 
     // Calculate the pitch values for the minimum and maximum possible v_zf values:
-    AimParams minParams = quicksolve(offset, robotVelocity, minDescentVelocity);
-    AimParams maxParams = quicksolve(offset, robotVelocity, maxDescentVelocity);
+    AimParams minParams = quicksolve(offset, shooterVelocity, minDescentVelocity);
+    AimParams maxParams = quicksolve(offset, shooterVelocity, maxDescentVelocity);
 
     double minPitch = minParams.pitch.getRadians();
     double maxPitch = maxParams.pitch.getRadians();
@@ -56,7 +54,7 @@ public class PhysicsAim implements AimStrategy {
 
     for (int i = 0; i < ITERATIONS; i++) {
       double guess = 0.5 * (lower + upper);
-      AimParams output = quicksolve(offset, robotVelocity, guess);
+      AimParams output = quicksolve(offset, shooterVelocity, guess);
       boolean ok = constraints.check(output);
       if (ok) {
         // We're just optimizing, so we won't stop yet.

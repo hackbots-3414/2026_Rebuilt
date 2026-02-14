@@ -26,6 +26,7 @@ public class StateManager {
       10);
 
   private AimParams params = new AimParams(AimStatus.Unchecked);
+  private AimParams predictedParams = new AimParams(AimStatus.Unchecked);
 
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
@@ -47,6 +48,17 @@ public class StateManager {
         Degrees);
     log.registerMeasurement(aimPrefix + "Error/Yaw", () -> params.deltaYaw.getMeasure(), Degrees);
     log.registerDouble(aimPrefix + "Error/Velocity", () -> params.deltaOutput);
+
+    aimPrefix = "Aim Params (Predicted)/";
+    log.registerString(aimPrefix + "Status", () -> predictedParams.status.toString());
+    log.registerMeasurement(aimPrefix + "Pitch", () -> predictedParams.pitch.getMeasure(), Degrees);
+    log.registerMeasurement(aimPrefix + "Yaw", () -> predictedParams.yaw.getMeasure(), Degrees);
+    log.registerDouble(aimPrefix + "Velocity", () -> predictedParams.output);
+    log.registerMeasurement(aimPrefix + "Error/Pitch",
+        () -> predictedParams.deltaPitch.getMeasure(), Degrees);
+    log.registerMeasurement(aimPrefix + "Error/Yaw", () -> predictedParams.deltaYaw.getMeasure(),
+        Degrees);
+    log.registerDouble(aimPrefix + "Error/Velocity", () -> predictedParams.deltaOutput);
   }
 
   /**
@@ -79,16 +91,27 @@ public class StateManager {
 
   public AimParams aimParams() {
     if (params.status == AimStatus.Unchecked) {
-      params = aim.update(this);
+      params = aim.update(aimTarget(), turretPose(), robotVelocity().getTranslation());
     }
     return params;
   }
 
+  public AimParams predictedAimParams() {
+    if (predictedParams.status == AimStatus.Unchecked) {
+      Pose2d predictedPose = subsystems.drivetrain().predictedRobotPose();
+      predictedParams = aim.update(aimTarget(), subsystems.turret().turretPose(predictedPose),
+          subsystems.drivetrain().predictedRobotVelocity());
+    }
+    return predictedParams;
+  }
+
   public void periodic() {
-    params.status = AimStatus.Unchecked;
+    params = new AimParams(AimStatus.Unchecked);
+    predictedParams = new AimParams(AimStatus.Unchecked);
   }
 
   public Pose3d turretPose() {
-    return subsystems.turret().turretPose(this);
+    return subsystems.turret().turretPose(robotPose());
   }
+
 }

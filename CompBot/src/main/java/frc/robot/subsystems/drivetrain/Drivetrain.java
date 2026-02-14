@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -350,5 +351,21 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return new Trigger(() -> rotationOverride.isPresent()
         && Math.abs(rotationOverride.get().yaw.relativeTo(robotPose().getRotation())
             .getDegrees()) < rotationOverride.get().deltaYaw.getDegrees());
+  }
+
+  private Twist2d predictedTwist() {
+    return new Twist2d(
+        state.Speeds.vxMetersPerSecond * Robot.kDefaultPeriod,
+        state.Speeds.vyMetersPerSecond * Robot.kDefaultPeriod,
+        state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod);
+  }
+
+  public Pose2d predictedRobotPose() {
+    return robotPose().exp(predictedTwist());
+  }
+
+  public Translation2d predictedRobotVelocity() {
+    return robotVelocity().getTranslation().rotateBy(
+        Rotation2d.fromRadians(state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod));
   }
 }
