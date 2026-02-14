@@ -44,22 +44,22 @@ public interface IntakeIO {
     public IntakeIOInputs() {
       OnboardLogger log = new OnboardLogger("Intake");
       log.registerBoolean("Intake Motor/Connected", () -> intakeMotorConnected);
-      log.registerMeasurment("Intake Motor/Supply Current", () -> intakeSupplyCurrent, Amps);
-      log.registerMeasurment("Intake Motor/Torque Current", () -> intakeTorqueCurrent, Amps);
-      log.registerMeasurment("Intake Motor/Stator Current", () -> intakeStatorCurrent, Amps);
-      log.registerMeasurment("Intake Motor/Voltage", () -> intakeVoltage, Volts);
-      log.registerMeasurment("Intake Motor/Temperature", () -> intakeTemperature, Celsius);
+      log.registerMeasurement("Intake Motor/Supply Current", () -> intakeSupplyCurrent, Amps);
+      log.registerMeasurement("Intake Motor/Torque Current", () -> intakeTorqueCurrent, Amps);
+      log.registerMeasurement("Intake Motor/Stator Current", () -> intakeStatorCurrent, Amps);
+      log.registerMeasurement("Intake Motor/Voltage", () -> intakeVoltage, Volts);
+      log.registerMeasurement("Intake Motor/Temperature", () -> intakeTemperature, Celsius);
 
       log.registerBoolean("Deploy Motor/Connected", () -> deployMotorConnected);
-      log.registerMeasurment("Deploy Motor/Supply Current", () -> deploySupplyCurrent, Amps);
-      log.registerMeasurment("Deploy Motor/Torque Current", () -> deployTorqueCurrent, Amps);
-      log.registerMeasurment("Deploy Motor/Stator Current", () -> deployStatorCurrent, Amps);
-      log.registerMeasurment("Deploy Motor/Voltage", () -> deployVoltage, Volts);
-      log.registerMeasurment("Deploy Motor/Temperature", () -> deployTemperature, Celsius);
-      log.registerMeasurment("Deploy Motor/Position", () -> deployPosition, Degrees);
+      log.registerMeasurement("Deploy Motor/Supply Current", () -> deploySupplyCurrent, Amps);
+      log.registerMeasurement("Deploy Motor/Torque Current", () -> deployTorqueCurrent, Amps);
+      log.registerMeasurement("Deploy Motor/Stator Current", () -> deployStatorCurrent, Amps);
+      log.registerMeasurement("Deploy Motor/Voltage", () -> deployVoltage, Volts);
+      log.registerMeasurement("Deploy Motor/Temperature", () -> deployTemperature, Celsius);
+      log.registerMeasurement("Deploy Motor/Position", () -> deployPosition, Degrees);
 
       log.registerBoolean("CANrange Connected", () -> canrangeConnected);
-      log.registerMeasurment("CANrange Distance", () -> canrangeDistance, Centimeters);
+      log.registerMeasurement("CANrange Distance", () -> canrangeDistance, Centimeters);
       log.registerBoolean("CANrange Detected", () -> canrangeDetected);
     }
   }

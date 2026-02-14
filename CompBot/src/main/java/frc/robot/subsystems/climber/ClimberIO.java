@@ -31,12 +31,12 @@ public interface ClimberIO {
     public ClimberIOInputs() {
       OnboardLogger log = new OnboardLogger("Climber");
       log.registerBoolean("Motor Connected", () -> motorConnected);
-      log.registerMeasurment("Supply Current", () -> supplyCurrent, Amps);
-      log.registerMeasurment("Torque Current", () -> torqueCurrent, Amps);
-      log.registerMeasurment("Stator Current", () -> statorCurrent, Amps);
-      log.registerMeasurment("Voltage", () -> voltage, Volts);
-      log.registerMeasurment("Temperature", () -> temperature, Celsius);
-      log.registerMeasurment("Velocity", () -> velocity, RotationsPerSecond);
+      log.registerMeasurement("Supply Current", () -> supplyCurrent, Amps);
+      log.registerMeasurement("Torque Current", () -> torqueCurrent, Amps);
+      log.registerMeasurement("Stator Current", () -> statorCurrent, Amps);
+      log.registerMeasurement("Voltage", () -> voltage, Volts);
+      log.registerMeasurement("Temperature", () -> temperature, Celsius);
+      log.registerMeasurement("Velocity", () -> velocity, RotationsPerSecond);
     }
   }
 
