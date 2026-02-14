@@ -50,7 +50,9 @@ public class AimParams {
     }
   }
 
-  public static final AimParams kImpossible = new AimParams(AimStatus.Impossible);
+  public static AimParams impossible() {
+    return new AimParams(AimStatus.Impossible);
+  }
 
   /** Returns whether the aim parameters calculated are feasible */
   public boolean isOk() {

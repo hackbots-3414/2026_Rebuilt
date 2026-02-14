@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.AimConstants;
 import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimParams;
 import frc.robot.aiming.AimStrategy;
@@ -20,10 +21,6 @@ import frc.robot.util.OnboardLogger;
  */
 public class StateManager {
   private final Subsystems subsystems;
-  private final AimStrategy aim = new PhysicsAim(
-      new AimConstraints(Rotation2d.fromDegrees(49.5), Rotation2d.fromDegrees(72.0), 18),
-      2,
-      10);
 
   private AimParams params = new AimParams(AimStatus.Unchecked);
   private AimParams predictedParams = new AimParams(AimStatus.Unchecked);
@@ -91,7 +88,8 @@ public class StateManager {
 
   public AimParams aimParams() {
     if (params.status == AimStatus.Unchecked) {
-      params = aim.update(aimTarget(), turretPose(), robotVelocity().getTranslation());
+      params =
+          AimConstants.kAim.update(aimTarget(), turretPose(), robotVelocity().getTranslation());
     }
     return params;
   }
@@ -99,8 +97,9 @@ public class StateManager {
   public AimParams predictedAimParams() {
     if (predictedParams.status == AimStatus.Unchecked) {
       Pose2d predictedPose = subsystems.drivetrain().predictedRobotPose();
-      predictedParams = aim.update(aimTarget(), subsystems.turret().turretPose(predictedPose),
-          subsystems.drivetrain().predictedRobotVelocity());
+      predictedParams =
+          AimConstants.kAim.update(aimTarget(), subsystems.turret().turretPose(predictedPose),
+              subsystems.drivetrain().predictedRobotVelocity());
     }
     return predictedParams;
   }

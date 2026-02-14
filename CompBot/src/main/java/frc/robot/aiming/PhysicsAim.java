@@ -37,7 +37,7 @@ public class PhysicsAim implements AimStrategy {
         && maxPitch >= constraints.minShooterAngle().getRadians();
 
     if (!solutionExists) {
-      return AimParams.kImpossible;
+      return AimParams.impossible();
     }
 
     boolean minWorks = constraints.check(minParams);
@@ -50,7 +50,7 @@ public class PhysicsAim implements AimStrategy {
     double lower = minDescentVelocity;
     double upper = maxDescentVelocity;
 
-    AimParams best = AimParams.kImpossible;
+    AimParams best = AimParams.impossible();
 
     for (int i = 0; i < ITERATIONS; i++) {
       double guess = 0.5 * (lower + upper);
@@ -81,14 +81,14 @@ public class PhysicsAim implements AimStrategy {
     }
 
     if (best.status == AimStatus.Impossible) {
-      return AimParams.kImpossible;
+      return AimParams.impossible();
     }
 
     // If yaw says to shoot in the wrong direction we don't listen, even if it would work.
     Rotation2d towardsTarget = Rotation2d.fromRadians(Math.atan2(offset.getY(), offset.getX()));
     double diff = MathUtil.angleModulus(Math.abs(towardsTarget.minus(best.yaw).getRadians()));
     if (diff > 0.8 * Math.PI) { // We aren't really pointed at the target.
-      return AimParams.kImpossible;
+      return AimParams.impossible();
     }
 
     best.control = SpeedControl.ProjectileVelocity;

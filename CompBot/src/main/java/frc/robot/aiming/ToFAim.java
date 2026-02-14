@@ -68,7 +68,7 @@ public class ToFAim implements AimStrategy {
     }
 
     if (status == AimStatus.Impossible) {
-      return AimParams.kImpossible;
+      return AimParams.impossible();
     }
 
     double pitch = pitchMap.get(distance);
