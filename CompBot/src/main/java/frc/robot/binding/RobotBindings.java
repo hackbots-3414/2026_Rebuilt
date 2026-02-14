@@ -7,7 +7,7 @@ import frc.robot.commands.CommandBuilder;
 import frc.robot.commands.FuelShot;
 import frc.robot.commands.FuelShotSim;
 import frc.robot.commands.RunClimb;
-import frc.robot.subsystems.climber.ClimberConstants.ClimberPositions;
+import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;
 import frc.robot.superstructure.Superstructure;
 
 public class RobotBindings implements Binder {
@@ -17,7 +17,7 @@ public class RobotBindings implements Binder {
             superstructure.build(shoot).repeatedly()
         );
         RobotModeTriggers.teleop().onTrue(
-            superstructure.build(new RunClimb(ClimberPositions.Ready)).onlyIf(superstructure.state.climbed())
+            superstructure.build(new RunClimb(ClimbPosition.Ready)).onlyIf(superstructure.state.climbed())
         );
     }
 }

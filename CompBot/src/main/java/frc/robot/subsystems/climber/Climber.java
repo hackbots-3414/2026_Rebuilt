@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.climber.ClimberConstants.ClimberPositions;
+import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;
 import frc.robot.subsystems.climber.ClimberIO.ClimberIOInputs;
 
 public class Climber extends SubsystemBase {
@@ -18,8 +18,9 @@ public class Climber extends SubsystemBase {
 
   public Climber(ClimberIO io) {
     this.io = io;
-    SmartDashboard.putData("Climber/ClimbTo0", go(ClimberPositions.Home));
-    SmartDashboard.putData("Climber/ClimbTo1", go(ClimberPositions.Climbed));
+    SmartDashboard.putData("Climber/Home", go(ClimbPosition.Home));
+    SmartDashboard.putData("Climber/Ready", go(ClimbPosition.Ready));
+    SmartDashboard.putData("Climber/Climb", go(ClimbPosition.Climbed));
   }
 
   @Override
@@ -28,13 +29,13 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putNumber("Climber/ClimbLevel", inputs.position.in(Degrees));
   }
 
-  public Command go(ClimberPositions climbLevel) {
+  public Command go(ClimbPosition climbLevel) {
     return Commands.sequence(
         this.runOnce(() -> io.setPosition(climbLevel.position)),
         Commands.waitUntil(at(climbLevel)));
   }
 
-  public Trigger at(ClimberPositions climbLevel) {
+  public Trigger at(ClimbPosition climbLevel) {
 
     return new Trigger(() -> {
       return ClimberConstants.kTolerance.in(Radians) >= Math

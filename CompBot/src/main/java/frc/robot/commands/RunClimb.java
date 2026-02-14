@@ -3,13 +3,13 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.superstructure.StateManager;
 import frc.robot.superstructure.Superstructure.Subsystems;
-import frc.robot.subsystems.climber.ClimberConstants.ClimberPositions;
+import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;
 
 public class RunClimb implements CommandBuilder {
     
-    ClimberPositions climberLevel;
+    private final ClimbPosition climberLevel;
 
-    public RunClimb(ClimberPositions climberLevel) {
+    public RunClimb(ClimbPosition climberLevel) {
         this.climberLevel = climberLevel;
     }
 

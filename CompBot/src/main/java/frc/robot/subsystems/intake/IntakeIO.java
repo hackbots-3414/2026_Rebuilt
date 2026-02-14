@@ -64,7 +64,7 @@ public interface IntakeIO {
     }
   }
 
-  public void setIntakeCurrent(Current current);
+  public void setIntakeVoltage(Voltage voltage);
 
   public void setDeployPosition(Angle position);
 }

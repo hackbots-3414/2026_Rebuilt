@@ -19,17 +19,14 @@ public final class ClimberConstants {
 
   protected static final int kMotorID = 64;
 
-  protected static final double kSupplyCurrentLimit = 40.0;
-  protected static final double kStatorCurrentLimit = 125.0;
-
-  public static enum ClimberPositions {
+  public static enum ClimbPosition {
     Home(Rotations.zero()),
     Ready(Rotations.of(0.6)),
     Climbed(Rotations.of(0.5));
     
     protected final Angle position;
 
-    private ClimberPositions(Angle posiiton) {
+    private ClimbPosition(Angle posiiton) {
       this.position = posiiton;
     }
   }
@@ -47,6 +44,6 @@ public final class ClimberConstants {
       .withCurrentLimits(new CurrentLimitsConfigs()
           .withSupplyCurrentLimitEnable(true)
           .withStatorCurrentLimitEnable(true)
-          .withSupplyCurrentLimit(kSupplyCurrentLimit)
-          .withStatorCurrentLimit(kStatorCurrentLimit));
+          .withSupplyCurrentLimit(40.0)
+          .withStatorCurrentLimit(125.0));
 }

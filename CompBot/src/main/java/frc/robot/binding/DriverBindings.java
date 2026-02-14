@@ -7,7 +7,7 @@ import frc.robot.binding.BindingConstants.Driver;
 import frc.robot.commands.AimPrep;
 import frc.robot.commands.RunClimb;
 import frc.robot.commands.RunIntake;
-import frc.robot.subsystems.climber.ClimberConstants.ClimberPositions;
+import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;
 import frc.robot.superstructure.Superstructure;
 
 public class DriverBindings implements Binder {
@@ -28,8 +28,8 @@ public class DriverBindings implements Binder {
         controller.R1().toggleOnTrue(superstructure.build(new AimPrep()));
         controller.R2().whileTrue(superstructure.build(new RunIntake()));
         
-        controller.cross().onTrue(superstructure.build(new RunClimb(ClimberPositions.Home)));
-        controller.triangle().onTrue(superstructure.build(new RunClimb(ClimberPositions.Ready)));
-        controller.circle().onTrue(superstructure.build(new RunClimb(ClimberPositions.Climbed)));
+        controller.cross().onTrue(superstructure.build(new RunClimb(ClimbPosition.Home)));
+        controller.triangle().onTrue(superstructure.build(new RunClimb(ClimbPosition.Ready)));
+        controller.circle().onTrue(superstructure.build(new RunClimb(ClimbPosition.Climbed)));
     }
 }
