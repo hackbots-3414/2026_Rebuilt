@@ -21,8 +21,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 
 public class IntakeConstants {
-  protected static final int kIntakeMotorId = 60;
-  protected static final int kcanrangeID = 25;
+  protected static final int kIntakeMotorId = 5;
+  protected static final int kcanrangeID = 25; // Do we really have a CANrange?
 
   protected static final Current kIntakeCurrent = Amps.of(5.0);
   protected static final Current kEjectCurrent = Amps.of(-5);
@@ -52,7 +52,7 @@ public class IntakeConstants {
           .withUpdateMode(UpdateModeValue.ShortRange100Hz));
 
   public static final class DeployConstants {
-    protected static final int kDeployMotorId = 61;
+    protected static final int kDeployMotorId = 6;
 
     protected static final TalonFXConfiguration kDeployMotorConfig = new TalonFXConfiguration()
         .withMotorOutput(new MotorOutputConfigs()

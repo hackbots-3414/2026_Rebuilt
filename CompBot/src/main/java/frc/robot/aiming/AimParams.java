@@ -1,17 +1,16 @@
 package frc.robot.aiming;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.LinearVelocity;
-
-import frc.robot.util.OnboardLogger;
 
 /**
  * The parameters of a shooter at a particlar moment in time. This is the type that is returned when
  * a shot is generated, meaning that this is what is applied to each subystem.
  */
 public class AimParams {
+  /** The status of the parameters object. */
+  public AimStatus status = AimStatus.Unchecked;
+  /** The manner of speed control the paramters requires */
+  public SpeedControl control = SpeedControl.ProjectileVelocity;
   /** the launch angle of the fuel out of the robot. */
   public Rotation2d pitch = Rotation2d.kZero;
   /**
@@ -20,24 +19,56 @@ public class AimParams {
    * shooter.
    */
   public Rotation2d yaw = Rotation2d.kZero;
-  /** the velocity that the fuel should be ejected out at, relative to the robot. */
-  public LinearVelocity velocity = MetersPerSecond.zero();
+  /**
+   * the output that the fuel should be ejected out at. If control is ProjectileVelocity, then this
+   * is m/s relative to the robot.
+   */
+  public double output = 0.0;
   /** the tolerated error in the shot's pitch */
-  public Rotation2d deltaPitch = Rotation2d.fromDegrees(2);
+  public Rotation2d deltaPitch = Rotation2d.fromDegrees(4);
   /** the tolerated error in the shot's yaw */
   public Rotation2d deltaYaw = Rotation2d.fromDegrees(2);
   /** the tolerated error in the shot's velocity */
-  public LinearVelocity deltaVelocity = MetersPerSecond.of(0.05);
+  public double deltaOutput = 0.35;
 
-  private OnboardLogger ologger = new OnboardLogger("AimParams");
+  public AimParams() {}
 
-  public AimParams() {
-    ologger.registerMeasurment("Pitch", () -> pitch.getMeasure(), Degrees);
-    ologger.registerMeasurment("Yaw", () -> yaw.getMeasure(), Degrees);
-    ologger.registerMeasurment("Velocity", () -> velocity, MetersPerSecond);
-    ologger.registerMeasurment("Error/Pitch", () -> deltaPitch.getMeasure(), Degrees);
-    ologger.registerMeasurment("Error/Yaw", () -> deltaYaw.getMeasure(), Degrees);
-    ologger.registerMeasurment("Error/Velocity", () -> deltaVelocity, MetersPerSecond);
+  public AimParams(AimStatus status) {
+    this.status = status;
+  }
+
+  public enum AimStatus {
+    /** The program has not yet evaluated the valididty of this parameters object */
+    Unchecked,
+    /** Not a possible shot, do not try to attempt. Values are invalid. */
+    Impossible,
+    /** A shot that is calculated to go in */
+    Possible;
+
+    public boolean isOk() {
+      return this == Possible;
+    }
+  }
+
+  public static AimParams impossible() {
+    return new AimParams(AimStatus.Impossible);
+  }
+
+  /** Returns whether the aim parameters calculated are feasible */
+  public boolean isOk() {
+    return status.isOk();
+  }
+
+  public enum SpeedControl {
+    /**
+     * The velocity parameter of the {@link AimParams} is the projectile's desired velocity, in
+     * meters per second.
+     */
+    ProjectileVelocity,
+    /**
+     * The velocity parameter of the {@link AimParams} is the shooter's control input, in its
+     * appropriate units.
+     */
+    MechanismControl;
   }
 }
-

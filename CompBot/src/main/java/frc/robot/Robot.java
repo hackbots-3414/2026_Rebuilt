@@ -40,16 +40,16 @@ public class Robot extends TimedRobot {
     DriverStation.startDataLog(DataLogManager.getLog());
 
     oLogger = new OnboardLogger("Robot");
-    oLogger.registerMeasurment("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
+    oLogger.registerMeasurement("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
   }
 
   @Override
   public void robotPeriodic() {
     FieldManager.getInstance().clearFuel();
 
+    robotContainer.superstructure.periodic();
     StatusSignalUtil.refreshAll();
     CommandScheduler.getInstance().run();
-    robotContainer.superstructure.periodic();
 
     FieldManager.getInstance().drawFuel();
 
