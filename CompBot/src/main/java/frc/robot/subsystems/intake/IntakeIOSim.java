@@ -19,5 +19,7 @@ public class IntakeIOSim implements IntakeIO {
     this.voltage = voltage;
   }
 
-  public void setDeployPosition(Angle angle) {}
+  public void setDeployPosition(Angle angle) {
+    position = angle;
+  }
 }

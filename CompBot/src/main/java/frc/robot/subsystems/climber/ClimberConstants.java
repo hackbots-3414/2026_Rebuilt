@@ -26,8 +26,8 @@ public final class ClimberConstants {
     
     protected final Angle position;
 
-    private ClimbPosition(Angle posiiton) {
-      this.position = posiiton;
+    private ClimbPosition(Angle position) {
+      this.position = position;
     }
   }
 

@@ -90,7 +90,7 @@ public class IntakeIOHardware implements IntakeIO {
     inputs.deployVelocity = deployMotor.getVelocity(false).getValue();
     inputs.deployPosition = deployMotor.getPosition(false).getValue();
 
-    inputs.canrangeDetected = BaseStatusSignal.isAllGood(
+    inputs.canrangeConnected = BaseStatusSignal.isAllGood(
         canrange.getDistance(false),
         canrange.getIsDetected(false));
 

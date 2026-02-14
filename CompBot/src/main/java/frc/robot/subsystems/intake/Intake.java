@@ -47,12 +47,15 @@ public class Intake extends SubsystemBase {
 
   public Command go(DeployPosition state) {
     return Commands.sequence(
-        runOnce(() -> io.setDeployPosition(state.position)),
-        Commands.waitUntil(this::deployAtPositoin)
+        runOnce(() -> {
+          reference = state;
+          io.setDeployPosition(state.position);
+        }),
+        Commands.waitUntil(this::deployAtPosition)
     );
   }
 
-  private boolean deployAtPositoin() {
+  private boolean deployAtPosition() {
     return Math.abs(inputs.deployPosition.minus(reference.position).baseUnitMagnitude()) <= DeployConstants.kTolerance.baseUnitMagnitude();
   }
 
@@ -64,7 +67,7 @@ public class Intake extends SubsystemBase {
    */
   public Trigger detectJam() {
     return new Trigger(
-        () -> (inputs.intakeSupplyCurrent.in(Amps) > IntakeConstants.kJamStatorThreshold.in(Amps))
+        () -> (inputs.intakeStatorCurrent.in(Amps) > IntakeConstants.kJamStatorThreshold.in(Amps))
             && inputs.canrangeDetected
             && inputs.intakeVelocity.baseUnitMagnitude() < IntakeConstants.kJamVelocityThreshold
                 .baseUnitMagnitude());
