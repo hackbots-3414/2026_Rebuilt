@@ -35,7 +35,7 @@ public class Led extends SubsystemBase  {
             if (appliedState == state) {
                 break;
             }
-            state.apply(io);
+            io.applyAnimation(state.apply(io));
             appliedState = state;
             break;
         }

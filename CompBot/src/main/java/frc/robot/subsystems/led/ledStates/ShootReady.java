@@ -1,5 +1,6 @@
 package frc.robot.subsystems.led.ledStates;
 
+import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.signals.RGBWColor;
 
 import edu.wpi.first.wpilibj.util.Color;
@@ -13,8 +14,8 @@ public class ShootReady implements LedState{
         return manager.shootReady().getAsBoolean();
     }
 
-    public void apply(LedIO io) {
-        io.createAnimation(new RGBWColor(Color.kPurple), LedIO.ANIMATION_TYPE.LARSON);
+    public ControlRequest apply(LedIO io) {
+        return io.createAnimation(new RGBWColor(Color.kPurple), LedIO.ANIMATION_TYPE.LARSON);
     }
 
    

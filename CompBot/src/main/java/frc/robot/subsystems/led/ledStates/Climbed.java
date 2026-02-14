@@ -1,5 +1,6 @@
 package frc.robot.subsystems.led.ledStates;
 
+import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.signals.RGBWColor;
 
 import frc.robot.subsystems.led.LedIO;
@@ -12,8 +13,8 @@ public class Climbed implements LedState {
         return manager.climbed().getAsBoolean();
     }
 
-    public void apply(LedIO io) {
-        io.createAnimation(new RGBWColor(), LedIO.ANIMATION_TYPE.RAINBOW);
+    public ControlRequest apply(LedIO io) {
+        return io.createAnimation(new RGBWColor(), LedIO.ANIMATION_TYPE.RAINBOW);
     }
 
     // Implement how to check for Climb

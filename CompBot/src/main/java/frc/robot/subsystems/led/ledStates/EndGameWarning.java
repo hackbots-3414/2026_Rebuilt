@@ -1,5 +1,6 @@
 package frc.robot.subsystems.led.ledStates;
 
+import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.signals.RGBWColor;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -15,8 +16,8 @@ public class EndGameWarning implements LedState {
         return DriverStation.getMatchTime() <= LedConstants.endgameWarning;
     }
 
-    public void apply(LedIO io) {
-        io.createAnimation(new RGBWColor(Color.kRed), LedIO.ANIMATION_TYPE.FLASH);
+    public ControlRequest apply(LedIO io) {
+       return io.createAnimation(new RGBWColor(Color.kRed), LedIO.ANIMATION_TYPE.FLASH);
     }
 
 }
