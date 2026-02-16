@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -66,6 +67,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity);
+
   private final SwerveRequest.FieldCentricFacingAngle autopilotControl = new SwerveRequest.FieldCentricFacingAngle()
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity)
@@ -124,7 +126,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   @SuppressWarnings("unused")
   private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
       new SysIdRoutine.Config(
-          /* This is in radians per second², but SysId only supports "volts per second" */
+          /* This is in radians per second^2, but SysId only supports "volts per second" */
           Volts.of(Math.PI / 6).per(Second),
           /* This is in radians per second, but SysId only supports "volts" */
           Volts.of(Math.PI),
@@ -396,5 +398,21 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public Command resetOdometry(Pose2d pose) {
     return this.runOnce(() -> resetPose(pose)).ignoringDisable(true);
+  }
+  
+  private Twist2d predictedTwist() {
+    return new Twist2d(
+        state.Speeds.vxMetersPerSecond * Robot.kDefaultPeriod,
+        state.Speeds.vyMetersPerSecond * Robot.kDefaultPeriod,
+        state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod);
+  }
+
+  public Pose2d predictedRobotPose() {
+    return robotPose().exp(predictedTwist());
+  }
+
+  public Translation2d predictedRobotVelocity() {
+    return robotVelocity().getTranslation().rotateBy(
+        Rotation2d.fromRadians(state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod));
   }
 }

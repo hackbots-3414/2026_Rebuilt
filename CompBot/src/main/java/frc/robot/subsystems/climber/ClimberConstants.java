@@ -1,6 +1,7 @@
 package frc.robot.subsystems.climber;
 
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
@@ -15,20 +16,17 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 
 public final class ClimberConstants {
+  protected static final int kMotorId = 64;
 
-  protected static final int kMotorID = 60;
-
-  protected static final double kSupplyCurrentLimit =   0.0;
-  protected static final double kStatorCurrentLimit = 125.0;
-
-  protected static enum ClimberPositions {
-    NotClimbed(Radians.zero()),
-    Level1(Radians.of(Math.PI));
-
+  public static enum ClimbPosition {
+    Home(Rotations.zero()),
+    Ready(Rotations.of(0.6)),
+    Climbed(Rotations.of(0.5));
+    
     protected final Angle position;
 
-    private ClimberPositions(Angle posiiton) {
-      this.position = posiiton;
+    private ClimbPosition(Angle position) {
+      this.position = position;
     }
   }
 
@@ -45,6 +43,6 @@ public final class ClimberConstants {
       .withCurrentLimits(new CurrentLimitsConfigs()
           .withSupplyCurrentLimitEnable(true)
           .withStatorCurrentLimitEnable(true)
-          .withSupplyCurrentLimit(kSupplyCurrentLimit)
-          .withStatorCurrentLimit(kStatorCurrentLimit));
+          .withSupplyCurrentLimit(40.0)
+          .withStatorCurrentLimit(125.0));
 }

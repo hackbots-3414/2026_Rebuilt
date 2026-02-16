@@ -2,15 +2,12 @@ package frc.robot.binding;
 
 import java.util.function.DoubleSupplier;
 
-import com.therekrab.autopilot.APTarget;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.binding.BindingConstants.Driver;
-import frc.robot.commands.DriveToPoint;
-import frc.robot.commands.ResetOdometry;
+import frc.robot.commands.AimPrep;
+import frc.robot.commands.RunClimb;
+import frc.robot.commands.RunIntake;
+import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;
 import frc.robot.superstructure.Superstructure;
 
 public class DriverBindings implements Binder {
@@ -28,7 +25,11 @@ public class DriverBindings implements Binder {
     public void bind(Superstructure superstructure) {
         superstructure.bindDrive(vx, vy, vrot);
 
-        controller.button(1).onTrue(superstructure.build(new ResetOdometry(Pose2d.kZero)));
-        controller.button(3).whileTrue(superstructure.build(new DriveToPoint(new APTarget(Pose2d.kZero).withEntryAngle(Rotation2d.kZero))));
+        controller.R1().toggleOnTrue(superstructure.build(new AimPrep()));
+        controller.R2().whileTrue(superstructure.build(new RunIntake()));
+        
+        controller.cross().onTrue(superstructure.build(new RunClimb(ClimbPosition.Home)));
+        controller.triangle().onTrue(superstructure.build(new RunClimb(ClimbPosition.Ready)));
+        controller.circle().onTrue(superstructure.build(new RunClimb(ClimbPosition.Climbed)));
     }
 }
