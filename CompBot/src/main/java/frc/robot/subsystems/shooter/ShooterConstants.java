@@ -47,6 +47,8 @@ public final class ShooterConstants {
                     .withSupplyCurrentLimitEnable(true)
                     .withSupplyCurrentLimitEnable(true)
                     .withSupplyCurrentLimit(80)
+                    .withStatorCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(100)
                     .withStatorCurrentLimit(125));
 
     public static final Distance kRadius = Inches.of(2);
