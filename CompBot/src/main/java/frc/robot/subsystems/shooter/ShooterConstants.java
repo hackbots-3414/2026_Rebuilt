@@ -45,9 +45,9 @@ public final class ShooterConstants {
 
             .withCurrentLimits(new CurrentLimitsConfigs()
                     .withSupplyCurrentLimitEnable(true)
-                    .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(100)
-                    .withStatorLimit(125));
+                    .withSupplyCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(80)
+                    .withStatorCurrentLimit(125));
 
     public static final Distance kRadius = Inches.of(2);
     public static final AngularVelocity kReverseVelocity = RotationsPerSecond.of(30.0);
