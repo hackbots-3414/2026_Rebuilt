@@ -1,14 +1,15 @@
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.intake.IntakeConstants.DeployConstants;
 import frc.robot.util.StatusSignalUtil;
 
@@ -18,14 +19,14 @@ public class IntakeIOHardware implements IntakeIO {
   private final TalonFX deployMotor;
   private final CANrange canrange;
 
-  private final TorqueCurrentFOC intakeControl = new TorqueCurrentFOC(0);
+  private final VoltageOut intakeControl = new VoltageOut(0).withEnableFOC(true);
   private final DynamicMotionMagicTorqueCurrentFOC deployControl =
       new DynamicMotionMagicTorqueCurrentFOC(
           Rotations.zero(),
           DeployConstants.kMaxVelocity,
           DeployConstants.kMaxAcceleration);
 
-  private Current lastCurrent = Amps.zero();
+  private Voltage lastVoltage = Volts.zero();
 
   public IntakeIOHardware() {
     intakeMotor = new TalonFX(IntakeConstants.kIntakeMotorId);
@@ -89,7 +90,7 @@ public class IntakeIOHardware implements IntakeIO {
     inputs.deployVelocity = deployMotor.getVelocity(false).getValue();
     inputs.deployPosition = deployMotor.getPosition(false).getValue();
 
-    inputs.canrangeDetected = BaseStatusSignal.isAllGood(
+    inputs.canrangeConnected = BaseStatusSignal.isAllGood(
         canrange.getDistance(false),
         canrange.getIsDetected(false));
 
@@ -97,10 +98,10 @@ public class IntakeIOHardware implements IntakeIO {
     inputs.canrangeDetected = canrange.getIsDetected(false).getValue();
   }
 
-  public void setIntakeCurrent(Current current) {
-    if (!current.equals(lastCurrent)) {
-      intakeMotor.setControl(intakeControl.withOutput(current));
-      lastCurrent = current;
+  public void setIntakeVoltage(Voltage voltage) {
+    if (!voltage.equals(lastVoltage)) {
+      intakeMotor.setControl(intakeControl.withOutput(voltage.baseUnitMagnitude()));
+      lastVoltage = voltage;
     }
   }
 

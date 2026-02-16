@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FovParamsConfigs;
@@ -19,17 +21,18 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 
 public class IntakeConstants {
   protected static final int kIntakeMotorId = 5;
   protected static final int kcanrangeID = 25; // Do we really have a CANrange?
 
-  protected static final Current kIntakeCurrent = Amps.of(5.0);
-  protected static final Current kEjectCurrent = Amps.of(-5);
+  protected static final Voltage kIntakeVoltage = Volts.of(5.0);
+  protected static final Voltage kEjectVoltage = Volts.of(-5);
 
   protected static final TalonFXConfiguration kIntakeMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
-          .withNeutralMode(NeutralModeValue.Brake)
+          .withNeutralMode(NeutralModeValue.Coast)
           .withInverted(InvertedValue.Clockwise_Positive))
 
       .withCurrentLimits(new CurrentLimitsConfigs()

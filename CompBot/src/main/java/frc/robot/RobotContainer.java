@@ -24,6 +24,7 @@ public class RobotContainer {
   public RobotContainer() {
     superstructure = new Superstructure();
     driverBinder.bind(superstructure);
+    robotBinder.bind(superstructure);
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
