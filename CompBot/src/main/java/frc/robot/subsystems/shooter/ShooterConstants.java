@@ -28,16 +28,16 @@ public final class ShooterConstants {
 
     protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
             .withSlot0(new Slot0Configs()
-                    .withKA(0.6)
-                    .withKS(0)
-                    .withKV(0)
+                    .withKA(5)
+                    .withKS(5)
+                    .withKV(0.5)
 
-                    .withKP(8.0)
+                    .withKP(4.0)
                     .withKI(0)
                     .withKD(0))
 
             .withMotionMagic(new MotionMagicConfigs()
-                .withMotionMagicAcceleration(30.0))
+                .withMotionMagicAcceleration(10.0))
 
             .withMotorOutput(new MotorOutputConfigs()
                     .withNeutralMode(NeutralModeValue.Coast)
