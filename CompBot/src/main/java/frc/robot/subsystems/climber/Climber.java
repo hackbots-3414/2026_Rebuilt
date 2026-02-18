@@ -11,13 +11,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;
 import frc.robot.subsystems.climber.ClimberIO.ClimberIOInputs;
+import frc.robot.util.OnboardLogger;
 
 public class Climber extends SubsystemBase {
   private final ClimberIO io;
   private final ClimberIOInputs inputs = new ClimberIOInputs();
 
+  private ClimbPosition reference = ClimbPosition.Home;
+
   public Climber(ClimberIO io) {
     this.io = io;
+    OnboardLogger log = new OnboardLogger("Climber");
+    log.registerString("State", () -> reference.toString());
     SmartDashboard.putData("Climber/Home", go(ClimbPosition.Home));
     SmartDashboard.putData("Climber/Ready", go(ClimbPosition.Ready));
     SmartDashboard.putData("Climber/Climb", go(ClimbPosition.Climbed));
@@ -31,12 +36,14 @@ public class Climber extends SubsystemBase {
 
   public Command go(ClimbPosition climbLevel) {
     return Commands.sequence(
-        this.runOnce(() -> io.setPosition(climbLevel.position)),
+        this.runOnce(() -> {
+          io.setPosition(climbLevel.position);
+          reference = climbLevel;
+        }),
         Commands.waitUntil(at(climbLevel)));
   }
 
   public Trigger at(ClimbPosition climbLevel) {
-
     return new Trigger(() -> {
       return ClimberConstants.kTolerance.in(Radians) >= Math
           .abs(inputs.position.in(Radians) - climbLevel.position.in(Radians));

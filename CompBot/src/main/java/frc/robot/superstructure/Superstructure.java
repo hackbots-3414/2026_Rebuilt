@@ -77,27 +77,27 @@ public class Superstructure {
   }
 
   public AprilTagVisionHandler createAprilTagVisionHandler() {
-    // These configs could be their own things, but I don't feel it rn.
+    // These configs could be somewhere else.
     List<CameraConfig> configs = List.of(
         LocalizationConstants.kTurretBaseCameraConfig.cameraCopy(
             "turret",
-            subsystems.turret()::turretCameraOffset));
-        // LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
-        //     "cam1",
-        //     () -> new Transform3d(-0.203, -0.321, 0.514,
-        //         new Rotation3d(0, Units.degreesToRadians(-28.6), Units.degreesToRadians(-53.654)))),
-        // LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
-        //     "cam2",
-        //     () -> new Transform3d(0.228, -0.281, 0.719,
-        //         new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(26.3)))),
-        // LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
-        //     "cam3",
-        //     () -> new Transform3d(0.141, 0.307, 0.730,
-        //         new Rotation3d(0, Units.degreesToRadians(-5.1), Units.degreesToRadians(141.3)))),
-        // LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
-        //     "cam4",
-        //     () -> new Transform3d(-0.317, 0.138, 0.441,
-        //         new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-165.827)))));
+            subsystems.turret()::turretCameraOffset),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam1",
+            () -> new Transform3d(-0.203, -0.321, 0.514,
+                new Rotation3d(0, Units.degreesToRadians(-28.6), Units.degreesToRadians(-53.654)))),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam2",
+            () -> new Transform3d(0.228, -0.281, 0.719,
+                new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(26.3)))),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam3",
+            () -> new Transform3d(0.141, 0.307, 0.730,
+                new Rotation3d(0, Units.degreesToRadians(-5.1), Units.degreesToRadians(141.3)))),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam4",
+            () -> new Transform3d(-0.317, 0.138, 0.441,
+                new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-165.827)))));
 
     return new AprilTagVisionHandler(this, configs);
   }

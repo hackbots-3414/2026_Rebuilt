@@ -11,6 +11,8 @@ public class IntakeIOSim implements IntakeIO {
   private Angle position = Rotations.zero();
 
   public void updateInputs(IntakeIOInputs inputs) {
+    inputs.intakeMotorConnected = true;
+    inputs.deployMotorConnected = true;
     inputs.intakeVoltage = voltage;
     inputs.deployPosition = position;
   }

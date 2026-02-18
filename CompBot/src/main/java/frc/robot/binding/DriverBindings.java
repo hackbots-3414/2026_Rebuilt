@@ -31,5 +31,6 @@ public class DriverBindings implements Binder {
         controller.cross().onTrue(superstructure.build(new RunClimb(ClimbPosition.Home)));
         controller.triangle().onTrue(superstructure.build(new RunClimb(ClimbPosition.Ready)));
         controller.circle().onTrue(superstructure.build(new RunClimb(ClimbPosition.Climbed)));
+
     }
 }

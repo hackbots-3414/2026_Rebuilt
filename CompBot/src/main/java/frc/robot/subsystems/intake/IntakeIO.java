@@ -7,6 +7,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -49,6 +50,7 @@ public interface IntakeIO {
       log.registerMeasurement("Intake Motor/Stator Current", () -> intakeStatorCurrent, Amps);
       log.registerMeasurement("Intake Motor/Voltage", () -> intakeVoltage, Volts);
       log.registerMeasurement("Intake Motor/Temperature", () -> intakeTemperature, Celsius);
+      log.registerMeasurement("Intake Motor/Velocity", () -> intakeVelocity, RotationsPerSecond);
 
       log.registerBoolean("Deploy Motor/Connected", () -> deployMotorConnected);
       log.registerMeasurement("Deploy Motor/Supply Current", () -> deploySupplyCurrent, Amps);
@@ -56,7 +58,7 @@ public interface IntakeIO {
       log.registerMeasurement("Deploy Motor/Stator Current", () -> deployStatorCurrent, Amps);
       log.registerMeasurement("Deploy Motor/Voltage", () -> deployVoltage, Volts);
       log.registerMeasurement("Deploy Motor/Temperature", () -> deployTemperature, Celsius);
-      log.registerMeasurement("Deploy Motor/Position", () -> deployPosition, Degrees);
+      log.registerMeasurement("Deploy Motor/Position", () -> deployPosition, Rotations);
 
       log.registerBoolean("CANrange Connected", () -> canrangeConnected);
       log.registerMeasurement("CANrange Distance", () -> canrangeDistance, Centimeters);

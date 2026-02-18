@@ -34,7 +34,7 @@ public class TurretConstants {
    * robot. For example, if this value was 30 degrees, then setting the turret's position to 30
    * degrees would result in the turret pointing forwards on the robot.
    */
-  protected static final Angle kForwards = Revolutions.of(0.25);
+  protected static final Angle kForwards = Revolutions.of(0);
 
   // MotionMagic configuration
   protected static final double kGearRatio = 30.0;
