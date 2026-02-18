@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.FieldManager;
 import frc.robot.aiming.AimParams;
@@ -39,7 +40,9 @@ public class Turret extends SubsystemBase {
     inputs = new TurretIOInputs();
     io.calibrate();
     SmartDashboard.putData("Turret/Home", home());
-    SmartDashboard.putData("Turret/Calibrate", runOnce(io::calibrate).ignoringDisable(true));
+    Command calibrate = runOnce(io::calibrate).ignoringDisable(true);
+    SmartDashboard.putData("Turret/Calibrate", calibrate);
+    RobotModeTriggers.disabled().onTrue(calibrate);
 
     OnboardLogger log = new OnboardLogger("Turret");
     log.registerBoolean("Ready", ready());
@@ -93,7 +96,7 @@ public class Turret extends SubsystemBase {
    * Returns a {@link Trigger} that represents whether the turret is currently at its reference
    * position.
    */
-  private Trigger ready() {
+  public Trigger ready() {
     return new Trigger(() -> {
       double delta = inputs.position.minus(inputs.reference).baseUnitMagnitude();
       return Math.abs(delta) <= TurretConstants.kTolerance.baseUnitMagnitude();

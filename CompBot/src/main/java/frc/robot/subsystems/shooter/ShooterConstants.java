@@ -17,6 +17,8 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -28,16 +30,16 @@ public final class ShooterConstants {
 
     protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
             .withSlot0(new Slot0Configs()
-                    .withKA(0.6)
-                    .withKS(0)
-                    .withKV(0)
+                    .withKA(0)
+                    .withKS(4)
+                    .withKV(0.07)
 
-                    .withKP(8.0)
+                    .withKP(9.0)
                     .withKI(0)
                     .withKD(0))
 
             .withMotionMagic(new MotionMagicConfigs()
-                .withMotionMagicAcceleration(30.0))
+                .withMotionMagicAcceleration(10.0))
 
             .withMotorOutput(new MotorOutputConfigs()
                     .withNeutralMode(NeutralModeValue.Coast)
@@ -46,8 +48,8 @@ public final class ShooterConstants {
             .withCurrentLimits(new CurrentLimitsConfigs()
                     .withSupplyCurrentLimitEnable(true)
                     .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(40)
-                    .withStatorCurrentLimit(125));
+                    .withSupplyCurrentLimit(80)
+                    .withStatorCurrentLimit(100));
 
     public static final Distance kRadius = Inches.of(2);
     public static final AngularVelocity kReverseVelocity = RotationsPerSecond.of(30.0);
@@ -74,11 +76,11 @@ public final class ShooterConstants {
                         .withReverseSoftLimitThreshold(0.0))
 
                 .withSlot0(new Slot0Configs()
-                        .withKA(0.2)
-                        .withKS(0)
-                        .withKV(10)
+                        .withKA(0.1)
+                        .withKS(0.3)
+                        .withKV(7)
 
-                        .withKP(40.0)
+                        .withKP(60.0)
                         .withKI(0)
                         .withKD(0))
                 
@@ -98,8 +100,9 @@ public final class ShooterConstants {
 
           protected static final CANcoderConfiguration kCANcoderConfig = new CANcoderConfiguration()
             .withMagnetSensor(new MagnetSensorConfigs()
-                .withAbsoluteSensorDiscontinuityPoint(0.7) // We'll never get to this point
-                .withMagnetOffset(0.24755859375));
+                .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
+                .withAbsoluteSensorDiscontinuityPoint(0.8) // We'll never get to this point
+                .withMagnetOffset(-0.0546875));
 
 
         protected static final int kSlot = 0;

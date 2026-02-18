@@ -18,7 +18,7 @@ public class ClimberTest extends CommandBasedTest {
         doAnswer(invocation -> {
         ClimberIOInputs inputs = invocation.getArgument(0, ClimberIOInputs.class);
         inputs.velocity = ClimberConstants.kVelocity;
-        inputs.position = ClimberConstants.ClimberPositions.NotClimbed.position;
+        inputs.position = ClimberConstants.ClimbPosition.Home.position;
 
         // It's a void method, so we're supposed to return null.
         return null;
@@ -29,16 +29,16 @@ public class ClimberTest extends CommandBasedTest {
     // Ensure we update the inputs every periodic run
     verify(mockClimbIO).updateInputs(Mockito.any(ClimberIOInputs.class));
 
-    CommandScheduler.getInstance().schedule(climber.climb(ClimberConstants.ClimberPositions.Level1));
+    CommandScheduler.getInstance().schedule(climber.go(ClimberConstants.ClimbPosition.Climbed));
     CommandScheduler.getInstance().run();
 
     //Can't verify set voltage because DC Motor Sim just teleports (DCMotorSim has no option to set position control)
-    verify(mockClimbIO).setPosition(ClimberConstants.ClimberPositions.Level1.position);
+    verify(mockClimbIO).setPosition(ClimberConstants.ClimbPosition.Climbed.position);
 
-    CommandScheduler.getInstance().schedule(climber.climb(ClimberConstants.ClimberPositions.NotClimbed));
+    CommandScheduler.getInstance().schedule(climber.go(ClimberConstants.ClimbPosition.Home));
     CommandScheduler.getInstance().run();
 
-    verify(mockClimbIO).setPosition(ClimberConstants.ClimberPositions.NotClimbed.position);
+    verify(mockClimbIO).setPosition(ClimberConstants.ClimbPosition.Home.position);
 
     }
 

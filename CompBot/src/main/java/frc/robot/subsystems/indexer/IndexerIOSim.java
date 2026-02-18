@@ -10,29 +10,39 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Robot;
 
 public class IndexerIOSim implements IndexerIO {
-    private final DCMotorSim motor;
+  private final DCMotorSim feeder;
+  private final DCMotorSim spindexer;
 
-    public IndexerIOSim() {
-        motor = new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 2, 10),
-            DCMotor.getKrakenX60Foc(1),
-            0.01,
-            0.02);
-    }
+  public IndexerIOSim() {
+    feeder = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 2, 10),
+        DCMotor.getKrakenX60Foc(1),
+        0.01,
+        0.02);
+    spindexer = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 2, 10),
+        DCMotor.getKrakenX60Foc(1),
+        0.01,
+        0.02);
+  }
 
-    public void updateInputs(IndexerIOInputs inputs) {
-        motor.update(Robot.kDefaultPeriod);
-        inputs.motorConnected = true;
-        inputs.supplyCurrent = Amps.of(motor.getCurrentDrawAmps());
-        inputs.voltage = Volts.of(motor.getInputVoltage());
-        inputs.velocity = motor.getAngularVelocity();
-    }
+  public void updateInputs(IndexerIOInputs inputs) {
+    feeder.update(Robot.kDefaultPeriod);
+    spindexer.update(Robot.kDefaultPeriod);
 
-    public void setVoltage(Voltage voltage) {
-        motor.setInputVoltage(voltage.baseUnitMagnitude());
-    }
+    inputs.feedMotorConnected = true;
+    inputs.feedSupplyCurrent = Amps.of(feeder.getCurrentDrawAmps());
+    inputs.feedVoltage = Volts.of(feeder.getInputVoltage());
+    inputs.feedVelocity = feeder.getAngularVelocity();
+    inputs.spindexerMotorConnected = true;
+    inputs.spindexerVoltage = Volts.of(spindexer.getInputVoltage());
+  }
 
-    public void stop() {
-        motor.setInputVoltage(Volts.of(0).baseUnitMagnitude());
-    }
+  public void setFeedVoltage(Voltage voltage) {
+    feeder.setInputVoltage(voltage.baseUnitMagnitude());
+  }
+
+  public void setSpindexerVoltage(Voltage voltage) {
+    spindexer.setInputVoltage(voltage.baseUnitMagnitude());
+  }
 }
