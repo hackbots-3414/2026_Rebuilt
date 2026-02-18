@@ -32,10 +32,6 @@ public class ClimberIOSim implements ClimberIO {
     inputs.velocity = motor.getAngularVelocity();
   }
 
-  public void setVoltage(Voltage voltage) {
-    motor.setInputVoltage(voltage.baseUnitMagnitude());
-  }
-
   public void setPosition(Angle position) {
     this.position = position;    
   }

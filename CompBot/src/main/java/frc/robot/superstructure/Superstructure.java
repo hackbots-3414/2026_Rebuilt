@@ -1,10 +1,14 @@
 package frc.robot.superstructure;
 
+import java.util.List;
 import java.util.function.DoubleSupplier;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.commands.CommandBuilder;
-import frc.robot.generated.TestBotTunerConstants;
+import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberIOSim;
@@ -21,7 +25,9 @@ import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIOHardware;
 import frc.robot.subsystems.turret.TurretIOSim;
+import frc.robot.vision.CameraConfig;
 import frc.robot.vision.localization.AprilTagVisionHandler;
+import frc.robot.vision.localization.LocalizationConstants;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
 /**
@@ -41,7 +47,7 @@ public class Superstructure {
   public final StateManager state;
 
   public Superstructure() {
-    Drivetrain drivetrain = TestBotTunerConstants.createDrivetrain();
+    Drivetrain drivetrain = TunerConstants.createDrivetrain();
     Turret turret = new Turret(Robot.isReal() ? new TurretIOHardware() : new TurretIOSim());
     Shooter shooter = new Shooter(Robot.isReal() ? new ShooterIOHardware() : new ShooterIOSim());
     Indexer indexer = new Indexer(Robot.isReal() ? new IndexerIOHardware() : new IndexerIOSim());
@@ -74,7 +80,29 @@ public class Superstructure {
   }
 
   public AprilTagVisionHandler createAprilTagVisionHandler() {
-    return new AprilTagVisionHandler(this);
+    // These configs could be somewhere else.
+    List<CameraConfig> configs = List.of(
+        LocalizationConstants.kTurretBaseCameraConfig.cameraCopy(
+            "turret",
+            subsystems.turret()::turretCameraOffset),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam1",
+            () -> new Transform3d(-0.203, -0.321, 0.514,
+                new Rotation3d(0, Units.degreesToRadians(-28.6), Units.degreesToRadians(-53.654)))),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam2",
+            () -> new Transform3d(0.228, -0.281, 0.719,
+                new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(26.3)))),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam3",
+            () -> new Transform3d(0.141, 0.307, 0.730,
+                new Rotation3d(0, Units.degreesToRadians(-5.1), Units.degreesToRadians(141.3)))),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam4",
+            () -> new Transform3d(-0.317, 0.138, 0.441,
+                new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-165.827)))));
+
+    return new AprilTagVisionHandler(this, configs);
   }
 
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
@@ -83,6 +111,5 @@ public class Superstructure {
 
   public void periodic() {
     state.periodic();
-    subsystems.turret.telemetrize(state);
   }
 }

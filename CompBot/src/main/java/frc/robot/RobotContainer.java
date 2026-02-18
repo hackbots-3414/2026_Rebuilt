@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,23 +17,23 @@ public class RobotContainer {
   public final Superstructure superstructure;
   public final AprilTagVisionHandler aprilTagVisionHandler;
 
-  public final Binder driver = new DriverBindings();
-  public final Binder robot = new RobotBindings();
+  public final Binder driverBinder = new DriverBindings();
+  public final Binder robotBinder = new RobotBindings();
 
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
     superstructure = new Superstructure();
-    driver.bind(superstructure);
-    robot.bind(superstructure);
+    driverBinder.bind(superstructure);
+    robotBinder.bind(superstructure);
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();
 
-    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
-
     autoChooser = Autogen.autoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-  }
 
+    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
+  }
+  
+  
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
   }
