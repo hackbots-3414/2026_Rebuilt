@@ -44,10 +44,14 @@ interface Production {
     }
 
     public Command build() {
+      if (name.chars().allMatch(Character::isDigit)) {
+        // Wait command
+        return Commands.waitSeconds(Integer.parseInt(name));
+      }
       if (!Autogen.registered.containsKey(name)) {
         Autogen.errorHandler.error(new ErrorInfo("Unregistered command: " + name, -1));
       }
-      return Autogen.registered.getOrDefault(name, Commands.print("Unregistered command: " + name));
+      return Autogen.wrap(Autogen.registered.getOrDefault(name, Commands.print("Unregistered command: " + name)));
     }
   }
 

@@ -16,6 +16,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.therekrab.autopilot.APTarget;
+import com.therekrab.autopilot.Autopilot;
 import com.therekrab.autopilot.Autopilot.APResult;
 
 import edu.wpi.first.math.Matrix;
@@ -370,15 +371,15 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     setControl(new SwerveRequest.SwerveDriveBrake());
   }
 
-  public Command driveTo(APTarget target) {
+  public Command driveTo(APTarget target, Autopilot autopilot) {
     return this.run(() -> {
-      APResult result = AutopilotConstants.kAutopilot.calculate(robotPose(), state.Speeds, target);
+      APResult result = autopilot.calculate(robotPose(), state.Speeds, target);
       setControl(autopilotControl
         .withVelocityX(result.vx())
         .withVelocityY(result.vy())
         .withTargetDirection(result.targetAngle()));
     })
-      .until(() -> AutopilotConstants.kAutopilot.atTarget(robotPose(), target))
+      .until(() -> autopilot.atTarget(robotPose(), target))
       .finallyDo(() -> {
         // Only stop if we are supposed to.
         if (target.getVelocity() == 0) {

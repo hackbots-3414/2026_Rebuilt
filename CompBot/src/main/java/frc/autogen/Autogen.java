@@ -18,18 +18,24 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.autogen.ErrorHandler.ErrorInfo;
 import frc.autogen.Production.ProductionKind.CompositionKind;
 
 public class Autogen {
   protected static Map<String, Command> registered = new HashMap<>();
-  public static final ErrorHandler errorHandler = new ErrorHandler.SimpleErrorHandler();
+  public static final ErrorHandler errorHandler = new ErrorHandler.MultiErrorHandler(
+    new ErrorHandler.AlertErrorHandler(),
+    new ErrorHandler.SimpleErrorHandler()
+  );
 
   public static void registerCommand(String name, Command command) {
     registered.put(name, command);
   }
 
   public static Optional<Command> loadFromFile(String path) {
+    errorHandler.reset();
     File file = new File(path);
     try (Scanner rdr = new Scanner(file)) {
       List<Production> productions = new ArrayList<>();
@@ -45,14 +51,14 @@ public class Autogen {
         Optional<Expr> expr = parser.expression();
         if (expr.isEmpty()) {
           errorHandler.error(new ErrorInfo("Could not compile command from " + path, -1));
-          break;
+          return Optional.empty();
         }
         productions.add(expr.get().produce());
       }
+      Command command = new Production.Composition(CompositionKind.Sequential, productions).build();
       if (!errorHandler.succeeded()) {
         return Optional.empty();
       }
-      Command command = new Production.Composition(CompositionKind.Sequential, productions).build();
       return Optional.of(command);
     } catch (FileNotFoundException e) {
       errorHandler.error(new ErrorInfo("Could not find file at " + path, -1));
@@ -72,7 +78,6 @@ public class Autogen {
     }
     Map<String, Command> autons = new HashMap<>();
     for (Path path : files) {
-      System.out.println("path=" + path);
       loadFromFile(path.toString()).ifPresent(
           command -> {
             autons.put(path.getFileName().toString(), command);
@@ -88,5 +93,15 @@ public class Autogen {
       chooser.addOption(entry.getKey(), entry.getValue());
     }
     return chooser;
+  }
+
+  // Thanks mjansen4857
+  protected static Command wrap(Command command) {
+    return new FunctionalCommand(
+        command::initialize,
+        command::execute,
+        command::end,
+        command::isFinished,
+        command.getRequirements().toArray(Subsystem[]::new));
   }
 }

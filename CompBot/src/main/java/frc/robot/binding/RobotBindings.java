@@ -17,7 +17,7 @@ public class RobotBindings implements Binder {
             superstructure.build(shoot).repeatedly()
         );
         RobotModeTriggers.teleop().onTrue(
-            superstructure.build(new RunClimb(ClimbPosition.Ready)).onlyIf(superstructure.state.climbed())
+            superstructure.build(new RunClimb(ClimbPosition.Ready)).onlyIf(superstructure.state.climbing())
         );
     }
 }

@@ -9,14 +9,14 @@ import com.therekrab.autopilot.Autopilot;
 
 public class AutopilotConstants {
     private static final APConstraints kConstraints = new APConstraints()
-        .withVelocity(2.0)
+        .withVelocity(5.0)
         .withAcceleration(10.0)
-        .withJerk(2.0);
+        .withJerk(8.0);
     private static final APProfile kProfile = new APProfile(kConstraints)
         .withBeelineRadius(Inches.of(5))
         .withErrorTheta(Degrees.of(3))
-        .withErrorXY(Inches.of(1));
-    public static final Autopilot kAutopilot = new Autopilot(kProfile);
+        .withErrorXY(Inches.of(2));
+    public static final Autopilot kDefaultAutopilot = new Autopilot(kProfile);
 
     public static final class HeadingGains {
         protected static final double kP = 4.0;

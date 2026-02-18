@@ -2,6 +2,12 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Rotation;
+
+
+import com.therekrab.autopilot.APTarget;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -32,5 +38,24 @@ public class Constants {
             18), // Max output (speed)
         2,
         10);
+  }
+
+  public static class AutonConstants {
+    public static final Pose2d kLeftStart = new Pose2d(3.6, 5.7, Rotation2d.kZero);
+    public static final Pose2d kRightStart = new Pose2d(3.6, 2.3, Rotation2d.kZero);
+
+    public static final APTarget kCrossLeft = new APTarget(new Pose2d(7.5, 5.7, Rotation2d.kCW_90deg))
+      .withRotationRadius(Meters.of(1.0));
+    public static final APTarget kCrossRight = new APTarget(new Pose2d(7.5, 2.3, Rotation2d.kCCW_90deg))
+      .withRotationRadius(Meters.of(1.0));
+
+    public static final APTarget kReturnLeft = new APTarget(kLeftStart).withEntryAngle(Rotation2d.k180deg);
+    public static final APTarget kReturnRight = new APTarget(kRightStart).withEntryAngle(Rotation2d.k180deg);
+
+    public static final APTarget kSurfLeft = new APTarget(new Pose2d(7.5, 4.0, Rotation2d.kCW_90deg));
+    public static final APTarget kSurfRight = new APTarget(new Pose2d(7.5, 4.0, Rotation2d.kCCW_90deg));
+
+    public static final APTarget kTower = new APTarget(new Pose2d(1.3,3.8,Rotation2d.k180deg)).withEntryAngle(Rotation2d.k180deg);
+    public static final APTarget kDepot = new APTarget(new Pose2d(0.55, 5.9, Rotation2d.k180deg)).withEntryAngle(Rotation2d.k180deg);
   }
 }

@@ -38,11 +38,6 @@ public class Robot extends TimedRobot {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
 
-    // Test some autogen stuff
-    Autogen.registerCommand("A", Commands.print("A ran!"));
-    Autogen.registerCommand("B", Commands.print("B ran!"));
-    Autogen.registerCommand("C", Commands.print("C ran!"));
-
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
 

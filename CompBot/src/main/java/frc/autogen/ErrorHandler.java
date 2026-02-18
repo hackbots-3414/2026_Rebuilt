@@ -1,5 +1,11 @@
 package frc.autogen;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Handler;
+
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
@@ -26,6 +32,18 @@ public abstract class ErrorHandler {
     }
   }
 
+  public static class MultiErrorHandler extends ErrorHandler {
+    private final List<ErrorHandler> handlers;
+
+    public MultiErrorHandler(ErrorHandler... handlers) {
+      this.handlers = List.of(handlers);
+    }
+
+    protected void handleError(ErrorInfo info) {
+      handlers.forEach(handler -> handler.handleError(info));
+    }
+  }
+
   /** An error handler class that logs errors using the DriverStation class. */
   public static class DSErrorHandler extends ErrorHandler {
     public void handleError(ErrorInfo info) {
@@ -36,7 +54,21 @@ public abstract class ErrorHandler {
   /** An error handler that simply prints out errors to standard out */
   public static class SimpleErrorHandler extends ErrorHandler {
     protected void handleError(ErrorInfo info) {
-      System.out.println(info.fullMessage());
+      System.err.println(info.fullMessage());
     }
+  }
+
+  /** An error handler which writes to a {@link Alert} */
+  public static class AlertErrorHandler extends ErrorHandler {
+    private final Alert alert = new Alert("Autons", "", AlertType.kError);
+
+    protected void handleError(ErrorInfo info) {
+      alert.setText(alert.getText() + "\n" + info.fullMessage());
+      alert.set(true);
+    }
+  }
+
+  public void reset() {
+    failed = false;
   }
 }

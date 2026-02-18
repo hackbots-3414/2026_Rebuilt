@@ -43,6 +43,10 @@ public class Climber extends SubsystemBase {
         Commands.waitUntil(at(climbLevel)));
   }
 
+  public Trigger wants(ClimbPosition climbLevel) {
+    return new Trigger(() -> climbLevel == reference);
+  }
+
   public Trigger at(ClimbPosition climbLevel) {
     return new Trigger(() -> {
       return ClimberConstants.kTolerance.in(Radians) >= Math

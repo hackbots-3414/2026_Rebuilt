@@ -33,6 +33,7 @@ class Tokenizer {
   private void one_token() {
     char c = source.charAt(curr++);
     Optional<SymbolKind> symbol = SymbolKind.from(c);
+    System.out.println("c: " + c + " symbol: " + symbol.isPresent() + " " + symbol.toString());
     // handle symbols
     if (symbol.isPresent()) {
       tokens.add(new Token.Symbol(symbol.get()));
@@ -46,13 +47,14 @@ class Tokenizer {
     }
     // Whitespace is ignored
     if (c == ' ' || c == '\t') {
-      curr ++;
+      return;
     }
     // By process of elimination, the current token MUST be a literal.
     while (curr < source.length() && SymbolKind.from(source.charAt(curr)).isEmpty()) {
       curr ++;
     }
     String literal = source.substring(start, curr).trim();
+    System.out.println("literal: " + literal);
     tokens.add(new Token.Literal(literal));
   }
 }

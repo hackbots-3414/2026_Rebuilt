@@ -5,7 +5,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Robot;
 import frc.robot.Constants.AimConstants;
 import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimParams;
@@ -36,6 +38,7 @@ public class StateManager {
     log.registerBoolean("Shoot Ready", shootReady());
     log.registerBoolean("Turret Tracked", subsystems.turret().tracked(this::aimParams));
     log.registerBoolean("Shooter Tracked", subsystems.shooter().tracked(this::aimParams));
+    log.registerBoolean("In Alliance Zone", () -> FieldUtils.inAllianceZone(robotPose()));
 
     String aimPrefix = "Aim Params/";
     log.registerString(aimPrefix + "Status", () -> params.status.toString());
@@ -84,7 +87,8 @@ public class StateManager {
   public Trigger shootReady() {
     return subsystems.turret().tracked(this::aimParams)
         .and(subsystems.shooter().tracked(this::aimParams))
-        .and(() -> params.isOk());
+        .and(() -> params.isOk())
+        .and(() -> DriverStation.isTeleop() || FieldUtils.inAllianceZone(robotPose()));
   }
 
   public AimParams aimParams() {
@@ -108,6 +112,10 @@ public class StateManager {
   public void periodic() {
     params = new AimParams(AimStatus.Unchecked);
     predictedParams = new AimParams(AimStatus.Unchecked);
+  }
+
+  public Trigger climbing() {
+    return subsystems.climber().wants(ClimbPosition.Climbed);
   }
 
   public Trigger climbed() {
