@@ -19,17 +19,20 @@ public class AimParams {
    * shooter.
    */
   public Rotation2d yaw = Rotation2d.kZero;
-  /** the velocity that the fuel should be ejected out at, relative to the robot. */
-  public double velocity = 0.0;
+  /**
+   * the output that the fuel should be ejected out at. If control is ProjectileVelocity, then this
+   * is m/s relative to the robot.
+   */
+  public double output = 0.0;
   /** the tolerated error in the shot's pitch */
   public Rotation2d deltaPitch = Rotation2d.fromDegrees(4);
   /** the tolerated error in the shot's yaw */
   public Rotation2d deltaYaw = Rotation2d.fromDegrees(2);
   /** the tolerated error in the shot's velocity */
-  public double deltaVelocity = 0.35;
+  public double deltaOutput = 0.35;
 
   public AimParams() {}
-  
+
   public AimParams(AimStatus status) {
     this.status = status;
   }
@@ -47,7 +50,9 @@ public class AimParams {
     }
   }
 
-  public static final AimParams kImpossible = new AimParams(AimStatus.Impossible);
+  public static AimParams impossible() {
+    return new AimParams(AimStatus.Impossible);
+  }
 
   /** Returns whether the aim parameters calculated are feasible */
   public boolean isOk() {
@@ -65,10 +70,5 @@ public class AimParams {
      * appropriate units.
      */
     MechanismControl;
-  }
-
-  public AimParams withSpeedControl(SpeedControl control) {
-    this.control = control;
-    return this;
   }
 }

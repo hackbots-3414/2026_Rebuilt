@@ -3,6 +3,8 @@ package frc.robot.subsystems.turret;
 import static edu.wpi.first.units.Units.Revolutions;
 import static edu.wpi.first.units.Units.Rotations;
 import java.util.function.Supplier;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -62,7 +64,7 @@ public class Turret extends SubsystemBase {
         this.run(() -> {
           tracking = true;
           Rotation2d robot = state.robotPose().getRotation();
-          Rotation2d relative = state.aimParams().yaw.minus(robot);
+          Rotation2d relative = state.predictedAimParams().yaw.minus(robot);
           // We're only in "tracking" mode if we're just trying to get to a happy spot. If everybody
           // else is ready, we don't want to hold up shooting, so we allow the turret access to its
           // full range. We don't generally want to do this, because it would mean that while
@@ -93,7 +95,7 @@ public class Turret extends SubsystemBase {
    * Returns a {@link Trigger} that represents whether the turret is currently at its reference
    * position.
    */
-  private Trigger ready() {
+  public Trigger ready() {
     return new Trigger(() -> {
       double delta = inputs.position.minus(inputs.reference).baseUnitMagnitude();
       return Math.abs(delta) <= TurretConstants.kTolerance.baseUnitMagnitude();
@@ -108,8 +110,8 @@ public class Turret extends SubsystemBase {
     });
   }
 
-  public Pose3d turretPose(StateManager state) {
-    return new Pose3d(state.robotPose()).transformBy(TurretConstants.kOffset);
+  public Pose3d turretPose(Pose2d robotPose) {
+    return new Pose3d(robotPose).transformBy(TurretConstants.kOffset);
   }
 
   /**

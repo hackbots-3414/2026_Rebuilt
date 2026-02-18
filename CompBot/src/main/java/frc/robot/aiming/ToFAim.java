@@ -3,12 +3,12 @@ package frc.robot.aiming;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import java.util.List;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import frc.robot.aiming.AimParams.AimStatus;
 import frc.robot.aiming.AimParams.SpeedControl;
-import frc.robot.superstructure.StateManager;
 
 /**
  * An aim strategy that uses time-of-flight recursion to estimate the ideal shot parameters for the
@@ -16,7 +16,7 @@ import frc.robot.superstructure.StateManager;
  */
 public class ToFAim implements AimStrategy {
   static final double EPSILON = 1e-3;
-  static final double ITERATIONS = 5;
+  static final int ITERATIONS = 5;
 
   private final AimConstraints constraints;
 
@@ -41,10 +41,9 @@ public class ToFAim implements AimStrategy {
     }
   }
 
-  public AimParams update(StateManager state) {
-    Translation2d target = state.aimTarget().getTranslation().toTranslation2d();
-    Translation2d start = state.robotPose().getTranslation();
-    Translation2d velo = state.robotVelocity().getTranslation();
+  public AimParams update(Pose3d aimTarget, Pose3d shooterPose, Translation2d shooterVelocity) {
+    Translation2d target = aimTarget.getTranslation().toTranslation2d();
+    Translation2d start = shooterPose.getTranslation().toTranslation2d();
 
     Translation2d afterShooting = start;
 
@@ -53,11 +52,11 @@ public class ToFAim implements AimStrategy {
     double distance = 0.0; // This will be overriden immediately
     double tof;
 
-    for (int i = 0;i < ITERATIONS;i ++) {
+    for (int i = 0; i < ITERATIONS; i++) {
       // Predict the ToF for the current shot
       distance = afterShooting.minus(target).getNorm();
       tof = timeMap.get(distance);
-      Translation2d newAfterShooting = start.plus(velo.times(tof));
+      Translation2d newAfterShooting = start.plus(shooterVelocity.times(tof));
       double error = newAfterShooting.minus(afterShooting).getNorm();
       if (error < EPSILON) {
         // Solution found!
@@ -69,7 +68,7 @@ public class ToFAim implements AimStrategy {
     }
 
     if (status == AimStatus.Impossible) {
-      return AimParams.kImpossible;
+      return AimParams.impossible();
     }
 
     double pitch = pitchMap.get(distance);
@@ -77,7 +76,7 @@ public class ToFAim implements AimStrategy {
 
     AimParams params = new AimParams();
     params.pitch = Rotation2d.fromDegrees(pitch);
-    params.velocity = shooterControl;
+    params.output = shooterControl;
     params.control = SpeedControl.MechanismControl;
     Translation2d finalOffset = target.minus(afterShooting);
     params.yaw = Rotation2d.fromRadians(Math.atan2(finalOffset.getY(), finalOffset.getX()));

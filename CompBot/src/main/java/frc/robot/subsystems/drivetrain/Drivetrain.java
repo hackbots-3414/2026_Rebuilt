@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -150,7 +151,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     poseLogEntry = StructLogEntry.create(DataLogManager.getLog(), "Robot Pose", Pose2d.struct);
     state = getState();
     OnboardLogger ologger = new OnboardLogger("Drivetrain");
-    ologger.registerBoolean("Received vision udpate", () -> hasReceivedVisionUpdate);
+    ologger.registerBoolean("Received vision update", () -> hasReceivedVisionUpdate);
   }
 
   /**
@@ -319,5 +320,21 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   public Command rotate() {
     return this.applyRequest(
         () -> new SwerveRequest.RobotCentric().withRotationalRate(0.5 * Math.PI));
+  }
+  
+  private Twist2d predictedTwist() {
+    return new Twist2d(
+        state.Speeds.vxMetersPerSecond * Robot.kDefaultPeriod,
+        state.Speeds.vyMetersPerSecond * Robot.kDefaultPeriod,
+        state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod);
+  }
+
+  public Pose2d predictedRobotPose() {
+    return robotPose().exp(predictedTwist());
+  }
+
+  public Translation2d predictedRobotVelocity() {
+    return robotVelocity().getTranslation().rotateBy(
+        Rotation2d.fromRadians(state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod));
   }
 }

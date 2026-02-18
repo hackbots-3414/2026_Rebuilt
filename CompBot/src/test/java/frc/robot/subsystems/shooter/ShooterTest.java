@@ -35,13 +35,13 @@ public class ShooterTest extends CommandBasedTest {
 
     AimParams params = new AimParams();
     params.pitch = Rotation2d.fromDegrees(55);
-    params.velocity = ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond);
+    params.output = ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond);
 
     CommandScheduler.getInstance().schedule(shooter.shoot(() -> params));
     CommandScheduler.getInstance().run();
     // These methods should have been called from the running command.
     verify(mockShooterIO).setVelocity(ShooterConstants.kMaxRotationalSpeed
-        .times(params.velocity / ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond)));
+        .times(params.output / ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond)));
     verify(mockShooterIO).setAngle(Degrees.of(35).minus(HoodConstants.kOffset));
 
     CommandScheduler.getInstance().schedule(shooter.reverse());

@@ -47,9 +47,9 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     FieldManager.getInstance().clearFuel();
 
+    robotContainer.superstructure.periodic();
     StatusSignalUtil.refreshAll();
     CommandScheduler.getInstance().run();
-    robotContainer.superstructure.periodic();
 
     FieldManager.getInstance().drawFuel();
 

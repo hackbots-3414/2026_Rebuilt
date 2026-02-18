@@ -6,10 +6,13 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.AimConstants;
 import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimParams;
 import frc.robot.aiming.AimStrategy;
 import frc.robot.aiming.PhysicsAim;
+import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;
+import frc.robot.aiming.AimParams.AimStatus;
 import frc.robot.superstructure.Superstructure.Subsystems;
 import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
@@ -19,12 +22,9 @@ import frc.robot.util.OnboardLogger;
  */
 public class StateManager {
   private final Subsystems subsystems;
-  private final AimStrategy aim = new PhysicsAim(
-      new AimConstraints(Rotation2d.fromDegrees(49.5), Rotation2d.fromDegrees(72.0), 18),
-      2,
-      10);
 
-  private AimParams params = AimParams.kImpossible;
+  private AimParams params = new AimParams(AimStatus.Unchecked);
+  private AimParams predictedParams = new AimParams(AimStatus.Unchecked);
 
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
@@ -41,11 +41,22 @@ public class StateManager {
     log.registerString(aimPrefix + "Status", () -> params.status.toString());
     log.registerMeasurement(aimPrefix + "Pitch", () -> params.pitch.getMeasure(), Degrees);
     log.registerMeasurement(aimPrefix + "Yaw", () -> params.yaw.getMeasure(), Degrees);
-    log.registerDouble(aimPrefix + "Velocity", () -> params.velocity);
+    log.registerDouble(aimPrefix + "Velocity", () -> params.output);
     log.registerMeasurement(aimPrefix + "Error/Pitch", () -> params.deltaPitch.getMeasure(),
         Degrees);
     log.registerMeasurement(aimPrefix + "Error/Yaw", () -> params.deltaYaw.getMeasure(), Degrees);
-    log.registerDouble(aimPrefix + "Error/Velocity", () -> params.deltaVelocity);
+    log.registerDouble(aimPrefix + "Error/Velocity", () -> params.deltaOutput);
+
+    aimPrefix = "Aim Params (Predicted)/";
+    log.registerString(aimPrefix + "Status", () -> predictedParams.status.toString());
+    log.registerMeasurement(aimPrefix + "Pitch", () -> predictedParams.pitch.getMeasure(), Degrees);
+    log.registerMeasurement(aimPrefix + "Yaw", () -> predictedParams.yaw.getMeasure(), Degrees);
+    log.registerDouble(aimPrefix + "Velocity", () -> predictedParams.output);
+    log.registerMeasurement(aimPrefix + "Error/Pitch",
+        () -> predictedParams.deltaPitch.getMeasure(), Degrees);
+    log.registerMeasurement(aimPrefix + "Error/Yaw", () -> predictedParams.deltaYaw.getMeasure(),
+        Degrees);
+    log.registerDouble(aimPrefix + "Error/Velocity", () -> predictedParams.deltaOutput);
   }
 
   /**
@@ -77,14 +88,34 @@ public class StateManager {
   }
 
   public AimParams aimParams() {
+    if (params.status == AimStatus.Unchecked) {
+      params =
+          AimConstants.kAim.update(aimTarget(), turretPose(), robotVelocity().getTranslation());
+    }
     return params;
   }
 
+  public AimParams predictedAimParams() {
+    if (predictedParams.status == AimStatus.Unchecked) {
+      Pose2d predictedPose = subsystems.drivetrain().predictedRobotPose();
+      predictedParams =
+          AimConstants.kAim.update(aimTarget(), subsystems.turret().turretPose(predictedPose),
+              subsystems.drivetrain().predictedRobotVelocity());
+    }
+    return predictedParams;
+  }
+
   public void periodic() {
-    params = aim.update(this);
+    params = new AimParams(AimStatus.Unchecked);
+    predictedParams = new AimParams(AimStatus.Unchecked);
+  }
+
+  public Trigger climbed() {
+    return subsystems.climber().at(ClimbPosition.Climbed);
   }
 
   public Pose3d turretPose() {
-    return subsystems.turret().turretPose(this);
+    return subsystems.turret().turretPose(robotPose());
   }
+
 }
