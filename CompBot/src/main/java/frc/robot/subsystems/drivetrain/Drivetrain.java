@@ -52,14 +52,14 @@ import frc.robot.vision.localization.TimestampedPoseEstimate;
 
 public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private static final double kSimLoopPeriod = 0.004; // 4 ms
-  private Notifier m_simNotifier = null;
-  private double m_lastSimTime;
+  private Notifier simNotifier = null;
+  private double lastSimTime;
 
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
 
   /* Keep track if we've ever applied the operator perspective before or not */
-  private boolean m_hasAppliedOperatorPerspective = false;
+  private boolean hasAppliedOperatorPerspective = false;
 
   private double maxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   private double maxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
@@ -79,16 +79,16 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private boolean hasReceivedVisionUpdate;
 
   /* Swerve requests to apply during SysId characterization */
-  private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
-  private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
-  private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
+  private final SwerveRequest.SysIdSwerveTranslation translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
+  private final SwerveRequest.SysIdSwerveSteerGains steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
+  private final SwerveRequest.SysIdSwerveRotation rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
   /*
    * SysId routine for characterizing translation. This is used to find PID gains
    * for the drive
    * motors.
    */
-  private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
+  private final SysIdRoutine sysIdRoutineTranslation = new SysIdRoutine(
       new SysIdRoutine.Config(
           null, // Use default ramp rate (1 V/s)
           Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
@@ -96,7 +96,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
           // Log state with SignalLogger class
           state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
       new SysIdRoutine.Mechanism(
-          output -> setControl(m_translationCharacterization.withVolts(output)),
+          output -> setControl(translationCharacterization.withVolts(output)),
           null,
           this));
 
@@ -105,7 +105,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
    * the steer motors.
    */
   @SuppressWarnings("unused")
-  private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
+  private final SysIdRoutine sysIdRoutineSteer = new SysIdRoutine(
       new SysIdRoutine.Config(
           null, // Use default ramp rate (1 V/s)
           Volts.of(7), // Use dynamic voltage of 7 V
@@ -113,7 +113,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
           // Log state with SignalLogger class
           state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
       new SysIdRoutine.Mechanism(
-          volts -> setControl(m_steerCharacterization.withVolts(volts)),
+          volts -> setControl(steerCharacterization.withVolts(volts)),
           null,
           this));
 
@@ -124,7 +124,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
    * SwerveRequest.SysIdSwerveRotation for info on importing the log to SysId.
    */
   @SuppressWarnings("unused")
-  private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
+  private final SysIdRoutine sysIdRoutineRotation = new SysIdRoutine(
       new SysIdRoutine.Config(
           /* This is in radians per second^2, but SysId only supports "volts per second" */
           Volts.of(Math.PI / 6).per(Second),
@@ -136,7 +136,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       new SysIdRoutine.Mechanism(
           output -> {
             /* output is actually radians per second, but SysId only supports "volts" */
-            setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
+            setControl(rotationCharacterization.withRotationalRate(output.in(Volts)));
             /* also log the requested output for SysId */
             SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
           },
@@ -144,7 +144,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
           this));
 
   /* The SysId routine to test */
-  private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
+  private SysIdRoutine sysIdRoutineToApply = sysIdRoutineTranslation;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -187,33 +187,33 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   /**
    * Runs the SysId Quasistatic test in the given direction for the routine
    * specified by
-   * {@link #m_sysIdRoutineToApply}.
+   * {@link #sysIdRoutineToApply}.
    *
    * @param direction Direction of the SysId Quasistatic test
    * @return Command to run
    */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return m_sysIdRoutineToApply.quasistatic(direction);
+    return sysIdRoutineToApply.quasistatic(direction);
   }
 
   /**
    * Runs the SysId Dynamic test in the given direction for the routine specified
    * by
-   * {@link #m_sysIdRoutineToApply}.
+   * {@link #sysIdRoutineToApply}.
    *
    * @param direction Direction of the SysId Dynamic test
    * @return Command to run
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return m_sysIdRoutineToApply.dynamic(direction);
+    return sysIdRoutineToApply.dynamic(direction);
   }
 
    public Command sysIdQuasistaticSteer(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineSteer.quasistatic(direction);
+        return sysIdRoutineSteer.quasistatic(direction);
     }
 
     public Command sysIdDynamicSteer(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineSteer.dynamic(direction);
+        return sysIdRoutineSteer.dynamic(direction);
     }
 
   @Override
@@ -229,13 +229,13 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
      * doesn't change
      * until an explicit disable event occurs during testing.
      */
-    if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
+    if (!hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
       DriverStation.getAlliance().ifPresent(allianceColor -> {
         setOperatorPerspectiveForward(
             allianceColor == Alliance.Red
                 ? kRedAlliancePerspectiveRotation
                 : kBlueAlliancePerspectiveRotation);
-        m_hasAppliedOperatorPerspective = true;
+        hasAppliedOperatorPerspective = true;
       });
     }
 
@@ -247,18 +247,18 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   private void startSimThread() {
-    m_lastSimTime = Utils.getCurrentTimeSeconds();
+    lastSimTime = Utils.getCurrentTimeSeconds();
 
     /* Run simulation at a faster rate so PID gains behave more reasonably */
-    m_simNotifier = new Notifier(() -> {
+    simNotifier = new Notifier(() -> {
       final double currentTime = Utils.getCurrentTimeSeconds();
-      double deltaTime = currentTime - m_lastSimTime;
-      m_lastSimTime = currentTime;
+      double deltaTime = currentTime - lastSimTime;
+      lastSimTime = currentTime;
 
       /* use the measured time delta, get battery voltage from WPILib */
       updateSimState(deltaTime, RobotController.getBatteryVoltage());
     });
-    m_simNotifier.startPeriodic(kSimLoopPeriod);
+    simNotifier.startPeriodic(kSimLoopPeriod);
   }
 
   /**

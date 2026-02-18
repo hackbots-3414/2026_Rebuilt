@@ -41,6 +41,7 @@ public class Robot extends TimedRobot {
 
     oLogger = new OnboardLogger("Robot");
     oLogger.registerMeasurement("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
+    oLogger.registerString("Game Data", DriverStation::getGameSpecificMessage);
   }
 
   @Override
