@@ -16,7 +16,7 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 
 public final class ClimberConstants {
-  protected static final int kMotorId = 64;
+  protected static final int kMotorId = 1;
 
   public static enum ClimbPosition {
     Home(Rotations.zero()),
