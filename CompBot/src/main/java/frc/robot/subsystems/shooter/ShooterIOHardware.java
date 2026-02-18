@@ -6,6 +6,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.Angle;
@@ -23,8 +24,7 @@ public class ShooterIOHardware implements ShooterIO {
   private AngularVelocity lastVelocity = RotationsPerSecond.zero();
   private Angle lastAngle = Rotations.zero();
 
-  private final MotionMagicVelocityTorqueCurrentFOC shooterControl =
-      new MotionMagicVelocityTorqueCurrentFOC(0);
+  private final VelocityTorqueCurrentFOC shooterControl = new VelocityTorqueCurrentFOC(0);
 
   // Using zero for the acceleration and jerk tell the control request to just use the
   // device-configured MotionMagic configs found in the motor configuration. Position doesn't really

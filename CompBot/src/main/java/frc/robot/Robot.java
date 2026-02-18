@@ -41,6 +41,7 @@ public class Robot extends TimedRobot {
 
     oLogger = new OnboardLogger("Robot");
     oLogger.registerMeasurement("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
+    oLogger.registerString("Game Data", DriverStation::getGameSpecificMessage);
   }
 
   @Override
@@ -60,7 +61,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     if (!hasStartedVision) {
-      robotContainer.aprilTagVisionHandler.startThread();
+      // robotContainer.aprilTagVisionHandler.startThread();
       hasStartedVision = true;
     }
   }
