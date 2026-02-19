@@ -1,6 +1,9 @@
 package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Meters;
+
+import com.therekrab.autopilot.APTarget;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,7 +17,7 @@ import frc.robot.Constants.FieldConstants;
  * something on the field
  */
 public class FieldUtils {
-  private static Pose3d allianceRelativeFlip(Pose3d pose) {
+  public static Pose3d allianceRelativeFlip(Pose3d pose) {
     if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red)) {
       return new Pose3d(
           FieldConstants.kFieldLength.minus(pose.getMeasureX()),
@@ -26,7 +29,7 @@ public class FieldUtils {
     }
   }
 
-  private static Pose2d allianceRelativeFlip(Pose2d pose) {
+  public static Pose2d allianceRelativeFlip(Pose2d pose) {
     return allianceRelativeFlip(new Pose3d(pose)).toPose2d();
   }
 
@@ -42,5 +45,13 @@ public class FieldUtils {
 
   public static Pose3d feedTarget() {
     return allianceRelativeFlip(FieldConstants.kFeedTarget);
+  }
+
+  public static APTarget targetFlip(APTarget original) {
+    APTarget adjusted = original.withReference(allianceRelativeFlip(original.getReference()));
+    if (original.getEntryAngle().isEmpty()) {
+      return adjusted;
+    }
+    return adjusted.withEntryAngle(original.getEntryAngle().get().rotateBy(Rotation2d.k180deg));
   }
 }

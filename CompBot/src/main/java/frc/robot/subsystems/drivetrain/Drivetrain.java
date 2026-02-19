@@ -46,6 +46,7 @@ import frc.robot.aiming.AimParams;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.AutopilotConstants.HeadingGains;
+import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
@@ -371,25 +372,25 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     setControl(new SwerveRequest.SwerveDriveBrake());
   }
 
-  public Command driveTo(APTarget target, Autopilot autopilot) {
+  public Command driveTo(Supplier<APTarget> target, Autopilot autopilot) {
     return this.run(() -> {
-      APResult result = autopilot.calculate(robotPose(), state.Speeds, target);
+      APResult result = autopilot.calculate(robotPose(), state.Speeds, target.get());
       setControl(autopilotControl
         .withVelocityX(result.vx())
         .withVelocityY(result.vy())
         .withTargetDirection(result.targetAngle()));
     })
-      .until(() -> autopilot.atTarget(robotPose(), target))
+      .until(() -> autopilot.atTarget(robotPose(), target.get()))
       .finallyDo(() -> {
         // Only stop if we are supposed to.
-        if (target.getVelocity() == 0) {
+        if (target.get().getVelocity() == 0) {
           stop();
         }
       });
   }
 
-  public Command resetOdometry(Pose2d pose) {
-    return this.runOnce(() -> resetPose(pose)).ignoringDisable(true);
+  public Command resetOdometry(Pose2d pose, boolean flip) {
+    return this.runOnce(() -> resetPose(flip ? FieldUtils.allianceRelativeFlip(pose) : pose)).ignoringDisable(true);
   }
   
   private Twist2d predictedTwist() {

@@ -7,12 +7,14 @@ import frc.robot.superstructure.Superstructure.Subsystems;
 
 public class ResetOdometry implements CommandBuilder {
     private final Pose2d pose;
+    private final boolean flip;
 
-    public ResetOdometry(Pose2d pose) {
+    public ResetOdometry(Pose2d pose, boolean flip) {
         this.pose = pose;
+        this.flip = flip;
     }
 
     public Command build(Subsystems subsystems, StateManager state) {
-        return subsystems.drivetrain().resetOdometry(pose);
+        return subsystems.drivetrain().resetOdometry(pose, flip);
     }
 }

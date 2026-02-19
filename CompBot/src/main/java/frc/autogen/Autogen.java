@@ -80,7 +80,9 @@ public class Autogen {
     for (Path path : files) {
       loadFromFile(path.toString()).ifPresent(
           command -> {
-            autons.put(path.getFileName().toString(), command);
+            String name = path.getFileName().toString();
+            int index = name.lastIndexOf(".autogen");
+            autons.put(name.substring(0, index), command);
           });
     }
     return autons;

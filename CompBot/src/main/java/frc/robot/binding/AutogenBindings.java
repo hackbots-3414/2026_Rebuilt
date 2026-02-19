@@ -16,6 +16,7 @@ import frc.robot.commands.RunClimb;
 import frc.robot.commands.RunIntake;
 import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;
 import frc.robot.superstructure.Superstructure;
+import frc.robot.util.FieldUtils;
 
 public class AutogenBindings implements Binder {
     public void bind(Superstructure superstructure) {
@@ -25,8 +26,8 @@ public class AutogenBindings implements Binder {
         Autogen.registerCommand("Climb Ready", superstructure.build(new RunClimb(ClimbPosition.Ready)));
         Autogen.registerCommand("Climb", superstructure.build(new RunClimb(ClimbPosition.Climbed)));
 
-        Autogen.registerCommand("Seed Left", superstructure.build(new ResetOdometry(AutonConstants.kLeftStart)));
-        Autogen.registerCommand("Seed Right", superstructure.build(new ResetOdometry(AutonConstants.kRightStart)));
+        Autogen.registerCommand("Seed Left", superstructure.build(new ResetOdometry(AutonConstants.kLeftStart, true)));
+        Autogen.registerCommand("Seed Right", superstructure.build(new ResetOdometry(AutonConstants.kRightStart, true)));
 
         registerAPTarget("Cross Left", AutonConstants.kCrossLeft, superstructure);
         registerAPTarget("Cross Right", AutonConstants.kCrossRight, superstructure);
@@ -42,6 +43,6 @@ public class AutogenBindings implements Binder {
     }
 
     private void registerAPTarget(String name, APTarget target, Superstructure superstructure) {
-        Autogen.registerCommand(name, superstructure.build(new DriveToPoint(target)));
+        Autogen.registerCommand(name, superstructure.build(new DriveToPoint(() -> FieldUtils.targetFlip(target))));
     }
 }
