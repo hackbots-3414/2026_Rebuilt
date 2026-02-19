@@ -118,7 +118,6 @@ public class Autogen {
   }
 
   public static Optional<Pose2d> getStartingPose(String name) {
-    System.out.println(name);
     if (starting.containsKey(name)) {
       return Optional.of(starting.get(name));
     }
