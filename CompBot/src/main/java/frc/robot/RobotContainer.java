@@ -25,6 +25,16 @@ public class RobotContainer {
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
+    System.out.print("PLSSSSSSS WORKKKKKKK");
+    SmartDashboard.putBoolean("/LedState BadController", false);
+    SmartDashboard.putBoolean("/LedState Climbed", false);
+    SmartDashboard.putBoolean("/LedState EndGameWarning", false);
+    SmartDashboard.putBoolean("/LedState EndGameAlert", false);
+    SmartDashboard.putBoolean("/LedState FuelOnBoard", false);
+    SmartDashboard.putBoolean("/LedState ShootReady", false);
+    SmartDashboard.putBoolean("/LedState Default", false);
+
+
   }
 
   public Command getAutonomousCommand() {

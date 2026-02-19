@@ -4,6 +4,7 @@ import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.signals.RGBWColor;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.subsystems.led.LedConstants;
 import frc.robot.subsystems.led.LedIO;
@@ -13,11 +14,12 @@ import frc.robot.superstructure.StateManager;
 public class EndGameWarning implements LedState {
 
     public boolean check(StateManager manager) {
-        return DriverStation.getMatchTime() <= LedConstants.endgameWarning;
+        return SmartDashboard.getBoolean("/LedState EndGameWarning", false);
+        // return DriverStation.getMatchTime() <= LedConstants.endgameWarning;
     }
 
     public ControlRequest apply(LedIO io) {
-       return io.createAnimation(new RGBWColor(Color.kRed), LedIO.ANIMATION_TYPE.FLASH);
+       return io.createAnimation(new RGBWColor(Color.kRed), LedIO.ANIMATION_TYPE.STROBE);
     }
 
 }

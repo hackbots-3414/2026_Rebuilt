@@ -1,6 +1,5 @@
 package frc.robot.subsystems.led;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -9,14 +8,16 @@ import frc.robot.superstructure.StateManager;
 
 public class Led extends SubsystemBase  {
     private LedState appliedState;
-    private StateManager manager;
     private LedIO io;
-    public Led(StateManager manager, LedIO io) {
-        this.manager = manager;
+
+    public Led(LedIO io) {
+        super();
         this.io = io;
+
     }
     //todo assign priority values to each ledstate (ORDERED)
     private List<LedState> hierarchy = List.of(
+               
         new BadController(),
         new Climbed(),
         new EndGameWarning(),
@@ -26,10 +27,9 @@ public class Led extends SubsystemBase  {
         new Default()
     );
     
-    @Override
-    public void periodic() {
+    public void update(StateManager stateManager) {
         for (LedState state : hierarchy) {
-            if (!state.check(manager)) {
+            if (!state.check(stateManager)) {
                 continue;
             }
             if (appliedState == state) {

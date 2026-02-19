@@ -4,10 +4,9 @@ public class LedConstants {
     // Offsets & numLEds & IDS
 
     public static final int candle1 = 5;
-    public static final int candle2 = 6;
     
     public static final int startIndex = 0;
-    public static final int endIndex = 0;
+    public static final int endIndex = 53;
 
     public static final int endgameWarning = 30;
     public static final int endgameAlert = 15;
