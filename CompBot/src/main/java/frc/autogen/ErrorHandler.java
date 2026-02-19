@@ -1,9 +1,6 @@
 package frc.autogen;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Handler;
-
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;

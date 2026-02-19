@@ -5,7 +5,12 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.autogen.Autogen;
 import frc.robot.Robot;
 import frc.robot.commands.CommandBuilder;
 import frc.robot.generated.TunerConstants;
@@ -25,6 +30,7 @@ import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIOHardware;
 import frc.robot.subsystems.turret.TurretIOSim;
+import frc.robot.util.AutonWarn;
 import frc.robot.vision.CameraConfig;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 import frc.robot.vision.localization.LocalizationConstants;
@@ -45,6 +51,10 @@ public class Superstructure {
 
   private final Subsystems subsystems;
   public final StateManager state;
+
+  private SendableChooser<Command> autoChooser = new SendableChooser<>();
+  private final Alert autonAlert =
+      new Alert("Robot not in configured starting pose for auton", AlertType.kWarning);
 
   public Superstructure() {
     Drivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -111,5 +121,15 @@ public class Superstructure {
 
   public void periodic() {
     state.periodic();
+    autonAlert.set(!AutonWarn.checkPose(getAutonomousCommand().getName(), state.robotPose()));
+  }
+
+  public void createAutonChooser() {
+    autoChooser = Autogen.autoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+  }
+
+  public Command getAutonomousCommand() {
+    return autoChooser.getSelected();
   }
 }

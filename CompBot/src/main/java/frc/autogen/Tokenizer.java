@@ -6,15 +6,13 @@ import java.util.Optional;
 import frc.autogen.Token.SymbolKind;
 
 class Tokenizer {
-  private int line;
   private int start;
   private int curr;
 
   private String source;
   private List<Token> tokens;
 
-  public Tokenizer(String source, int line) {
-    this.line = line;
+  public Tokenizer(String source) {
     start = 0;
     curr = 0;
 
@@ -33,7 +31,6 @@ class Tokenizer {
   private void one_token() {
     char c = source.charAt(curr++);
     Optional<SymbolKind> symbol = SymbolKind.from(c);
-    System.out.println("c: " + c + " symbol: " + symbol.isPresent() + " " + symbol.toString());
     // handle symbols
     if (symbol.isPresent()) {
       tokens.add(new Token.Symbol(symbol.get()));
@@ -54,7 +51,6 @@ class Tokenizer {
       curr ++;
     }
     String literal = source.substring(start, curr).trim();
-    System.out.println("literal: " + literal);
     tokens.add(new Token.Literal(literal));
   }
 }

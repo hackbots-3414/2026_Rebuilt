@@ -1,14 +1,8 @@
 package frc.robot.binding;
 
-import static edu.wpi.first.units.Units.Meters;
-
 import com.therekrab.autopilot.APTarget;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import frc.autogen.Autogen;
 import frc.robot.Constants.AutonConstants;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.AimPrep;
 import frc.robot.commands.DriveToPoint;
 import frc.robot.commands.ResetOdometry;
@@ -25,6 +19,10 @@ public class AutogenBindings implements Binder {
         Autogen.registerCommand("Aim", superstructure.build(new AimPrep()));
         Autogen.registerCommand("Climb Ready", superstructure.build(new RunClimb(ClimbPosition.Ready)));
         Autogen.registerCommand("Climb", superstructure.build(new RunClimb(ClimbPosition.Climbed)));
+
+        Autogen.registerStartingPose("left", AutonConstants.kLeftStart);
+        Autogen.registerStartingPose("right", AutonConstants.kRightStart);
+        Autogen.registerStartingPose("depot", AutonConstants.kLeftStart);
 
         Autogen.registerCommand("Seed Left", superstructure.build(new ResetOdometry(AutonConstants.kLeftStart, true)));
         Autogen.registerCommand("Seed Right", superstructure.build(new ResetOdometry(AutonConstants.kRightStart, true)));
