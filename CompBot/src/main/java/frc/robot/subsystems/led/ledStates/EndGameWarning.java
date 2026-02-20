@@ -14,8 +14,8 @@ import frc.robot.superstructure.StateManager;
 public class EndGameWarning implements LedState {
 
     public boolean check(StateManager manager) {
-        return SmartDashboard.getBoolean("/LedState EndGameWarning", false);
-        // return DriverStation.getMatchTime() <= LedConstants.endgameWarning;
+        return DriverStation.getMatchTime() < LedConstants.endgameWarning && !DriverStation.isAutonomous();
+
     }
 
     public ControlRequest apply(LedIO io) {

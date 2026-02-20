@@ -2,7 +2,10 @@ package frc.robot.subsystems.led;
 
 import java.util.List;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.subsystems.led.ledStates.*;
 import frc.robot.superstructure.StateManager;
 
@@ -13,11 +16,14 @@ public class Led extends SubsystemBase  {
     public Led(LedIO io) {
         super();
         this.io = io;
-
+        if (DriverStation.isTest() || Robot.isSimulation()) {
+            for (LedState state : hierarchy) {
+                SmartDashboard.putBoolean("Led/Enable " + state.getClass().getSimpleName(), false);
+            }
+        }
     }
     //todo assign priority values to each ledstate (ORDERED)
     private List<LedState> hierarchy = List.of(
-               
         new BadController(),
         new Climbed(),
         new EndGameWarning(),
@@ -29,7 +35,13 @@ public class Led extends SubsystemBase  {
     
     public void update(StateManager stateManager) {
         for (LedState state : hierarchy) {
-            if (!state.check(stateManager)) {
+            boolean check = state.check(stateManager);
+            if (Robot.isSimulation()) {
+                String name = state.getClass().getSimpleName();
+                check = SmartDashboard.getBoolean("Led/Enable " + name, false);
+                SmartDashboard.putBoolean("Led/Enable " + name, check);
+            }
+            if (!check) {
                 continue;
             }
             if (appliedState == state) {

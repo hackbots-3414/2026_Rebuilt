@@ -12,9 +12,7 @@ import frc.robot.superstructure.StateManager;
 
 public class Default implements LedState{
     public boolean check(StateManager manager){
-        System.out.print("DEFAULT CHECK");
-        return SmartDashboard.getBoolean("/LedState Default", false);
-        // return !(DriverStation.isEnabled());
+        return !(DriverStation.isEnabled());
     }
     public ControlRequest apply(LedIO io){
         return io.createAnimation(new RGBWColor(Color.kPurple), LedIO.ANIMATION_TYPE.FLOW);

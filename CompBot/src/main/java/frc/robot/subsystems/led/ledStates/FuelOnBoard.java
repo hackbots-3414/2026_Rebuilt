@@ -11,8 +11,7 @@ import frc.robot.superstructure.StateManager;
 
 public class FuelOnBoard implements LedState{
      public boolean check(StateManager manager){
-        return SmartDashboard.getBoolean("/LedState FuelOnBoard", false);
-        // return false;
+        return false;
     }
 
     public ControlRequest apply(LedIO io){

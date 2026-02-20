@@ -11,8 +11,7 @@ import frc.robot.superstructure.StateManager;
 public class Climbed implements LedState {
 
     public boolean check(StateManager manager) {
-         return SmartDashboard.getBoolean("/LedState Climbed", false);
-        // return manager.climbed().getAsBoolean();
+        return manager.climbed().getAsBoolean();
     }
 
     public ControlRequest apply(LedIO io) {

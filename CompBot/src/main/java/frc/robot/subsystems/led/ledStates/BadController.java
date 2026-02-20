@@ -15,8 +15,7 @@ import frc.robot.superstructure.StateManager;
 public class BadController implements LedState {
 
     public boolean check(StateManager manager) {
-        return SmartDashboard.getBoolean("/LedState BadController", false);
-        // return badController();
+        return badController();
     }
     public ControlRequest apply(LedIO io) {
         return io.createAnimation(new RGBWColor(Color.kRed), LedIO.ANIMATION_TYPE.STROBE);
