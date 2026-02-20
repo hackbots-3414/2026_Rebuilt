@@ -55,7 +55,8 @@ public class Autogen {
         }
         productions.add(expr.get().produce());
       }
-      Command command = new Production.Composition(CompositionKind.Sequential, productions).build();
+      Production production = new Production.Composition(CompositionKind.Sequential, productions);
+      Command command = production.build();
       if (!errorHandler.succeeded()) {
         return Optional.empty();
       }

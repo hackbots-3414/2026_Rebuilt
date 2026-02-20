@@ -57,5 +57,6 @@ public class Constants {
 
     public static final APTarget kTower = new APTarget(new Pose2d(1.3,3.8,Rotation2d.k180deg)).withEntryAngle(Rotation2d.k180deg);
     public static final APTarget kDepot = new APTarget(new Pose2d(0.55, 5.9, Rotation2d.k180deg)).withEntryAngle(Rotation2d.k180deg);
+    public static final APTarget kOutpost = new APTarget(new Pose2d(0.42,0.68,Rotation2d.k180deg));
   }
 }

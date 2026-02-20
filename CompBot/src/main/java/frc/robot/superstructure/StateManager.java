@@ -36,6 +36,7 @@ public class StateManager {
     log.registerPose3d("Aim Target", this::aimTarget);
     log.registerPose3d("Turret Position", this::turretPose);
     log.registerBoolean("Shoot Ready", shootReady());
+    log.registerBoolean("Shoot Ready (Forced)", shootReady(true));
     log.registerBoolean("Turret Tracked", subsystems.turret().tracked(this::aimParams));
     log.registerBoolean("Shooter Tracked", subsystems.shooter().tracked(this::aimParams));
     log.registerBoolean("In Alliance Zone", () -> FieldUtils.inAllianceZone(robotPose()));
@@ -84,11 +85,15 @@ public class StateManager {
     }
   }
 
-  public Trigger shootReady() {
+  public Trigger shootReady(boolean forceWhenReady) {
     return subsystems.turret().tracked(this::aimParams)
         .and(subsystems.shooter().tracked(this::aimParams))
         .and(() -> params.isOk())
-        .and(() -> DriverStation.isTeleop() || FieldUtils.inAllianceZone(robotPose()));
+        .and(() -> forceWhenReady || DriverStation.isTeleop() || FieldUtils.inAllianceZone(robotPose()));
+  }
+
+  public Trigger shootReady() {
+    return shootReady(false);
   }
 
   public AimParams aimParams() {
