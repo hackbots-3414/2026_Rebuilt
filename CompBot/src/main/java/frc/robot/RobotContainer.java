@@ -1,11 +1,7 @@
 package frc.robot;
 
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.autogen.Autogen;
 import frc.robot.binding.AutogenBindings;
 import frc.robot.binding.Binder;
 import frc.robot.binding.DriverBindings;
@@ -22,23 +18,14 @@ public class RobotContainer {
   public final Binder robotBinder = new RobotBindings();
   public final Binder autogenBinder = new AutogenBindings();
 
-  private final SendableChooser<Command> autoChooser;
-
   public RobotContainer() {
     superstructure = new Superstructure();
     driverBinder.bind(superstructure);
     robotBinder.bind(superstructure);
     autogenBinder.bind(superstructure);
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();
-
-    autoChooser = Autogen.autoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    superstructure.createAutonChooser();
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
-  }
-  
-  
-  public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
   }
 }

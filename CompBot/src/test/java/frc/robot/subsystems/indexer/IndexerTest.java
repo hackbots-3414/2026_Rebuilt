@@ -1,13 +1,10 @@
 package frc.robot.subsystems.indexer;
 
-import static org.mockito.Mockito.doAnswer;
+import static edu.wpi.first.units.Units.Volts;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static edu.wpi.first.units.Units.Volts;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.CommandBasedTest;
 import frc.robot.subsystems.indexer.IndexerConstants.FeederConstants;

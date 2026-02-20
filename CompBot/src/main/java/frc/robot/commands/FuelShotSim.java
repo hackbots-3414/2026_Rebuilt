@@ -19,7 +19,8 @@ public class FuelShotSim implements CommandBuilder {
         Commands.runOnce(() -> sim.launch(state)),
         Commands.run(sim::tick))
         .until(sim::atHub)
-        .withName("Fuel Shot (sim)");
+        .withName("Fuel Shot (sim)")
+        .ignoringDisable(true);
   }
 
   public Command build(Subsystems subsystems, StateManager state) {

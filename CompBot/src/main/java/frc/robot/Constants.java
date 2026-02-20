@@ -2,11 +2,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Rotation;
-
-
 import com.therekrab.autopilot.APTarget;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;

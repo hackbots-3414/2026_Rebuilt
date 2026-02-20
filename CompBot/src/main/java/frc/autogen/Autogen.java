@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,14 +25,19 @@ import frc.autogen.ErrorHandler.ErrorInfo;
 import frc.autogen.Production.ProductionKind.CompositionKind;
 
 public class Autogen {
-  protected static Map<String, Command> registered = new HashMap<>();
+  protected final static Map<String, Command> registered = new HashMap<>();
+  protected final static Map<String, Pose2d> starting = new HashMap<>();
+
   public static final ErrorHandler errorHandler = new ErrorHandler.MultiErrorHandler(
-    new ErrorHandler.AlertErrorHandler(),
-    new ErrorHandler.SimpleErrorHandler()
-  );
+      new ErrorHandler.AlertErrorHandler(),
+      new ErrorHandler.SimpleErrorHandler());
 
   public static void registerCommand(String name, Command command) {
     registered.put(name, command);
+  }
+
+  public static void registerStartingPose(String auto, Pose2d startingPose) {
+    starting.put(auto, startingPose);
   }
 
   public static Optional<Command> loadFromFile(String path) {
@@ -42,7 +48,7 @@ public class Autogen {
       int line = 1;
       while (rdr.hasNextLine()) {
         String input = rdr.nextLine();
-        List<Token> tokens = new Tokenizer(input, line).tokenize();
+        List<Token> tokens = new Tokenizer(input).tokenize();
         line++;
         if (tokens.isEmpty()) {
           continue;
@@ -60,7 +66,7 @@ public class Autogen {
       if (!errorHandler.succeeded()) {
         return Optional.empty();
       }
-      return Optional.of(command);
+      return Optional.of(command.withName(trimExtension(file.getName())));
     } catch (FileNotFoundException e) {
       errorHandler.error(new ErrorInfo("Could not find file at " + path, -1));
     }
@@ -82,11 +88,15 @@ public class Autogen {
       loadFromFile(path.toString()).ifPresent(
           command -> {
             String name = path.getFileName().toString();
-            int index = name.lastIndexOf(".autogen");
-            autons.put(name.substring(0, index), command);
+            autons.put(trimExtension(name), command);
           });
     }
     return autons;
+  }
+
+  private static String trimExtension(String path) {
+    int index = path.lastIndexOf(".autogen");
+    return path.substring(0, index);
   }
 
   public static SendableChooser<Command> autoChooser() {
@@ -106,5 +116,12 @@ public class Autogen {
         command::end,
         command::isFinished,
         command.getRequirements().toArray(Subsystem[]::new));
+  }
+
+  public static Optional<Pose2d> getStartingPose(String name) {
+    if (starting.containsKey(name)) {
+      return Optional.of(starting.get(name));
+    }
+    return Optional.empty();
   }
 }

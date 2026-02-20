@@ -18,7 +18,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.therekrab.autopilot.APTarget;
 import com.therekrab.autopilot.Autopilot;
 import com.therekrab.autopilot.Autopilot.APResult;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,7 +31,6 @@ import edu.wpi.first.util.datalog.StructLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -42,7 +40,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.FieldManager;
 import frc.robot.Robot;
-import frc.robot.aiming.AimParams;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.AutopilotConstants.HeadingGains;
@@ -103,7 +100,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
    * SysId routine for characterizing steer. This is used to find PID gains for
    * the steer motors.
    */
-  @SuppressWarnings("unused")
   private final SysIdRoutine sysIdRoutineSteer = new SysIdRoutine(
       new SysIdRoutine.Config(
           null, // Use default ramp rate (1 V/s)

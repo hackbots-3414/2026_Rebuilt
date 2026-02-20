@@ -23,6 +23,10 @@ public class AutogenBindings implements Binder {
         Autogen.registerCommand("Climb", superstructure.build(new RunClimb(ClimbPosition.Climbed)));
         Autogen.registerCommand("Shoot", superstructure.build(new ShootWhenReady()));
 
+        Autogen.registerStartingPose("left", AutonConstants.kLeftStart);
+        Autogen.registerStartingPose("right", AutonConstants.kRightStart);
+        Autogen.registerStartingPose("depot", AutonConstants.kLeftStart);
+
         Autogen.registerCommand("Seed Left", superstructure.build(new ResetOdometry(AutonConstants.kLeftStart, true)));
         Autogen.registerCommand("Seed Right", superstructure.build(new ResetOdometry(AutonConstants.kRightStart, true)));
 
