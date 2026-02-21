@@ -33,8 +33,7 @@ public class RobotContainer {
     SmartDashboard.putBoolean("/LedState FuelOnBoard", false);
     SmartDashboard.putBoolean("/LedState ShootReady", false);
     SmartDashboard.putBoolean("/LedState Default", false);
-
-
+    SmartDashboard.putBoolean("/LedState TransitionShift", false);
   }
 
   public Command getAutonomousCommand() {

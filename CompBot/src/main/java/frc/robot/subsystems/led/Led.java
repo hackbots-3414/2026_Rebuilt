@@ -28,6 +28,7 @@ public class Led extends SubsystemBase  {
         new Climbed(),
         new EndGameWarning(),
         new EndGameAlert(),
+        new TransitionShift(),
         new FuelOnBoard(),
         new ShootReady(),
         new Default()
