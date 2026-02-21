@@ -37,13 +37,11 @@ public class Constants {
   }
 
   public static class AutonConstants {
-    public static final Pose2d kLeftStart = new Pose2d(3.6, 5.7, Rotation2d.kZero);
-    public static final Pose2d kRightStart = new Pose2d(3.6, 2.3, Rotation2d.kZero);
+    public static final Pose2d kLeftStart = new Pose2d(3.6, 5.7, Rotation2d.fromDegrees(-45));
+    public static final Pose2d kRightStart = new Pose2d(3.6, 2.3, Rotation2d.fromDegrees(45));
 
-    public static final APTarget kCrossLeft = new APTarget(new Pose2d(7.5, 5.7, Rotation2d.kCW_90deg))
-      .withRotationRadius(Meters.of(1.0));
-    public static final APTarget kCrossRight = new APTarget(new Pose2d(7.5, 2.3, Rotation2d.kCCW_90deg))
-      .withRotationRadius(Meters.of(1.0));
+    public static final APTarget kCrossLeft = new APTarget(new Pose2d(7.5, 5.7, Rotation2d.fromDegrees(-45)));
+    public static final APTarget kCrossRight = new APTarget(new Pose2d(7.5, 2.3, Rotation2d.fromDegrees(45)));
 
     public static final APTarget kReturnLeft = new APTarget(kLeftStart).withEntryAngle(Rotation2d.k180deg);
     public static final APTarget kReturnRight = new APTarget(kRightStart).withEntryAngle(Rotation2d.k180deg);

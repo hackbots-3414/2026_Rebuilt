@@ -17,8 +17,11 @@ import frc.robot.Constants.FieldConstants;
  * something on the field
  */
 public class FieldUtils {
+  private static boolean shouldFlip() {
+    return DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red);
+  }
   public static Pose3d allianceRelativeFlip(Pose3d pose) {
-    if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red)) {
+    if (shouldFlip()) {
       return new Pose3d(
           FieldConstants.kFieldLength.minus(pose.getMeasureX()),
           FieldConstants.kFieldWidth.minus(pose.getMeasureY()),
@@ -31,6 +34,13 @@ public class FieldUtils {
 
   public static Pose2d allianceRelativeFlip(Pose2d pose) {
     return allianceRelativeFlip(new Pose3d(pose)).toPose2d();
+  }
+
+  public static Rotation2d allianceRelativeFlip(Rotation2d rotation) {
+    if (shouldFlip()) {
+      return Rotation2d.k180deg.plus(rotation);
+    }
+    return rotation;
   }
 
   /** Returns the position of the hub corresponding to the currently selected alliance */
@@ -52,6 +62,8 @@ public class FieldUtils {
     if (original.getEntryAngle().isEmpty()) {
       return adjusted;
     }
-    return adjusted.withEntryAngle(original.getEntryAngle().get().rotateBy(Rotation2d.k180deg));
+    adjusted = adjusted.withEntryAngle(allianceRelativeFlip(original.getEntryAngle().get()));
+    System.out.println(adjusted.getEntryAngle().get().toString());
+    return adjusted;
   }
 }
