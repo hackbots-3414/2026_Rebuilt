@@ -19,6 +19,8 @@ import frc.robot.subsystems.indexer.IndexerIOSim;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOHardware;
 import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.led.Led;
+import frc.robot.subsystems.led.LedIO;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOHardware;
 import frc.robot.subsystems.shooter.ShooterIOSim;
@@ -37,7 +39,8 @@ public class Superstructure {
       Shooter shooter,
       Indexer indexer,
       Intake intake,
-      Climber climber) {
+      Climber climber,
+      Led led) {
   }
 
   private final Subsystems subsystems;
@@ -50,7 +53,8 @@ public class Superstructure {
     Indexer indexer = new Indexer(Robot.isReal() ? new IndexerIOHardware() : new IndexerIOSim());
     Intake intake = new Intake(Robot.isReal() ? new IntakeIOHardware() : new IntakeIOSim());
     Climber climber = new Climber(Robot.isReal() ? new ClimberIOHardware() : new ClimberIOSim());
-    subsystems = new Subsystems(drivetrain, turret, shooter, indexer, intake, climber);
+    Led led = new Led(new LedIO());
+    subsystems = new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
     state = new StateManager(subsystems);
   }
 
@@ -108,5 +112,6 @@ public class Superstructure {
 
   public void periodic() {
     state.periodic();
+    subsystems.led().update(state);
   }
 }
