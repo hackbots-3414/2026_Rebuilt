@@ -54,7 +54,6 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    SmartDashboard.putNumber("Position", inputs.position.in(Revolutions));
     calibrationAlert.set(!inputs.calibrated);
   }
 
