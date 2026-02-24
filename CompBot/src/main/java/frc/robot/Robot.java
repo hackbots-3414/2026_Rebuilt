@@ -13,8 +13,10 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.ActivityCalculator;
 import frc.robot.util.OnboardLogger;
 import frc.robot.util.StatusSignalUtil;
+import frc.robot.util.ActivityCalculator.HubStatus;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -58,7 +60,13 @@ public class Robot extends TimedRobot {
     OnboardLogger.logAll();
     timeAndJoystickReplay.update();
 
+    ActivityCalculator.initialize();
     SmartDashboard.putNumber("DS/Match Time", DriverStation.getMatchTime());
+    HubStatus hubStatus = ActivityCalculator.update();
+    SmartDashboard.putString("DS/Active (Color)", hubStatus.color(ActivityCalculator.us()));
+    SmartDashboard.putBoolean("DS/Active (Boolean)", ActivityCalculator.is(ActivityCalculator.us()));
+    SmartDashboard.putNumber("DS/Hub Time", hubStatus.timeRemaining());
+    SmartDashboard.putString("DS/Current", hubStatus.active().toString());
   }
 
   @Override
@@ -70,10 +78,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+  }
 
   @Override
   public void autonomousInit() {

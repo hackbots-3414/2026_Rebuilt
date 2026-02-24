@@ -120,10 +120,10 @@
         "containers": [
           {
             "title": "Alerts",
-            "x": 640.0,
+            "x": 896.0,
             "y": 0.0,
             "width": 256.0,
-            "height": 256.0,
+            "height": 384.0,
             "type": "Alerts",
             "properties": {
               "topic": "/SmartDashboard/Alerts",
@@ -134,8 +134,8 @@
             "title": "Match Time",
             "x": 0.0,
             "y": 0.0,
-            "width": 640.0,
-            "height": 256.0,
+            "width": 512.0,
+            "height": 384.0,
             "type": "Match Time",
             "properties": {
               "topic": "/SmartDashboard/DS/Match Time",
@@ -163,9 +163,9 @@
           {
             "title": "Field",
             "x": 0.0,
-            "y": 256.0,
+            "y": 384.0,
             "width": 896.0,
-            "height": 512.0,
+            "height": 384.0,
             "type": "Field",
             "properties": {
               "topic": "/SmartDashboard/Robot/Field",
@@ -179,6 +179,35 @@
               "robot_color": 4294198070,
               "trajectory_color": 4294967295,
               "show_robot_outside_widget": true
+            }
+          },
+          {
+            "title": "Hub State",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/DS/Hub State",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          },
+          {
+            "title": "Hub Time",
+            "x": 512.0,
+            "y": 128.0,
+            "width": 384.0,
+            "height": 256.0,
+            "type": "Match Time",
+            "properties": {
+              "topic": "/SmartDashboard/DS/Hub Time",
+              "period": 0.06,
+              "data_type": "double",
+              "time_display_mode": "Minutes and Seconds",
+              "red_start_time": 5,
+              "yellow_start_time": 10
             }
           }
         ]

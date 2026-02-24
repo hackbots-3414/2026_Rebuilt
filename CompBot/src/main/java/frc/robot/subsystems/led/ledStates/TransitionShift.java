@@ -8,17 +8,17 @@ import frc.robot.subsystems.led.LedIO;
 import frc.robot.subsystems.led.LedIO.ANIMATION_TYPE;
 import frc.robot.subsystems.led.LedState;
 import frc.robot.superstructure.StateManager;
-import frc.robot.util.ActivityCalcuator;
-import frc.robot.util.ActivityCalcuator.HubActivity;
+import frc.robot.util.ActivityCalculator;
+import frc.robot.util.ActivityCalculator.HubActivity;
 
 public class TransitionShift implements LedState {
 
     public boolean check (StateManager state) {
-        return ActivityCalcuator.when(ActivityCalcuator.us()).getAsBoolean();
+        return ActivityCalculator.when(ActivityCalculator.us()).getAsBoolean();
     }
 
     public ControlRequest apply (LedIO io) {
-        Color color = (ActivityCalcuator.us() == HubActivity.Red) ? Color.kRed : Color.kBlue;
+        Color color = (ActivityCalculator.us() == HubActivity.Red) ? Color.kRed : Color.kBlue;
         return io.createAnimation(new RGBWColor(color) , ANIMATION_TYPE.FLASH);
     }
     
