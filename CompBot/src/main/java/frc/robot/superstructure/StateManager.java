@@ -1,19 +1,16 @@
 package frc.robot.superstructure;
 
 import static edu.wpi.first.units.Units.Degrees;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AimConstants;
-import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimParams;
-import frc.robot.aiming.AimStrategy;
-import frc.robot.aiming.PhysicsAim;
-import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;
 import frc.robot.aiming.AimParams.AimStatus;
+import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;
 import frc.robot.superstructure.Superstructure.Subsystems;
 import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
@@ -109,6 +106,7 @@ public class StateManager {
   public void periodic() {
     params = new AimParams(AimStatus.Unchecked);
     predictedParams = new AimParams(AimStatus.Unchecked);
+    SmartDashboard.putBoolean("Robot/Shoot Ready", shootReady().getAsBoolean());
   }
 
   public Trigger climbed() {

@@ -61,7 +61,8 @@ public class Shooter extends SubsystemBase {
   private Angle pitchToHoodAngle(Rotation2d pitch) {
     // The hood's angle is normal to the angle of the ball, i.e. the hood angle is 90 degrees
     // minus the pitch. Then we subtract the offset to get the mechanism position.
-    return Rotation2d.kCCW_90deg.minus(pitch).getMeasure().minus(HoodConstants.kOffset);
+    Angle mechanismAngle = Rotation2d.kCCW_90deg.minus(pitch).getMeasure().minus(HoodConstants.kOffset);
+    return mechanismAngle;
   }
 
   /**

@@ -65,8 +65,8 @@ public class IntakeConstants {
         .withCurrentLimits(new CurrentLimitsConfigs()
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimit(80)
-            .withStatorCurrentLimit(120))
+            .withSupplyCurrentLimit(20)
+            .withStatorCurrentLimit(20))
 
         .withSlot0(new Slot0Configs()
             .withKA(0)

@@ -63,6 +63,8 @@ public final class ShooterConstants {
         protected static final int kMotorID = 56;
         protected static final int kCANcoderId = 57;
 
+        protected static final double kRatio = 0.0028888888888;
+
         protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
                 .withFeedback(new FeedbackConfigs()
                         .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
