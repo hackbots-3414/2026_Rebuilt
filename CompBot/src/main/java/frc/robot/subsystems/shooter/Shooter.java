@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.aiming.AimParams;
+import frc.robot.aiming.AimParams.SpeedControl;
 import frc.robot.subsystems.shooter.ShooterConstants.HoodConstants;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 import frc.robot.util.OnboardLogger;
@@ -44,10 +45,17 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
   }
 
-  private AngularVelocity projectileToShooterVelocity(double projectileVelocity) {
-    // Assume linear relationship between shooter rotational speed and projectile linear speed.
-    return ShooterConstants.kMaxRotationalSpeed
-        .times(projectileVelocity / ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond));
+  private AngularVelocity projectileToShooterVelocity(double output, SpeedControl control) {
+    switch (control) {
+      case ProjectileVelocity:  
+        // Assume linear relationship between shooter rotational speed and projectile linear speed.
+        return ShooterConstants.kMaxRotationalSpeed
+            .times(output / ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond));
+      case MechanismControl:
+        return RotationsPerSecond.of(output);
+    }
+    // This will never really happen.
+    return RotationsPerSecond.zero();
   }
 
   private Angle pitchToHoodAngle(Rotation2d pitch) {
@@ -62,7 +70,7 @@ public class Shooter extends SubsystemBase {
    */
   public Command shoot(Supplier<AimParams> params) {
     return this.run(() -> {
-      shooterReference = projectileToShooterVelocity(params.get().output);
+      shooterReference = projectileToShooterVelocity(params.get().output, params.get().control);
       hoodReference = pitchToHoodAngle(params.get().pitch);
       io.setVelocity(shooterReference);
       io.setAngle(hoodReference);
@@ -78,15 +86,16 @@ public class Shooter extends SubsystemBase {
 
   public Trigger tracked(Supplier<AimParams> params) {
     return new Trigger(() -> {
+      AimParams realParams = params.get();
       double velocityError = inputs.shooter1Velocity
-          .minus(projectileToShooterVelocity(params.get().output)).baseUnitMagnitude();
+          .minus(projectileToShooterVelocity(realParams.output, realParams.control)).baseUnitMagnitude();
       boolean velocityOk =
-          Math.abs(velocityError) <= params.get().deltaOutput;
+          Math.abs(velocityError) <= realParams.deltaOutput;
 
       double hoodError =
-          inputs.hoodPosition.minus(pitchToHoodAngle(params.get().pitch)).baseUnitMagnitude();
+          inputs.hoodPosition.minus(pitchToHoodAngle(realParams.pitch)).baseUnitMagnitude();
       boolean hoodOk =
-          Math.abs(hoodError) <= params.get().deltaPitch.getMeasure().baseUnitMagnitude();
+          Math.abs(hoodError) <= realParams.deltaPitch.getMeasure().baseUnitMagnitude();
       return velocityOk && hoodOk;
     });
   }
