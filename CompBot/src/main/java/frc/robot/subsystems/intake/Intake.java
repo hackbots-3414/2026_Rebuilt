@@ -58,11 +58,4 @@ public class Intake extends SubsystemBase {
   private boolean deployAtPosition() {
     return Math.abs(inputs.deployPosition.minus(reference.position).baseUnitMagnitude()) <= DeployConstants.kTolerance.baseUnitMagnitude();
   }
-
-  /**
-   * Returns whether a jam may be hypothetically occuring. This requies three things to both be
-   * true: Firstly, the intake motor must be drawing a lot of current. Secondly, there must be a
-   * gamepiece detected in the intake system. Thirdly, the intake motors must not be moving very
-   * quickly. If all these conditions are true, then a jam is possible.
-   */
 }
