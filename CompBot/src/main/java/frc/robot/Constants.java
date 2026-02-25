@@ -29,7 +29,7 @@ public class Constants {
         new AimConstraints(
             Rotation2d.fromDegrees(49.5), // Min pitch
             Rotation2d.fromDegrees(72.0), // Max pitch
-            18), // Max output (speed)
+            16), // Max output (speed)
         2,
         10);
   }

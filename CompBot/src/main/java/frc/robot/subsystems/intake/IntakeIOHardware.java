@@ -31,7 +31,7 @@ public class IntakeIOHardware implements IntakeIO {
   public IntakeIOHardware() {
     intakeMotor = new TalonFX(IntakeConstants.kIntakeMotorId);
     intakeMotor.getConfigurator().apply(IntakeConstants.kIntakeMotorConfig);
-    deployMotor = new TalonFX(DeployConstants.kDeployMotorId);
+    deployMotor = new TalonFX(DeployConstants.kDeployMotorId, "CANivore");
     deployMotor.getConfigurator().apply(DeployConstants.kDeployMotorConfig);
 
     canrange = new CANrange(IntakeConstants.kcanrangeID);
@@ -45,16 +45,18 @@ public class IntakeIOHardware implements IntakeIO {
         intakeMotor.getDeviceTemp(false),
         intakeMotor.getVelocity(false),
 
+        canrange.getDistance(false),
+        canrange.getIsDetected(false));
+
+    StatusSignalUtil.registerCANivoreSignals(
         deployMotor.getSupplyCurrent(false),
         deployMotor.getTorqueCurrent(false),
         deployMotor.getStatorCurrent(false),
         deployMotor.getMotorVoltage(false),
         deployMotor.getDeviceTemp(false),
         deployMotor.getVelocity(false),
-        deployMotor.getPosition(false),
-
-        canrange.getDistance(false),
-        canrange.getIsDetected(false));
+        deployMotor.getPosition(false)
+    );
   }
 
   public void updateInputs(IntakeIOInputs inputs) {
