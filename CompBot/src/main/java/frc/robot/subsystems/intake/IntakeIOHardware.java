@@ -17,7 +17,6 @@ public class IntakeIOHardware implements IntakeIO {
 
   private final TalonFX intakeMotor;
   private final TalonFX deployMotor;
-  private final CANrange canrange;
 
   private final VoltageOut intakeControl = new VoltageOut(0).withEnableFOC(true);
   private final DynamicMotionMagicTorqueCurrentFOC deployControl =
@@ -34,9 +33,6 @@ public class IntakeIOHardware implements IntakeIO {
     deployMotor = new TalonFX(DeployConstants.kDeployMotorId);
     deployMotor.getConfigurator().apply(DeployConstants.kDeployMotorConfig);
 
-    canrange = new CANrange(IntakeConstants.kcanrangeID);
-    canrange.getConfigurator().apply(IntakeConstants.kCANrangeConfig);
-
     StatusSignalUtil.registerRioSignals(
         intakeMotor.getSupplyCurrent(false),
         intakeMotor.getTorqueCurrent(false),
@@ -51,10 +47,8 @@ public class IntakeIOHardware implements IntakeIO {
         deployMotor.getMotorVoltage(false),
         deployMotor.getDeviceTemp(false),
         deployMotor.getVelocity(false),
-        deployMotor.getPosition(false),
+        deployMotor.getPosition(false));
 
-        canrange.getDistance(false),
-        canrange.getIsDetected(false));
   }
 
   public void updateInputs(IntakeIOInputs inputs) {
@@ -89,13 +83,6 @@ public class IntakeIOHardware implements IntakeIO {
     inputs.deployTemperature = deployMotor.getDeviceTemp(false).getValue();
     inputs.deployVelocity = deployMotor.getVelocity(false).getValue();
     inputs.deployPosition = deployMotor.getPosition(false).getValue();
-
-    inputs.canrangeConnected = BaseStatusSignal.isAllGood(
-        canrange.getDistance(false),
-        canrange.getIsDetected(false));
-
-    inputs.canrangeDistance = canrange.getDistance(false).getValue();
-    inputs.canrangeDetected = canrange.getIsDetected(false).getValue();
   }
 
   public void setIntakeVoltage(Voltage voltage) {

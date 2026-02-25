@@ -65,11 +65,4 @@ public class Intake extends SubsystemBase {
    * gamepiece detected in the intake system. Thirdly, the intake motors must not be moving very
    * quickly. If all these conditions are true, then a jam is possible.
    */
-  public Trigger detectJam() {
-    return new Trigger(
-        () -> (inputs.intakeStatorCurrent.in(Amps) > IntakeConstants.kJamStatorThreshold.in(Amps))
-            && inputs.canrangeDetected
-            && inputs.intakeVelocity.baseUnitMagnitude() < IntakeConstants.kJamVelocityThreshold
-                .baseUnitMagnitude());
-  }
 }
