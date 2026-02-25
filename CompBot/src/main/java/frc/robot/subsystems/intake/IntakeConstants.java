@@ -25,7 +25,6 @@ import edu.wpi.first.units.measure.Voltage;
 
 public class IntakeConstants {
   protected static final int kIntakeMotorId = 5;
-  protected static final int kcanrangeID = 25; // Do we really have a CANrange?
 
   protected static final Voltage kIntakeVoltage = Volts.of(5.0);
   protected static final Voltage kEjectVoltage = Volts.of(-5);
