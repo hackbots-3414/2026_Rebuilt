@@ -89,10 +89,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+  }
 
   @Override
   public void teleopInit() {
@@ -103,10 +105,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+  }
 
   @Override
   public void testInit() {
@@ -114,39 +118,38 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
-  public void testExit() {}
+  public void testExit() {
+  }
 
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+  }
 
   public Command getM_autonomousCommand() {
-	return m_autonomousCommand;
+    return m_autonomousCommand;
   }
 
   public void setM_autonomousCommand(Command m_autonomousCommand) {
-	this.m_autonomousCommand = m_autonomousCommand;
+    this.m_autonomousCommand = m_autonomousCommand;
   }
 
   public boolean isHasStartedVision() {
-	return hasStartedVision;
+    return hasStartedVision;
   }
 
   public void setHasStartedVision(boolean hasStartedVision) {
-	this.hasStartedVision = hasStartedVision;
+    this.hasStartedVision = hasStartedVision;
   }
 
   public RobotContainer getRobotContainer() {
-	return robotContainer;
+    return robotContainer;
   }
 
   public OnboardLogger getoLogger() {
-	return oLogger;
-  }
-
-  public HootAutoReplay getTimeAndJoystickReplay() {
-	return timeAndJoystickReplay;
+    return oLogger;
   }
 }
