@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.AimConstants;
 import frc.robot.aiming.AimParams;
 import frc.robot.aiming.AimParams.SpeedControl;
 import frc.robot.subsystems.shooter.ShooterConstants.HoodConstants;
@@ -26,6 +27,8 @@ public class Shooter extends SubsystemBase {
 
   private Angle hoodReference = Rotations.zero();
   private AngularVelocity shooterReference = RotationsPerSecond.zero();
+
+  private boolean activeShooting = false;
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -72,6 +75,7 @@ public class Shooter extends SubsystemBase {
    */
   public Command shoot(Supplier<AimParams> paramsSupplier) {
     return this.run(() -> {
+      activeShooting = true;
       AimParams params = paramsSupplier.get();
       // This runs each tick (no exceptions are possible), so we get to vary slot parameter here.
       shooterReference = projectileToShooterVelocity(params.output, params.control);
@@ -80,6 +84,7 @@ public class Shooter extends SubsystemBase {
       io.setAngle(hoodReference);
     })
     .finallyDo(() -> {
+      activeShooting = false;
       shooterReference = RotationsPerSecond.zero();
       io.setVelocity(shooterReference);
     });
@@ -119,5 +124,9 @@ public class Shooter extends SubsystemBase {
 
       return shooterAtSpeed(realParams) && hoodAtPosition(realParams);
     });
+  }
+
+  public Trigger shooting() {
+    return new Trigger(() -> activeShooting);
   }
 }

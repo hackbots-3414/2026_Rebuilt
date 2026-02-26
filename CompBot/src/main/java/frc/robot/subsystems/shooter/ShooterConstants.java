@@ -2,8 +2,13 @@ package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
+
+import java.util.List;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -22,10 +27,12 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import frc.robot.aiming.AimMeasurement;
 
 public final class ShooterConstants {
   protected static final int kMotor1Id = 53;
@@ -41,9 +48,9 @@ public final class ShooterConstants {
       .withKD(0);
 
   private static final SlotConfigs recoveryControl = regularControl.clone()
-      .withKP(15);
+      .withKP(25);
 
-  protected static final AngularVelocity kRecoveryErrorThreshold = RotationsPerSecond.of(7);
+  protected static final AngularVelocity kRecoveryErrorThreshold = RotationsPerSecond.of(4);
 
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withSlot0(Slot0Configs.from(regularControl))
@@ -68,8 +75,8 @@ public final class ShooterConstants {
 
   public static final MotorAlignmentValue kMotor2Alignment = MotorAlignmentValue.Aligned;
 
-  protected static final LinearVelocity kMaxLinearSpeed = MetersPerSecond.of(16.0);
-  protected static final AngularVelocity kMaxRotationalSpeed = RotationsPerSecond.of(85.0);
+  public static final LinearVelocity kMaxLinearSpeed = MetersPerSecond.of(15.5);
+  public static final AngularVelocity kMaxRotationalSpeed = RotationsPerSecond.of(85.0);
 
   public static final class HoodConstants {
     protected static final int kMotorID = 56;
@@ -126,4 +133,19 @@ public final class ShooterConstants {
     /** The position of the hood when its sensor reads zero */
     protected static final Angle kOffset = Degrees.of(18.0);
   }
+
+  public static final List<AimMeasurement> measurements = List.of(
+      new AimMeasurement(Meters.of(1.00), Rotation2d.fromDegrees(72), 32, Seconds.of(0.95)),
+      new AimMeasurement(Meters.of(1.64), Rotation2d.fromDegrees(70), 36, Seconds.of(1.11)),
+      new AimMeasurement(Meters.of(2.03), Rotation2d.fromDegrees(65), 36, Seconds.of(1.10)),
+      new AimMeasurement(Meters.of(2.512), Rotation2d.fromDegrees(65), 37.5, Seconds.of(1.12)),
+      new AimMeasurement(Meters.of(3.09), Rotation2d.fromDegrees(60), 38, Seconds.of(1.07)),
+      new AimMeasurement(Meters.of(3.56), Rotation2d.fromDegrees(60), 42, Seconds.of(1.20)),
+      new AimMeasurement(Meters.of(4.08), Rotation2d.fromDegrees(58), 42, Seconds.of(1.18)),
+      new AimMeasurement(Meters.of(4.53), Rotation2d.fromDegrees(55), 42, Seconds.of(1.13)),
+      new AimMeasurement(Meters.of(5.03), Rotation2d.fromDegrees(54), 46, Seconds.of(1.21)),
+      new AimMeasurement(Meters.of(5.552), Rotation2d.fromDegrees(54), 46, Seconds.of(1.21)),
+      new AimMeasurement(Meters.of(5.996), Rotation2d.fromDegrees(54), 49, Seconds.of(1.25)),
+      new AimMeasurement(Meters.of(6.485), Rotation2d.fromDegrees(52), 50, Seconds.of(1.31))
+  );
 }
