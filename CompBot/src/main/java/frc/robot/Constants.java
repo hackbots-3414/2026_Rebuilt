@@ -39,11 +39,14 @@ public class Constants {
             ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond)), // Max output (speed)
         2,
         10);
-    public static final AimStrategy kAim = new ToFAim(
-      ShooterConstants.measurements,
-      new AimConstraints(
+
+    public static final AimStrategy kRealAim = new ToFAim(
+        ShooterConstants.measurements,
+        new AimConstraints(
             Rotation2d.fromDegrees(49.5), // Min pitch
             Rotation2d.fromDegrees(72.0), // Max pitch
             ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond))); // Max output (speed));
+
+    public static final AimStrategy kAim = Robot.isReal() ? kRealAim : kSimulationAim;
   }
 }
