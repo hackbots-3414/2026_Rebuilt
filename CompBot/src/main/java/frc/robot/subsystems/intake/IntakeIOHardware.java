@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -30,7 +31,7 @@ public class IntakeIOHardware implements IntakeIO {
   public IntakeIOHardware() {
     intakeMotor = new TalonFX(IntakeConstants.kIntakeMotorId);
     intakeMotor.getConfigurator().apply(IntakeConstants.kIntakeMotorConfig);
-    deployMotor = new TalonFX(DeployConstants.kDeployMotorId, "CANivore");
+    deployMotor = new TalonFX(DeployConstants.kDeployMotorId, StatusSignalUtil.canbus);
     deployMotor.getConfigurator().apply(DeployConstants.kDeployMotorConfig);
 
     StatusSignalUtil.registerRioSignals(

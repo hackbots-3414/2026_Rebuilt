@@ -3,6 +3,7 @@ package frc.robot.util;
 import java.util.ArrayList;
 import java.util.List;
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 
 /**
@@ -13,6 +14,8 @@ import com.ctre.phoenix6.StatusSignal;
 public class StatusSignalUtil {
   private static List<BaseStatusSignal> rioSignals = new ArrayList<>();
   private static List<BaseStatusSignal> canivoreSignals = new ArrayList<>();
+
+  public static final CANBus canbus = new CANBus("CANivore"); 
 
   public static void registerRioSignals(StatusSignal... signals) {
     for (StatusSignal signal : signals) {
