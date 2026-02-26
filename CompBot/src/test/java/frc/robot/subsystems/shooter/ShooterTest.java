@@ -46,7 +46,7 @@ public class ShooterTest extends CommandBasedTest {
     verify(mockShooterIO).setVelocity(
       ShooterConstants.kMaxRotationalSpeed
         .times(params.output / ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond)),
-        false); / 
+        false);
     verify(mockShooterIO).setAngle(Degrees.of(35).minus(HoodConstants.kOffset));
 
     CommandScheduler.getInstance().schedule(shooter.reverse());
