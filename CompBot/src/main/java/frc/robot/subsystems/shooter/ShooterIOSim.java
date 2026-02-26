@@ -20,7 +20,7 @@ public class ShooterIOSim implements ShooterIO {
     inputs.hoodPosition = hoodAngle;
   }
 
-  public void setVelocity(AngularVelocity velocity) {
+  public void setVelocity(AngularVelocity velocity, boolean useRecovery) {
     shooterVelocity = velocity;
   }
 

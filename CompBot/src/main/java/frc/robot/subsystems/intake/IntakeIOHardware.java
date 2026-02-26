@@ -6,8 +6,8 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.intake.IntakeConstants.DeployConstants;
@@ -17,7 +17,6 @@ public class IntakeIOHardware implements IntakeIO {
 
   private final TalonFX intakeMotor;
   private final TalonFX deployMotor;
-  private final CANrange canrange;
 
   private final VoltageOut intakeControl = new VoltageOut(0).withEnableFOC(true);
   private final DynamicMotionMagicTorqueCurrentFOC deployControl =
@@ -31,11 +30,8 @@ public class IntakeIOHardware implements IntakeIO {
   public IntakeIOHardware() {
     intakeMotor = new TalonFX(IntakeConstants.kIntakeMotorId);
     intakeMotor.getConfigurator().apply(IntakeConstants.kIntakeMotorConfig);
-    deployMotor = new TalonFX(DeployConstants.kDeployMotorId);
+    deployMotor = new TalonFX(DeployConstants.kDeployMotorId, "CANivore");
     deployMotor.getConfigurator().apply(DeployConstants.kDeployMotorConfig);
-
-    canrange = new CANrange(IntakeConstants.kcanrangeID);
-    canrange.getConfigurator().apply(IntakeConstants.kCANrangeConfig);
 
     StatusSignalUtil.registerRioSignals(
         intakeMotor.getSupplyCurrent(false),
@@ -43,18 +39,17 @@ public class IntakeIOHardware implements IntakeIO {
         intakeMotor.getStatorCurrent(false),
         intakeMotor.getMotorVoltage(false),
         intakeMotor.getDeviceTemp(false),
-        intakeMotor.getVelocity(false),
+        intakeMotor.getVelocity(false));
 
+    StatusSignalUtil.registerCANivoreSignals(
         deployMotor.getSupplyCurrent(false),
         deployMotor.getTorqueCurrent(false),
         deployMotor.getStatorCurrent(false),
         deployMotor.getMotorVoltage(false),
         deployMotor.getDeviceTemp(false),
         deployMotor.getVelocity(false),
-        deployMotor.getPosition(false),
-
-        canrange.getDistance(false),
-        canrange.getIsDetected(false));
+        deployMotor.getPosition(false)
+    );
   }
 
   public void updateInputs(IntakeIOInputs inputs) {
@@ -89,13 +84,6 @@ public class IntakeIOHardware implements IntakeIO {
     inputs.deployTemperature = deployMotor.getDeviceTemp(false).getValue();
     inputs.deployVelocity = deployMotor.getVelocity(false).getValue();
     inputs.deployPosition = deployMotor.getPosition(false).getValue();
-
-    inputs.canrangeConnected = BaseStatusSignal.isAllGood(
-        canrange.getDistance(false),
-        canrange.getIsDetected(false));
-
-    inputs.canrangeDistance = canrange.getDistance(false).getValue();
-    inputs.canrangeDetected = canrange.getIsDetected(false).getValue();
   }
 
   public void setIntakeVoltage(Voltage voltage) {

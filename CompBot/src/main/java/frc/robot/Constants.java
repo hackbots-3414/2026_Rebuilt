@@ -4,6 +4,9 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import com.therekrab.autopilot.APTarget;
 import edu.wpi.first.math.geometry.Pose2d;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -11,6 +14,10 @@ import edu.wpi.first.units.measure.Distance;
 import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimStrategy;
 import frc.robot.aiming.PhysicsAim;
+import frc.robot.aiming.ToFAim;
+import frc.robot.aiming.TuneAim;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterConstants;
 
 public class Constants {
   // Checked the FIRST Game Manual and fixed the field dimensions.
@@ -27,13 +34,22 @@ public class Constants {
   }
 
   public static class AimConstants {
-    public static final AimStrategy kAim = new PhysicsAim(
+    public static final AimStrategy kSimulationAim = new PhysicsAim(
         new AimConstraints(
             Rotation2d.fromDegrees(49.5), // Min pitch
             Rotation2d.fromDegrees(72.0), // Max pitch
-            18), // Max output (speed)
+            ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond)), // Max output (speed)
         2,
         10);
+
+    public static final AimStrategy kRealAim = new ToFAim(
+        ShooterConstants.measurements,
+        new AimConstraints(
+            Rotation2d.fromDegrees(49.5), // Min pitch
+            Rotation2d.fromDegrees(72.0), // Max pitch
+            ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond))); // Max output (speed));
+
+    public static final AimStrategy kAim = Robot.isReal() ? kRealAim : kSimulationAim;
   }
 
   public static class AutonConstants {

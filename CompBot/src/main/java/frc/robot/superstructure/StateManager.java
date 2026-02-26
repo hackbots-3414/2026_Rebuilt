@@ -1,10 +1,12 @@
 package frc.robot.superstructure;
 
 import static edu.wpi.first.units.Units.Degrees;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AimConstants;
 import frc.robot.aiming.AimParams;
@@ -80,6 +82,10 @@ public class StateManager {
     }
   }
 
+  public Trigger shooting() {
+    return subsystems.shooter().shooting();
+  }
+
   public Trigger shootReady(boolean forceWhenReady) {
     return subsystems.turret().tracked(this::aimParams)
         .and(subsystems.shooter().tracked(this::aimParams))
@@ -106,12 +112,16 @@ public class StateManager {
           AimConstants.kAim.update(aimTarget(), subsystems.turret().turretPose(predictedPose),
               subsystems.drivetrain().predictedRobotVelocity());
     }
+    SmartDashboard.putNumber("Pitch", predictedParams.pitch.getDegrees());
+    SmartDashboard.putNumber("Output", predictedParams.output);
     return predictedParams;
   }
 
   public void periodic() {
     params = new AimParams(AimStatus.Unchecked);
     predictedParams = new AimParams(AimStatus.Unchecked);
+    SmartDashboard.putBoolean("Robot/Shoot Ready", shootReady().getAsBoolean());
+    SmartDashboard.putBoolean("Robot/Shooter Ready", subsystems.shooter().tracked(this::aimParams).getAsBoolean());
   }
 
   public Trigger climbing() {

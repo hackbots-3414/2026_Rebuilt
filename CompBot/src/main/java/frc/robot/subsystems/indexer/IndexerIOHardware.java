@@ -76,11 +76,12 @@ public class IndexerIOHardware implements IndexerIO {
 
   public void setSpindexerVoltage(Voltage voltage) {
     if (!voltage.equals(spindexerControl.getOutputMeasure())) {
-      feeder.setControl(spindexerControl.withOutput(voltage));
+      spindexer.setControl(spindexerControl.withOutput(voltage));
     }
   }
 
   public void stop() {
     feeder.stopMotor();
+    spindexer.stopMotor();
   }
 }

@@ -5,13 +5,16 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Volts;
-import com.ctre.phoenix6.HootAutoReplay;
+
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.ActivityCalculator;
+import frc.robot.util.ActivityCalculator.HubStatus;
 import frc.robot.util.OnboardLogger;
 import frc.robot.util.StatusSignalUtil;
 
@@ -23,11 +26,6 @@ public class Robot extends TimedRobot {
   private final RobotContainer robotContainer;
 
   private final OnboardLogger oLogger;
-
-  /* log and replay timestamp and joystick data */
-  private final HootAutoReplay timeAndJoystickReplay = new HootAutoReplay()
-      .withTimestampReplay()
-      .withJoystickReplay();
 
   public Robot() {
     robotContainer = new RobotContainer();
@@ -55,22 +53,31 @@ public class Robot extends TimedRobot {
     FieldManager.getInstance().drawFuel();
 
     OnboardLogger.logAll();
-    timeAndJoystickReplay.update();
+
+    SmartDashboard.putNumber("DS/Match Time", DriverStation.getMatchTime());
+    HubStatus hubStatus = ActivityCalculator.update();
+    SmartDashboard.putString("DS/Active (Color)", hubStatus.color(ActivityCalculator.us()));
+    SmartDashboard.putBoolean("DS/Active (Boolean)", ActivityCalculator.is(ActivityCalculator.us()));
+    SmartDashboard.putNumber("DS/Hub Time", hubStatus.timeRemaining());
+    SmartDashboard.putString("DS/Current", hubStatus.active().toString());
   }
 
   @Override
   public void disabledInit() {
     if (!hasStartedVision) {
-      robotContainer.aprilTagVisionHandler.startThread();
+      // robotContainer.aprilTagVisionHandler.startThread();
       hasStartedVision = true;
     }
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    ActivityCalculator.initialize();
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+  }
 
   @Override
   public void autonomousInit() {
@@ -89,6 +96,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    ActivityCalculator.initialize();
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().cancel(m_autonomousCommand);
     }

@@ -37,10 +37,6 @@ public interface IntakeIO {
     public Temperature deployTemperature = Celsius.zero();
     public Angle deployPosition = Rotations.zero();
 
-    public boolean canrangeConnected = false;
-    public Distance canrangeDistance = Meters.zero();
-    public boolean canrangeDetected = false;
-
     public IntakeIOInputs() {
       OnboardLogger log = new OnboardLogger("Intake");
       log.registerBoolean("Intake Motor/Connected", () -> intakeMotorConnected);
@@ -58,10 +54,6 @@ public interface IntakeIO {
       log.registerMeasurement("Deploy Motor/Voltage", () -> deployVoltage, Volts);
       log.registerMeasurement("Deploy Motor/Temperature", () -> deployTemperature, Celsius);
       log.registerMeasurement("Deploy Motor/Position", () -> deployPosition, Rotations);
-
-      log.registerBoolean("CANrange Connected", () -> canrangeConnected);
-      log.registerMeasurement("CANrange Distance", () -> canrangeDistance, Centimeters);
-      log.registerBoolean("CANrange Detected", () -> canrangeDetected);
     }
   }
 

@@ -77,7 +77,11 @@ public interface ShooterIO {
     }
   }
 
-  // void setVoltage(double voltage);
-  public void setVelocity(AngularVelocity velocity);
+  public void setVelocity(AngularVelocity velocity, boolean useRecovery);
+  
+  public default void setVelocity(AngularVelocity velocity) {
+    setVelocity(velocity, false);
+  }
+
   public void setAngle(Angle angle);
 }

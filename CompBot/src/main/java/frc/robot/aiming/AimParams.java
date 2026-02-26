@@ -29,7 +29,7 @@ public class AimParams {
   /** the tolerated error in the shot's yaw */
   public Rotation2d deltaYaw = Rotation2d.fromDegrees(2);
   /** the tolerated error in the shot's velocity */
-  public double deltaOutput = 0.35;
+  public double deltaOutput = 1.5;
 
   public AimParams() {}
 
