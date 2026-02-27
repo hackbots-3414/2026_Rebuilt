@@ -80,6 +80,7 @@ public class IntakeConstants {
 
     public static enum DeployPosition {
       Stow(Rotations.zero()),
+      Agitate(Rotations.of(0.8)),
       Deployed(Rotations.of(1.0));
 
       protected final Angle position;

@@ -8,7 +8,7 @@ import frc.robot.subsystems.intake.IntakeConstants.DeployConstants.DeployPositio
 public class AgitateIntake implements CommandBuilder {
     public Command build(Subsystems subsystems, StateManager state) {
         return Commands.repeatingSequence(
-            subsystems.intake().go(DeployPosition.Stow),
+            subsystems.intake().go(DeployPosition.Agitate),
             Commands.waitSeconds(0.5),
             subsystems.intake().go(DeployPosition.Deployed),
             Commands.waitSeconds(0.5));
