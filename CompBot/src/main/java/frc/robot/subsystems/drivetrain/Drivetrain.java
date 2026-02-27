@@ -5,9 +5,11 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
+
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -18,7 +20,9 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.therekrab.autopilot.APTarget;
 import com.therekrab.autopilot.Autopilot;
 import com.therekrab.autopilot.Autopilot.APResult;
+
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -27,8 +31,6 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.util.datalog.StructLogEntry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -36,6 +38,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.FieldManager;
@@ -71,9 +74,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       .withHeadingPID(HeadingGains.kP, HeadingGains.kI, HeadingGains.kD);
 
   private SwerveDriveState state;
-  private final StructLogEntry<Pose2d> poseLogEntry;
 
-  private boolean hasReceivedVisionUpdate;
+  private boolean hasReceivedOkayVisionUpdate;
 
   /* Swerve requests to apply during SysId characterization */
   private final SwerveRequest.SysIdSwerveTranslation translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -159,10 +161,10 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     if (Utils.isSimulation()) {
       startSimThread();
     }
-    poseLogEntry = StructLogEntry.create(DataLogManager.getLog(), "Robot Pose", Pose2d.struct);
     state = getState();
     OnboardLogger ologger = new OnboardLogger("Drivetrain");
-    ologger.registerBoolean("Received vision update", () -> hasReceivedVisionUpdate);
+    ologger.registerBoolean("Received vision update", () -> hasReceivedOkayVisionUpdate);
+    ologger.registerPose("Robot Pose", this::robotPose);
     sysIDCommands();
   }
 
@@ -229,15 +231,13 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     state = getState();
-    poseLogEntry.update(robotPose());
 
     FieldManager.getInstance().getField().setRobotPose(robotPose());
-    hasReceivedVisionUpdate = false;
+    hasReceivedOkayVisionUpdate = false;
   }
 
   private void startSimThread() {
     lastSimTime = Utils.getCurrentTimeSeconds();
-
     /* Run simulation at a faster rate so PID gains behave more reasonably */
     simNotifier = new Notifier(() -> {
       final double currentTime = Utils.getCurrentTimeSeconds();
@@ -336,8 +336,13 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         Rotation2d.fromRadians(fieldRelative.omegaRadiansPerSecond));
   }
 
+  // Checks to see if a vision update was recieved
+  public Trigger validOdemetry() {
+    return new Trigger(() -> !hasReceivedOkayVisionUpdate).debounce(0.2, DebounceType.kFalling);
+  }
+
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
-    hasReceivedVisionUpdate = true;
+    hasReceivedOkayVisionUpdate = true;
     // This should NOT run in simulation!
     if (Robot.isSimulation()) {
       return;
@@ -404,4 +409,5 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return robotVelocity().getTranslation().rotateBy(
         Rotation2d.fromRadians(state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod));
   }
+
 }

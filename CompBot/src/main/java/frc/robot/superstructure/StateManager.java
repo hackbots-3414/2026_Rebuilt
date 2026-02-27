@@ -89,6 +89,7 @@ public class StateManager {
   public Trigger shootReady(boolean forceWhenReady) {
     return subsystems.turret().tracked(this::aimParams)
         .and(subsystems.shooter().tracked(this::aimParams))
+        .and(subsystems.drivetrain().validOdemetry())
         .and(() -> params.isOk())
         .and(() -> forceWhenReady || DriverStation.isTeleop() || FieldUtils.inAllianceZone(robotPose()));
   }
