@@ -99,14 +99,13 @@ public class LocalizationConstants {
   protected static final double kAvgErr = 0.08;
   protected static final double kErrStdDevs = 0.02;
 
-  public static final boolean kEnableTagFilter = true;
+  public static final boolean kEnableTagFilter = false;
 
-  protected static final Set<Integer> kApprovedTagIds = Set.of(
-      6, 7, 8, 9, 10, 11, // red reef tags
-      17, 18, 19, 20, 21, 22, // blue reef tags
-      3, 16 // processor tags are okay as well.
-  );
+  protected static final Set<Integer> kApprovedTagIds = Set.of();
 
   public static final Transform3d kTurretAoRToTurretCameraOffset =
       new Transform3d(0.064, -0.02, 0.038, new Rotation3d(0, Units.degreesToRadians(-30), 0));
+
+  /** Maximum time since last pose estimate for odometry to be considered valid */
+  public static final double kValidOdometryCutoff = 0.5;
 }

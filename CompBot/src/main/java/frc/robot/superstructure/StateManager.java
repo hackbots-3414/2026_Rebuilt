@@ -13,6 +13,7 @@ import frc.robot.aiming.AimParams;
 import frc.robot.aiming.AimParams.AimStatus;
 import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;
 import frc.robot.superstructure.Superstructure.Subsystems;
+import frc.robot.util.ActivityCalculator;
 import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
 
@@ -86,12 +87,21 @@ public class StateManager {
     return subsystems.shooter().shooting();
   }
 
+  public Trigger shouldShoot() {
+    return subsystems.shooter().shooting().and(() -> {
+      boolean teleop = DriverStation.isTeleop();
+      boolean inZone = FieldUtils.inAllianceZone(robotPose());
+      boolean activeHubOrFeeding = !inZone || ActivityCalculator.is(ActivityCalculator.us());
+      return (teleop || inZone) && activeHubOrFeeding;
+    });
+  }
+
   public Trigger shootReady(boolean forceWhenReady) {
     return subsystems.turret().tracked(this::aimParams)
         .and(subsystems.shooter().tracked(this::aimParams))
         .and(subsystems.drivetrain().validOdemetry())
         .and(() -> params.isOk())
-        .and(() -> forceWhenReady || DriverStation.isTeleop() || FieldUtils.inAllianceZone(robotPose()));
+        .and(shouldShoot().or(() -> forceWhenReady));
   }
 
   public Trigger shootReady() {
@@ -122,7 +132,8 @@ public class StateManager {
     params = new AimParams(AimStatus.Unchecked);
     predictedParams = new AimParams(AimStatus.Unchecked);
     SmartDashboard.putBoolean("Robot/Shoot Ready", shootReady().getAsBoolean());
-    SmartDashboard.putBoolean("Robot/Shooter Ready", subsystems.shooter().tracked(this::aimParams).getAsBoolean());
+    SmartDashboard.putBoolean("Robot/Shooter Ready",
+        subsystems.shooter().tracked(this::aimParams).getAsBoolean());
   }
 
   public Trigger climbing() {

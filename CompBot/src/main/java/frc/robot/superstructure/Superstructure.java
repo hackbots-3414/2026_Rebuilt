@@ -30,6 +30,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOHardware;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretIODisabled;
 import frc.robot.subsystems.turret.TurretIOHardware;
 import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.util.AutonWarn;
@@ -61,7 +62,7 @@ public class Superstructure {
 
   public Superstructure() {
     Drivetrain drivetrain = TunerConstants.createDrivetrain();
-    Turret turret = new Turret(Robot.isReal() ? new TurretIOSim() : new TurretIOSim());
+    Turret turret = new Turret(Robot.isReal() ? new TurretIODisabled() : new TurretIOSim());
     Shooter shooter = new Shooter(Robot.isReal() ? new ShooterIOHardware() : new ShooterIOSim());
     Indexer indexer = new Indexer(Robot.isReal() ? new IndexerIOHardware() : new IndexerIOSim());
     Intake intake = new Intake(Robot.isReal() ? new IntakeIOHardware() : new IntakeIOSim());
