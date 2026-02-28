@@ -101,20 +101,20 @@ public class Superstructure {
             subsystems.turret()::turretCameraOffset),
         LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
             "cam1",
-            () -> new Transform3d(-0.203, -0.321, 0.514,
-                new Rotation3d(0, Units.degreesToRadians(-28.6), Units.degreesToRadians(-53.654)))),
+            () -> new Transform3d(-0.207, -0.318, 0.473,
+                new Rotation3d(Units.degreesToRadians(0.7), Units.degreesToRadians(-28.6), Units.degreesToRadians(-53.654)))),
         LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
             "cam2",
-            () -> new Transform3d(0.228, -0.281, 0.719,
+            () -> new Transform3d(0.221, -0.262, 0.724,
                 new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(26.3)))),
         LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
             "cam3",
-            () -> new Transform3d(0.141, 0.307, 0.730,
+            () -> new Transform3d(0.121, 0.271, 0.709,
                 new Rotation3d(0, Units.degreesToRadians(-5.1), Units.degreesToRadians(141.3)))),
         LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
             "cam4",
-            () -> new Transform3d(-0.317, 0.138, 0.441,
-                new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(-165.827)))));
+            () -> new Transform3d(-0.315, 0.138, 0.438,
+                new Rotation3d(Units.degreesToRadians(-6.5), Units.degreesToRadians(-30), Units.degreesToRadians(-165.827)))));
 
     return new AprilTagVisionHandler(this, configs);
   }

@@ -12,6 +12,7 @@ import com.ctre.phoenix6.configs.FovParamsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.ProximityParamsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.ToFParamsConfigs;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -61,10 +62,16 @@ public class IntakeConstants {
             .withNeutralMode(NeutralModeValue.Brake)
             .withInverted(InvertedValue.Clockwise_Positive))
 
+        .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+          .withForwardSoftLimitEnable(true)
+          .withForwardSoftLimitThreshold(13.5)
+          .withReverseSoftLimitEnable(true)
+          .withReverseSoftLimitThreshold(0.0))
+
         .withCurrentLimits(new CurrentLimitsConfigs()
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimit(20)
+            .withSupplyCurrentLimit(10)
             .withStatorCurrentLimit(20))
 
         .withSlot0(new Slot0Configs()
