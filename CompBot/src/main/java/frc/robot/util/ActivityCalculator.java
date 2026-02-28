@@ -1,10 +1,15 @@
 package frc.robot.util;
 
+import java.text.DecimalFormat;
+
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class ActivityCalculator {
+
+  private static final DecimalFormat df = new DecimalFormat("#.00");
 
   // We have to set default values
   private static HubActivity winner = HubActivity.Blue;
@@ -13,6 +18,8 @@ public class ActivityCalculator {
   private static boolean failed = true;
 
   private static HubActivity teamHub;
+
+  private static double end = Double.POSITIVE_INFINITY;
 
   public enum HubActivity {
     Red, Blue, Both;
@@ -37,9 +44,15 @@ public class ActivityCalculator {
       };
       return timeRemaining() <= 5 ? low : base;
     }
+
+    public String timeText() {
+      return df.format(timeRemaining());
+    }
   }
 
-  public static void initialize() {
+  private static HubStatus status = new HubStatus(HubActivity.Both, Double.POSITIVE_INFINITY);
+
+  public static void readGameData() {
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
       teamHub = HubActivity.Red;
     } else {
@@ -77,23 +90,30 @@ public class ActivityCalculator {
     }
   }
 
-  public static HubStatus update() {
+  public static void startTimer() {
+    end = Timer.getTimestamp() + 140.0; // 140s in teleop
+  }
+
+  public static void update() {
     if (DriverStation.isAutonomous()) {
-      return new HubStatus(HubActivity.Both, DriverStation.getMatchTime());
+      setStatus(HubActivity.Both, DriverStation.getMatchTime());
+      return;
     }
 
     if (failed || !DriverStation.isTeleopEnabled()) {
-      return new HubStatus(HubActivity.Both, Double.POSITIVE_INFINITY);
+      setStatus(HubActivity.Both, Double.POSITIVE_INFINITY);
+      return;
     }
 
-    double matchTime = DriverStation.getMatchTime();
+    double matchTime = end - Timer.getTimestamp();
 
     boolean winnerActive = false;
     double timeRemaining;
 
     if (matchTime > 130) {
       // Transition shift
-      return new HubStatus(HubActivity.Both, matchTime - 130.0);
+      setStatus(HubActivity.Both, matchTime - 130.0);
+      return;
     } else if (matchTime > 105) {
       // First alliance shift
       winnerActive = false;
@@ -112,17 +132,21 @@ public class ActivityCalculator {
       timeRemaining = matchTime - 30;
     } else {
       // Endgame, match time IS time remaining.
-      return new HubStatus(HubActivity.Both, matchTime);
+      setStatus(HubActivity.Both, matchTime);
+      return;
     }
 
     HubActivity currentAlliance = (winnerActive) ? winner : loser;
-    return new HubStatus(currentAlliance, timeRemaining);
+    setStatus(currentAlliance, timeRemaining);
+  }
+
+  private static void setStatus(HubActivity active, double timeRemaining) {
+    status = new HubStatus(active, timeRemaining);
   }
 
   public static boolean is(HubActivity active, double timeCutoff) {
-    HubStatus status = update();
-      return (status.active == active || status.active == HubActivity.Both)
-          && status.timeRemaining <= timeCutoff;
+    return (status.active == active || status.active == HubActivity.Both)
+        && status.timeRemaining <= timeCutoff;
   }
 
   public static boolean is(HubActivity active) {
@@ -130,10 +154,11 @@ public class ActivityCalculator {
   }
 
   /**
-   * Returns a trigger that is true when the given hub status is active AND the time remaining for
+   * Returns a trigger that is true when the given hub status is active AND the
+   * time remaining for
    * that status is less than the provided time remaining.
    * 
-   * @param active The active hub
+   * @param active     The active hub
    * @param timeCutoff The time until the status changes
    */
   public static Trigger when(HubActivity active, double timeCutoff) {
@@ -146,5 +171,18 @@ public class ActivityCalculator {
 
   public static HubActivity us() {
     return teamHub;
+  }
+
+  /** Returns the last cached hub status. Only calls to {@code update()} will actually change this value. */
+  public static HubStatus status() {
+    return status;
+  }
+
+  public static void startLogging() {
+    OnboardLogger logger = new OnboardLogger("Hub");
+    logger.registerString("Status", () -> status.active().toString());
+    logger.registerBoolean("Enabled", () -> is(us()));
+    logger.registerDouble("Time Remaining", () -> status.timeRemaining());
+    logger.registerBoolean("Valid DS Data", () -> !failed);
   }
 }

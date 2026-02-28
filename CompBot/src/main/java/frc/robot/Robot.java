@@ -40,6 +40,10 @@ public class Robot extends TimedRobot {
     oLogger = new OnboardLogger("Robot");
     oLogger.registerMeasurement("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
     oLogger.registerString("Game Data", DriverStation::getGameSpecificMessage);
+
+    ActivityCalculator.readGameData();
+    ActivityCalculator.startTimer();
+    ActivityCalculator.startLogging();
   }
 
   @Override
@@ -48,6 +52,7 @@ public class Robot extends TimedRobot {
 
     robotContainer.superstructure.periodic();
     StatusSignalUtil.refreshAll();
+    ActivityCalculator.update();
     CommandScheduler.getInstance().run();
 
     FieldManager.getInstance().drawFuel();
@@ -55,10 +60,10 @@ public class Robot extends TimedRobot {
     OnboardLogger.logAll();
 
     SmartDashboard.putNumber("DS/Match Time", DriverStation.getMatchTime());
-    HubStatus hubStatus = ActivityCalculator.update();
+    HubStatus hubStatus = ActivityCalculator.status();
     SmartDashboard.putString("DS/Active (Color)", hubStatus.color(ActivityCalculator.us()));
     SmartDashboard.putBoolean("DS/Active (Boolean)", ActivityCalculator.is(ActivityCalculator.us()));
-    SmartDashboard.putNumber("DS/Hub Time", hubStatus.timeRemaining());
+    SmartDashboard.putString("DS/Hub Time", hubStatus.timeText());
     SmartDashboard.putString("DS/Current", hubStatus.active().toString());
   }
 
@@ -72,7 +77,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    ActivityCalculator.initialize();
   }
 
   @Override
@@ -98,7 +102,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    ActivityCalculator.initialize();
+    ActivityCalculator.startTimer();
+    ActivityCalculator.readGameData();
+
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().cancel(m_autonomousCommand);
     }
