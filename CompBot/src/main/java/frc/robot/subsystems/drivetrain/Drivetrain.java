@@ -5,11 +5,9 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
-
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -20,9 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.therekrab.autopilot.APTarget;
 import com.therekrab.autopilot.Autopilot;
 import com.therekrab.autopilot.Autopilot.APResult;
-
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -35,19 +31,23 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.FieldManager;
 import frc.robot.Robot;
+import frc.robot.aiming.AimParams;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.AutopilotConstants.HeadingGains;
 import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
+import frc.robot.vision.localization.LocalizationConstants;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
 public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
@@ -75,7 +75,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   private SwerveDriveState state;
 
-  private boolean hasReceivedOkayVisionUpdate;
+  private double lastOkayVisionUpdateTime;
 
   /* Swerve requests to apply during SysId characterization */
   private final SwerveRequest.SysIdSwerveTranslation translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -140,6 +140,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
           null,
           this));
 
+  private Optional<AimParams> override = Optional.empty();
+
   /* The SysId routine to test */
   private SysIdRoutine sysIdRoutineToApply = sysIdRoutineTranslation;
 
@@ -163,8 +165,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     }
     state = getState();
     OnboardLogger ologger = new OnboardLogger("Drivetrain");
-    ologger.registerBoolean("Received vision update", () -> hasReceivedOkayVisionUpdate);
+    ologger.registerBoolean("Valid Odometry", validOdemetry());
     ologger.registerPose("Robot Pose", this::robotPose);
+    ologger.registerDouble("Time since last estimate", () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
     sysIDCommands();
   }
 
@@ -233,7 +236,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     state = getState();
 
     FieldManager.getInstance().getField().setRobotPose(robotPose());
-    hasReceivedOkayVisionUpdate = false;
   }
 
   private void startSimThread() {
@@ -310,6 +312,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       // Recalculate the *real* vx and vy to be operator-dependent
       Translation2d operatorRelative = new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
       Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
+      if (override.isPresent()) {
+        return autopilotControl.withVelocityX(fieldRelative.getX())
+          .withVelocityY(fieldRelative.getY())
+          .withTargetDirection(override.get().yaw);
+      }
       return drive
           .withVelocityX(fieldRelative.getX())
           .withVelocityY(fieldRelative.getY())
@@ -336,13 +343,12 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         Rotation2d.fromRadians(fieldRelative.omegaRadiansPerSecond));
   }
 
-  // Checks to see if a vision update was recieved
   public Trigger validOdemetry() {
-    return new Trigger(() -> !hasReceivedOkayVisionUpdate).debounce(0.2, DebounceType.kFalling);
+    return new Trigger(() -> Timer.getTimestamp() - lastOkayVisionUpdateTime <= LocalizationConstants.kValidOdometryCutoff);
   }
 
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
-    hasReceivedOkayVisionUpdate = true;
+    lastOkayVisionUpdateTime = Timer.getTimestamp();
     // This should NOT run in simulation!
     if (Robot.isSimulation()) {
       return;
@@ -379,7 +385,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       setControl(autopilotControl
         .withVelocityX(result.vx())
         .withVelocityY(result.vy())
-        .withTargetDirection(result.targetAngle()));
+        .withTargetDirection(override.isPresent() ? override.get().yaw : result.targetAngle()));
     })
       .until(() -> autopilot.atTarget(robotPose(), target.get()))
       .finallyDo(() -> {
@@ -408,6 +414,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   public Translation2d predictedRobotVelocity() {
     return robotVelocity().getTranslation().rotateBy(
         Rotation2d.fromRadians(state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod));
+  }
+
+  public Command track(Supplier<AimParams> params) {
+    return Commands.run(() -> override = Optional.of(params.get()))
+      .finallyDo(() -> override = Optional.empty());
   }
 
 }
