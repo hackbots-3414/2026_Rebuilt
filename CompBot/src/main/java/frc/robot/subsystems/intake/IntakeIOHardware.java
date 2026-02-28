@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.Angle;
@@ -19,11 +20,7 @@ public class IntakeIOHardware implements IntakeIO {
   private final TalonFX deployMotor;
 
   private final VoltageOut intakeControl = new VoltageOut(0).withEnableFOC(true);
-  private final DynamicMotionMagicTorqueCurrentFOC deployControl =
-      new DynamicMotionMagicTorqueCurrentFOC(
-          Rotations.zero(),
-          DeployConstants.kMaxVelocity,
-          DeployConstants.kMaxAcceleration);
+  private final PositionVoltage deployControl = new PositionVoltage(0);
 
   private Voltage lastVoltage = Volts.zero();
 
@@ -52,7 +49,7 @@ public class IntakeIOHardware implements IntakeIO {
     );
 
     deployMotor.setPosition(0.0);
-    SmartDashboard.putData("Intake/Set Zero", Commands.run(() -> deployMotor.setPosition(0)));
+    SmartDashboard.putData("Intake/Set Zero", Commands.run(() -> deployMotor.setPosition(0)).ignoringDisable(true));
   }
 
   public void updateInputs(IntakeIOInputs inputs) {

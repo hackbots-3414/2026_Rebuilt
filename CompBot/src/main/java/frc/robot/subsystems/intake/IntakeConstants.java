@@ -27,8 +27,8 @@ import edu.wpi.first.units.measure.Voltage;
 public class IntakeConstants {
   protected static final int kIntakeMotorId = 5;
 
-  protected static final Voltage kIntakeVoltage = Volts.of(5.0);
-  protected static final Voltage kEjectVoltage = Volts.of(-5);
+  protected static final Voltage kIntakeVoltage = Volts.of(12.0);
+  protected static final Voltage kEjectVoltage = Volts.of(-8);
 
   protected static final TalonFXConfiguration kIntakeMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
@@ -78,7 +78,7 @@ public class IntakeConstants {
             .withKA(0)
             .withKV(0)
             .withKS(0)
-            .withKP(0)
+            .withKP(1.5)
             .withKI(0)
             .withKD(0));
 
@@ -87,8 +87,8 @@ public class IntakeConstants {
 
     public static enum DeployPosition {
       Stow(Rotations.zero()),
-      Agitate(Rotations.of(0.8)),
-      Deployed(Rotations.of(1.0));
+      Agitate(Rotations.of(10.0)),
+      Deployed(Rotations.of(13.5));
 
       protected final Angle position;
       private DeployPosition(Angle position) {
@@ -96,6 +96,6 @@ public class IntakeConstants {
       }
     }
 
-    protected static final Angle kTolerance = Rotations.of(0.02);
+    protected static final Angle kTolerance = Rotations.of(0.5);
   }
 }

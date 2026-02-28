@@ -27,7 +27,7 @@ public class BindingConstants {
         /* These values may not be correct. Test with chosen controller. */
         public static final int kXAxis = 1;
         public static final int kYAxis = 0;
-        public static final int kRotAxis = 4;
+        public static final int kRotAxis = 2;
 
         public static final boolean kFlipX = true;
         public static final boolean kFlipY = true;

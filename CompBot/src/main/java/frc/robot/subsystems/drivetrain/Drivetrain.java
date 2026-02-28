@@ -2,6 +2,7 @@ package frc.robot.subsystems.drivetrain;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
@@ -20,6 +21,7 @@ import com.therekrab.autopilot.Autopilot;
 import com.therekrab.autopilot.Autopilot.APResult;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -169,6 +171,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     ologger.registerPose("Robot Pose", this::robotPose);
     ologger.registerDouble("Time since last estimate", () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
     sysIDCommands();
+    SmartDashboard.putData("Drivetrain/Reset Pose (Our Hub)", resetOdometry(new Pose2d(4, 4, Rotation2d.kZero), true));
   }
 
   /**
@@ -234,6 +237,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     state = getState();
+    System.out.println("running drivetrain periodic");
 
     FieldManager.getInstance().getField().setRobotPose(robotPose());
   }
@@ -353,6 +357,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     if (Robot.isSimulation()) {
       return;
     }
+    FieldManager.getInstance().getField().getObject("Estimate").setPose(estimate.pose());
+    SmartDashboard.putNumber("stddevs", estimate.stdDevs().get(0,0));
     addVisionMeasurement(
         estimate.pose(),
         estimate.timestamp(),
@@ -397,7 +403,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public Command resetOdometry(Pose2d pose, boolean flip) {
-    return this.runOnce(() -> resetPose(flip ? FieldUtils.allianceRelativeFlip(pose) : pose)).ignoringDisable(true);
+    return this.runOnce(() -> {
+      resetPose(flip ? FieldUtils.allianceRelativeFlip(pose) : pose);
+    }).ignoringDisable(true);
   }
   
   private Twist2d predictedTwist() {
