@@ -15,8 +15,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ctre.phoenix6.Utils;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,6 +25,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.FieldManager;
@@ -104,6 +103,7 @@ public class SingleInputPoseEstimator implements Runnable {
     }
   }
 
+  @SuppressWarnings("unused")
   private void combinedHandleResult(PhotonPipelineResult result) {
     // some prechecks before we do anything
     if (!precheckValidity(result)) {
@@ -112,19 +112,16 @@ public class SingleInputPoseEstimator implements Runnable {
     // we can now assume that we have targets
     List<PhotonTrackedTarget> targets = result.getTargets();
     // use solvePnP every time if we can
-    // Optional<EstimatedRobotPose> est = estimator.estimateCoprocMultiTagPose(result);
-    // if (est.isEmpty()) {
-    //   est = estimator.estimatePnpDistanceTrigSolvePose(result);
-    // }
-    // if (est.isEmpty()) {
-    //   est = estimator.estimateLowestAmbiguityPose(result);
-    // }
+    Optional<EstimatedRobotPose> est = estimator.estimateCoprocMultiTagPose(result);
+    if (est.isEmpty() && LocalizationConstants.kUsePnPDistanceTrigSolve) {
+      est = estimator.estimatePnpDistanceTrigSolvePose(result);
+    }
     // Now we are out of options
-    // if (est.isPresent()) {
-    //   Pose3d estimatedPose = est.get().estimatedPose;
-    //   process(result, estimatedPose).ifPresent(reporter);
-    //   return;
-    // }
+    if (est.isPresent()) {
+      Pose3d estimatedPose = est.get().estimatedPose;
+      process(result, estimatedPose).ifPresent(reporter);
+      return;
+    }
 
     PhotonTrackedTarget target = targets.get(0);
     int fidId = target.getFiducialId();
@@ -151,8 +148,8 @@ public class SingleInputPoseEstimator implements Runnable {
     double heading = pose.getRotation().getRadians();
     Transform2d bestDiff = best.toPose2d().minus(pose);
     Transform2d altDiff = alt.toPose2d().minus(pose);
-    double bestRotErr = Math.abs(MathUtil.inputModulus(bestHeading - heading, 0, 2*Math.PI));
-    double altRotErr = Math.abs(MathUtil.inputModulus(altHeading - heading, 0, 2*Math.PI));
+    double bestRotErr = Math.abs(MathUtil.angleModulus(bestHeading - heading));
+    double altRotErr = Math.abs(MathUtil.angleModulus(altHeading - heading));
     double bestXYErr = bestDiff.getTranslation().getNorm();
     double altXYErr = altDiff.getTranslation().getNorm();
     Pose3d estimate;
@@ -166,7 +163,7 @@ public class SingleInputPoseEstimator implements Runnable {
     process(result, estimate).ifPresent(reporter);
   }
 
-  @SuppressWarnings("all")
+  @SuppressWarnings("unused")
   private boolean precheckValidity(PhotonPipelineResult result) {
     double latency = result.metadata.getLatencyMillis() * 1e-3;
     if (latency > config.trust().latencyThreshold()) {
@@ -191,7 +188,6 @@ public class SingleInputPoseEstimator implements Runnable {
     if (!checkValidity(pose, ambiguity)) {
       return Optional.empty();
     }
-    FieldManager.getInstance().getField().getObject(config.cameraName()).setPose(flatPose);
     return Optional.of(
         new TimestampedPoseEstimate(flatPose, timestamp, stdDevs));
   }

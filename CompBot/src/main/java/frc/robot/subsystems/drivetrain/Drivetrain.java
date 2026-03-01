@@ -352,11 +352,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
     lastOkayVisionUpdateTime = Timer.getTimestamp();
+    FieldManager.getInstance().getField().getObject("Estimate").setPose(estimate.pose());
     // This should NOT run in simulation!
     if (Robot.isSimulation()) {
       return;
     }
-    FieldManager.getInstance().getField().getObject("Estimate").setPose(estimate.pose());
     SmartDashboard.putNumber("stddevs", estimate.stdDevs().get(0,0));
     addVisionMeasurement(
         estimate.pose(),
