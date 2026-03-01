@@ -1,0 +1,16 @@
+<configuration>
+
+ <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+   <encoder>
+     <pattern>%date{mm:ss.SSS} [%thread] %highlight(%-5level) %logger{20} - %message %n</pattern>
+   </encoder>
+ </appender>
+
+ <logger name="frc.autogen" level="WARN"/>
+ <logger name="frc.robot" level="INFO"/>
+
+ <root level="WARN">
+   <appender-ref ref="STDOUT"/>
+ </root>
+
+</configuration>
