@@ -44,16 +44,6 @@ public class IntakeConstants {
   protected static final Current kJamStatorThreshold = Amps.of(70);
   protected static final AngularVelocity kJamVelocityThreshold = RotationsPerSecond.of(0.3);
 
-  protected static final CANrangeConfiguration kCANrangeConfig = new CANrangeConfiguration()
-      .withFovParams(new FovParamsConfigs()
-          .withFOVRangeX(6.5)
-          .withFOVRangeY(6.5))
-      .withProximityParams(new ProximityParamsConfigs()
-          .withMinSignalStrengthForValidMeasurement(15015)
-          .withProximityThreshold(0.1))
-      .withToFParams(new ToFParamsConfigs()
-          .withUpdateMode(UpdateModeValue.ShortRange100Hz));
-
   public static final class DeployConstants {
     protected static final int kDeployMotorId = 6;
 
