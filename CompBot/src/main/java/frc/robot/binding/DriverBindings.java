@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.binding.BindingConstants.Driver;
 import frc.robot.commands.AimPrep;
+import frc.robot.commands.ResetForwards;
 import frc.robot.commands.RunClimb;
 import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
@@ -24,15 +25,16 @@ public class DriverBindings implements Binder {
   }
 
   public void bind(Superstructure superstructure) {
-    // superstructure.bindDrive(vx, vy, vrot);
+    superstructure.bindDrive(vx, vy, vrot);
 
-    controller.R1().toggleOnTrue(superstructure.build(new AimPrep()));
-    controller.R2().whileTrue(superstructure.build(new RunIntake()));
+    controller.button(3).toggleOnTrue(superstructure.build(new AimPrep()));
+    controller.button(4).whileTrue(superstructure.build(new RunIntake()));
+    controller.button(1).onTrue(superstructure.build(new ResetForwards()));
 
-    controller.cross().onTrue(superstructure.build(new RunClimb(ClimbPosition.Home)));
-    controller.triangle().onTrue(superstructure.build(new RunClimb(ClimbPosition.Ready)));
-    controller.circle().onTrue(superstructure.build(new RunClimb(ClimbPosition.Climbed)));
+    // controller.cross().onTrue(superstructure.build(new RunClimb(ClimbPosition.Home)));
+    // controller.triangle().onTrue(superstructure.build(new RunClimb(ClimbPosition.Ready)));
+    // controller.circle().onTrue(superstructure.build(new RunClimb(ClimbPosition.Climbed)));
 
-    controller.L2().whileTrue(superstructure.build(new RunIndex()));
+    // controller.L2().whileTrue(superstructure.build(new RunIndex()));
   }
 }

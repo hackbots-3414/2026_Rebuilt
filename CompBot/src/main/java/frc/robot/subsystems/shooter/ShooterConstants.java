@@ -135,17 +135,17 @@ public final class ShooterConstants {
   }
 
   public static final List<AimMeasurement> measurements = List.of(
-      new AimMeasurement(Meters.of(1.00), Rotation2d.fromDegrees(72), 32, Seconds.of(0.95)),
-      new AimMeasurement(Meters.of(1.64), Rotation2d.fromDegrees(70), 36, Seconds.of(1.11)),
-      new AimMeasurement(Meters.of(2.03), Rotation2d.fromDegrees(65), 36, Seconds.of(1.10)),
-      new AimMeasurement(Meters.of(2.512), Rotation2d.fromDegrees(65), 37.5, Seconds.of(1.12)),
-      new AimMeasurement(Meters.of(3.09), Rotation2d.fromDegrees(60), 38, Seconds.of(1.07)),
-      new AimMeasurement(Meters.of(3.56), Rotation2d.fromDegrees(60), 42, Seconds.of(1.20)),
-      new AimMeasurement(Meters.of(4.08), Rotation2d.fromDegrees(58), 42, Seconds.of(1.18)),
-      new AimMeasurement(Meters.of(4.53), Rotation2d.fromDegrees(55), 42, Seconds.of(1.13)),
-      new AimMeasurement(Meters.of(5.03), Rotation2d.fromDegrees(54), 46, Seconds.of(1.21)),
-      new AimMeasurement(Meters.of(5.552), Rotation2d.fromDegrees(54), 46, Seconds.of(1.21)),
-      new AimMeasurement(Meters.of(5.996), Rotation2d.fromDegrees(54), 49, Seconds.of(1.25)),
-      new AimMeasurement(Meters.of(6.485), Rotation2d.fromDegrees(52), 50, Seconds.of(1.31))
+      new AimMeasurement(Meters.of(1.70), Rotation2d.fromDegrees(72), 32, Seconds.of(0.95)),
+      new AimMeasurement(Meters.of(2.34), Rotation2d.fromDegrees(70), 36, Seconds.of(1.11)),
+      new AimMeasurement(Meters.of(2.73), Rotation2d.fromDegrees(65), 36, Seconds.of(1.10)),
+      new AimMeasurement(Meters.of(3.212), Rotation2d.fromDegrees(65), 37.5, Seconds.of(1.12)),
+      new AimMeasurement(Meters.of(3.79), Rotation2d.fromDegrees(60), 38, Seconds.of(1.07)),
+      new AimMeasurement(Meters.of(4.26), Rotation2d.fromDegrees(60), 42, Seconds.of(1.20)),
+      new AimMeasurement(Meters.of(4.78), Rotation2d.fromDegrees(58), 42, Seconds.of(1.18)),
+      new AimMeasurement(Meters.of(5.23), Rotation2d.fromDegrees(55), 42, Seconds.of(1.13)),
+      new AimMeasurement(Meters.of(5.73), Rotation2d.fromDegrees(54), 46, Seconds.of(1.21)),
+      new AimMeasurement(Meters.of(6.252), Rotation2d.fromDegrees(54), 46, Seconds.of(1.21)),
+      new AimMeasurement(Meters.of(6.696), Rotation2d.fromDegrees(54), 49, Seconds.of(1.25)),
+      new AimMeasurement(Meters.of(7.185), Rotation2d.fromDegrees(52), 50, Seconds.of(1.31))
   );
 }

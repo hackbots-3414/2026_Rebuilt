@@ -237,7 +237,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     state = getState();
-    System.out.println("running drivetrain periodic");
 
     FieldManager.getInstance().getField().setRobotPose(robotPose());
   }
