@@ -4,7 +4,6 @@ import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.signals.RGBWColor;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.subsystems.led.LedConstants;
 import frc.robot.subsystems.led.LedIO;
