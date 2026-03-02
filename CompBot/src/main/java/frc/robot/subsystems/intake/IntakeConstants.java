@@ -6,18 +6,14 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.FovParamsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.ProximityParamsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.ToFParamsConfigs;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.UpdateModeValue;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -43,16 +39,6 @@ public class IntakeConstants {
 
   protected static final Current kJamStatorThreshold = Amps.of(70);
   protected static final AngularVelocity kJamVelocityThreshold = RotationsPerSecond.of(0.3);
-
-  protected static final CANrangeConfiguration kCANrangeConfig = new CANrangeConfiguration()
-      .withFovParams(new FovParamsConfigs()
-          .withFOVRangeX(6.5)
-          .withFOVRangeY(6.5))
-      .withProximityParams(new ProximityParamsConfigs()
-          .withMinSignalStrengthForValidMeasurement(15015)
-          .withProximityThreshold(0.1))
-      .withToFParams(new ToFParamsConfigs()
-          .withUpdateMode(UpdateModeValue.ShortRange100Hz));
 
   public static final class DeployConstants {
     protected static final int kDeployMotorId = 6;

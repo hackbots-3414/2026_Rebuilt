@@ -2,11 +2,12 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
-import com.therekrab.autopilot.APTarget;
-import edu.wpi.first.math.geometry.Pose2d;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.therekrab.autopilot.APTarget;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -15,8 +16,6 @@ import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimStrategy;
 import frc.robot.aiming.PhysicsAim;
 import frc.robot.aiming.ToFAim;
-import frc.robot.aiming.TuneAim;
-import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
 
 public class Constants {

@@ -25,8 +25,6 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer robotContainer;
 
-  private final OnboardLogger oLogger;
-
   public Robot() {
     robotContainer = new RobotContainer();
 
@@ -37,9 +35,9 @@ public class Robot extends TimedRobot {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
 
-    oLogger = new OnboardLogger("Robot");
-    oLogger.registerMeasurement("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
-    oLogger.registerString("Game Data", DriverStation::getGameSpecificMessage);
+    OnboardLogger logger = new OnboardLogger("Robot");
+    logger.registerMeasurement("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
+    logger.registerString("Game Data", DriverStation::getGameSpecificMessage);
 
     ActivityCalculator.readGameData();
     ActivityCalculator.startTimer();
@@ -61,10 +59,10 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("DS/Match Time", DriverStation.getMatchTime());
     HubStatus hubStatus = ActivityCalculator.status();
-    SmartDashboard.putString("DS/Active (Color)", hubStatus.color(ActivityCalculator.us()));
-    SmartDashboard.putBoolean("DS/Active (Boolean)", ActivityCalculator.is(ActivityCalculator.us()));
-    SmartDashboard.putString("DS/Hub Time", hubStatus.timeText());
-    SmartDashboard.putString("DS/Current", hubStatus.active().toString());
+    SmartDashboard.putString("Hub/Active (Color)", hubStatus.color(ActivityCalculator.us()));
+    SmartDashboard.putBoolean("Hub/Active (Boolean)", ActivityCalculator.is(ActivityCalculator.us()));
+    SmartDashboard.putString("Hub/Hub Time", hubStatus.timeText());
+    SmartDashboard.putString("Hub/Current", hubStatus.active().toString());
   }
 
   @Override
@@ -133,29 +131,5 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {
-  }
-
-  public Command getM_autonomousCommand() {
-    return m_autonomousCommand;
-  }
-
-  public void setM_autonomousCommand(Command m_autonomousCommand) {
-    this.m_autonomousCommand = m_autonomousCommand;
-  }
-
-  public boolean isHasStartedVision() {
-    return hasStartedVision;
-  }
-
-  public void setHasStartedVision(boolean hasStartedVision) {
-    this.hasStartedVision = hasStartedVision;
-  }
-
-  public RobotContainer getRobotContainer() {
-    return robotContainer;
-  }
-
-  public OnboardLogger getoLogger() {
-    return oLogger;
   }
 }

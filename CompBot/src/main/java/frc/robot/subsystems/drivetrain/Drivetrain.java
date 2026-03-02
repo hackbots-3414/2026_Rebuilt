@@ -2,13 +2,14 @@ package frc.robot.subsystems.drivetrain;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
+
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -19,9 +20,9 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.therekrab.autopilot.APTarget;
 import com.therekrab.autopilot.Autopilot;
 import com.therekrab.autopilot.Autopilot.APResult;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -352,11 +353,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
     lastOkayVisionUpdateTime = Timer.getTimestamp();
+    FieldManager.getInstance().getField().getObject("Estimate").setPose(estimate.pose());
     // This should NOT run in simulation!
     if (Robot.isSimulation()) {
       return;
     }
-    FieldManager.getInstance().getField().getObject("Estimate").setPose(estimate.pose());
     SmartDashboard.putNumber("stddevs", estimate.stdDevs().get(0,0));
     addVisionMeasurement(
         estimate.pose(),

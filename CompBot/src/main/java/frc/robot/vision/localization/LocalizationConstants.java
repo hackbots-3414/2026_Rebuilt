@@ -108,4 +108,6 @@ public class LocalizationConstants {
 
   /** Maximum time since last pose estimate for odometry to be considered valid */
   public static final double kValidOdometryCutoff = 0.5;
+
+  public static final boolean kUsePnPDistanceTrigSolve = false;
 }

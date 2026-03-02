@@ -2,6 +2,7 @@ package frc.robot.superstructure;
 
 import java.util.List;
 import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
@@ -31,7 +32,6 @@ import frc.robot.subsystems.shooter.ShooterIOHardware;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIODisabled;
-import frc.robot.subsystems.turret.TurretIOHardware;
 import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.util.AutonWarn;
 import frc.robot.vision.CameraConfig;
@@ -115,8 +115,8 @@ public class Superstructure {
         LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
             "cam4",
             () -> new Transform3d(-0.315, 0.138, 0.438,
-                new Rotation3d(Units.degreesToRadians(-6.5), Units.degreesToRadians(-29.9), Units.degreesToRadians(-169)))
-                ));
+                new Rotation3d(Units.degreesToRadians(-6.5), Units.degreesToRadians(-29.9), Units.degreesToRadians(-169))))
+                );
 
     return new AprilTagVisionHandler(this, configs);
   }

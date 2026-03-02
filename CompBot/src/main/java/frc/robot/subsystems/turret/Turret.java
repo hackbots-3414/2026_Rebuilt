@@ -1,7 +1,7 @@
 package frc.robot.subsystems.turret;
 
-import static edu.wpi.first.units.Units.Revolutions;
 import static edu.wpi.first.units.Units.Rotations;
+
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
