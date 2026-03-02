@@ -59,10 +59,10 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("DS/Match Time", DriverStation.getMatchTime());
     HubStatus hubStatus = ActivityCalculator.status();
-    SmartDashboard.putString("DS/Active (Color)", hubStatus.color(ActivityCalculator.us()));
-    SmartDashboard.putBoolean("DS/Active (Boolean)", ActivityCalculator.is(ActivityCalculator.us()));
-    SmartDashboard.putString("DS/Hub Time", hubStatus.timeText());
-    SmartDashboard.putString("DS/Current", hubStatus.active().toString());
+    SmartDashboard.putString("Hub/Active (Color)", hubStatus.color(ActivityCalculator.us()));
+    SmartDashboard.putBoolean("Hub/Active (Boolean)", ActivityCalculator.is(ActivityCalculator.us()));
+    SmartDashboard.putString("Hub/Hub Time", hubStatus.timeText());
+    SmartDashboard.putString("Hub/Current", hubStatus.active().toString());
   }
 
   @Override
