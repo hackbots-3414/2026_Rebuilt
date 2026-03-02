@@ -3,6 +3,7 @@ package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -43,15 +44,15 @@ public class Intake extends SubsystemBase {
         () -> io.setIntakeVoltage(Volts.zero()));
   }
 
-  public Command intakeAndGo(DeployPosition state) {
-    return Commands.sequence(
-      runOnce(() -> {
+  public Command intakeAt(DeployPosition state) {
+    return runOnce(() -> {
           reference = state;
           io.setDeployPosition(state.position);
           io.setIntakeVoltage(IntakeConstants.kIntakeVoltage);
-        }),
-        Commands.waitUntil(this::deployAtPosition)
-    );
+        })
+        .finallyDo(() -> {
+          io.setIntakeVoltage(Volts.zero());
+        });
   }
 
   public Command go(DeployPosition state) {
