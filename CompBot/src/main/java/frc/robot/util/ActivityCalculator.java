@@ -2,8 +2,10 @@ package frc.robot.util;
 
 import java.text.DecimalFormat;
 
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -20,6 +22,8 @@ public class ActivityCalculator {
   private static HubActivity teamHub;
 
   private static double end = Double.POSITIVE_INFINITY;
+
+  private static final Alert noData = new Alert("FMS has not communicated the winner of auto", AlertType.kWarning);
 
   public enum HubActivity {
     Red, Blue, Both;
@@ -99,6 +103,8 @@ public class ActivityCalculator {
       setStatus(HubActivity.Both, DriverStation.getMatchTime());
       return;
     }
+
+    noData.set(failed);
 
     if (failed || !DriverStation.isTeleopEnabled()) {
       setStatus(HubActivity.Both, Double.POSITIVE_INFINITY);
