@@ -27,7 +27,7 @@ public class TurretConstants {
 
   protected static final double kSupplyCurrentLimit = 100;
 
-  protected static final Angle kHomePosition = Revolutions.of(0.5);
+  protected static final Angle kHomePosition = Revolutions.of(0);
   /**
    * The position measurement of the turret such that the turret points directly forward on the
    * robot. For example, if this value was 30 degrees, then setting the turret's position to 30
@@ -37,23 +37,21 @@ public class TurretConstants {
 
   // MotionMagic configuration
   protected static final double kGearRatio = 30.0;
-  protected static final double kMaxSpeed = 32;
-  protected static final double kMaxAcceleration = 48;
+  protected static final double kMaxSpeed = 40;
+  protected static final double kMaxAcceleration = 70;
   protected static final double kMaxJerk = 480;
 
   protected static final Angle kTolerance = Degrees.of(1);
 
   // CRT-focused constants
-  protected static final double kEncoder1Offset = 0.00927734375;
-  protected static final double kEncoder2Offset = 0.044677734375;
+  protected static final double kEncoder1Offset = -0.11474609375;
+  protected static final double kEncoder2Offset = -0.634521484375;
   protected static final double kEncoder1GearRatio = 72.0 / 12.0;
   protected static final double kEncoder2GearRatio = (72.0 * 25.0) / (12.0 * 27.0);
 
   // These parameters define the range of valid angles for the turret
   protected static final Angle kMinAngle = Rotations.of(-0.5);
-  protected static final Angle kMinTrackingAngle = Rotations.of(-0.5);
   protected static final Angle kMaxAngle = Rotations.of(0.5);
-  protected static final Angle kMaxTrackingAngle = Rotations.of(0.5);
 
   // CANcoder configurations
   protected static final CANcoderConfiguration kEncoder1Config = new CANcoderConfiguration()

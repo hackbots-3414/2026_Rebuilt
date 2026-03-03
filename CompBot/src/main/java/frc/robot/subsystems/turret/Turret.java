@@ -36,6 +36,8 @@ public class Turret extends SubsystemBase {
 
   private boolean tracking;
 
+  private Angle reference = TurretConstants.kHomePosition;
+
   public Turret(TurretIO io) {
     super();
     this.io = io;
@@ -49,6 +51,7 @@ public class Turret extends SubsystemBase {
     OnboardLogger log = new OnboardLogger("Turret");
     log.registerBoolean("Ready", ready());
     log.registerBoolean("Tracking", () -> tracking);
+    log.registerMeasurement("Reference", () -> reference, Rotations);
   }
 
   @Override
@@ -66,14 +69,17 @@ public class Turret extends SubsystemBase {
         this.run(() -> {
           tracking = true;
           Rotation2d robot = state.robotPose().getRotation();
-          Rotation2d relative = state.predictedAimParams().yaw.minus(robot);
+          AimParams params = state.predictedAimParams();
+          if (!params.isOk()) {
+            return;
+          }
+          Angle mechanismAngle = params.yaw.minus(robot).getMeasure().plus(TurretConstants.kForwards);
           // We're only in "tracking" mode if we're just trying to get to a happy spot. If everybody
           // else is ready, we don't want to hold up shooting, so we allow the turret access to its
           // full range. We don't generally want to do this, because it would mean that while
           // shooting, we would be more likely to hit the turret's physical max and *force*
           // ourselves to rotate the turret all the way around... nonideal.
-          setPosition(relative.getMeasure().plus(TurretConstants.kForwards),
-              !state.shootReady().getAsBoolean());
+          setPosition(mechanismAngle, !state.shootReady().getAsBoolean());
         }))
         .finallyDo(() -> tracking = false);
   }
@@ -114,19 +120,20 @@ public class Turret extends SubsystemBase {
 
   public Pose3d turretPose(Pose2d robotPose) {
     return new Pose3d(robotPose).transformBy(TurretConstants.kOffset);
-  }
+}
 
   /**
    * This algorithm calculates the "ideal" position for the turret to rotate through.
    */
   private void setPosition(Angle position, boolean tracking) {
-    Angle min = (tracking) ? TurretConstants.kMinTrackingAngle : TurretConstants.kMinAngle;
-    Angle max = (tracking) ? TurretConstants.kMaxTrackingAngle : TurretConstants.kMaxAngle;
-    io.setPosition(Rotations.of(findCC(
+    Angle min = TurretConstants.kMinAngle;
+    Angle max = TurretConstants.kMaxAngle;
+    reference = Rotations.of(findCC(
         inputs.position.in(Rotations),
         position.in(Rotations),
         min.in(Rotations),
-        max.in(Rotations))));
+        max.in(Rotations)));
+    io.setPosition(reference);
   }
 
   /**

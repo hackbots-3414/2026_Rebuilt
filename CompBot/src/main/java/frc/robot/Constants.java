@@ -33,7 +33,7 @@ public class Constants {
   }
 
   public static class AimConstants {
-    public static final AimStrategy kSimulationAim = new PhysicsAim(
+    public static final AimStrategy kPhysicsAim = new PhysicsAim(
         new AimConstraints(
             Rotation2d.fromDegrees(49.5), // Min pitch
             Rotation2d.fromDegrees(72.0), // Max pitch
@@ -47,6 +47,8 @@ public class Constants {
             Rotation2d.fromDegrees(49.5), // Min pitch
             Rotation2d.fromDegrees(72.0), // Max pitch
             ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond))); // Max output (speed));
+
+    public static final AimStrategy kSimulationAim = kRealAim;
 
     public static final AimStrategy kAim = Robot.isReal() ? kRealAim : kSimulationAim;
   }

@@ -44,11 +44,14 @@ public class Intake extends SubsystemBase {
   }
 
   public Command intakeAt(DeployPosition state) {
-    return runOnce(() -> {
+    return Commands.sequence(
+      runOnce(() -> {
           reference = state;
           io.setDeployPosition(state.position);
+        }),
+        run(() -> {
           io.setIntakeVoltage(IntakeConstants.kIntakeVoltage);
-        })
+        }))
         .finallyDo(() -> {
           io.setIntakeVoltage(Volts.zero());
         });

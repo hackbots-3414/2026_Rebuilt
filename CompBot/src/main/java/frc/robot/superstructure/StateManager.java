@@ -99,7 +99,6 @@ public class StateManager {
   public Trigger shootReady(boolean forceWhenReady) {
     return subsystems.turret().tracked(this::aimParams)
         .and(subsystems.shooter().tracked(this::aimParams))
-        .and(subsystems.drivetrain().validOdemetry())
         .and(() -> params.isOk())
         .and(shouldShoot().or(() -> forceWhenReady));
   }
@@ -123,8 +122,6 @@ public class StateManager {
           AimConstants.kAim.update(aimTarget(), subsystems.turret().turretPose(predictedPose),
               subsystems.drivetrain().predictedRobotVelocity());
     }
-    SmartDashboard.putNumber("Pitch", predictedParams.pitch.getDegrees());
-    SmartDashboard.putNumber("Output", predictedParams.output);
     return predictedParams;
   }
 
@@ -132,6 +129,7 @@ public class StateManager {
     params = new AimParams(AimStatus.Unchecked);
     predictedParams = new AimParams(AimStatus.Unchecked);
     SmartDashboard.putBoolean("Robot/Shoot Ready", shootReady().getAsBoolean());
+    SmartDashboard.putBoolean("Robot/Shoot Ready (forced)", shootReady(true).getAsBoolean());
     SmartDashboard.putBoolean("Robot/Shooter Ready",
         subsystems.shooter().tracked(this::aimParams).getAsBoolean());
   }

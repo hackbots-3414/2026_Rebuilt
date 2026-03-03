@@ -58,6 +58,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private Notifier simNotifier = null;
   private double lastSimTime;
 
+  private final double LOOKAHEAD = 2 * Robot.kDefaultPeriod;
+
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
 
@@ -410,9 +412,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   
   private Twist2d predictedTwist() {
     return new Twist2d(
-        state.Speeds.vxMetersPerSecond * Robot.kDefaultPeriod,
-        state.Speeds.vyMetersPerSecond * Robot.kDefaultPeriod,
-        state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod);
+        state.Speeds.vxMetersPerSecond * LOOKAHEAD,
+        state.Speeds.vyMetersPerSecond * LOOKAHEAD,
+        state.Speeds.omegaRadiansPerSecond * LOOKAHEAD);
   }
 
   public Pose2d predictedRobotPose() {
@@ -421,7 +423,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public Translation2d predictedRobotVelocity() {
     return robotVelocity().getTranslation().rotateBy(
-        Rotation2d.fromRadians(state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod));
+        Rotation2d.fromRadians(state.Speeds.omegaRadiansPerSecond * LOOKAHEAD));
   }
 
   public Command track(Supplier<AimParams> params) {

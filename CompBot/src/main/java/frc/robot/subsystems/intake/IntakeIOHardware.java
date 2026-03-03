@@ -12,6 +12,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.intake.IntakeConstants.DeployConstants;
+import frc.robot.subsystems.intake.IntakeConstants.DeployConstants.DeployPosition;
 import frc.robot.util.StatusSignalUtil;
 
 public class IntakeIOHardware implements IntakeIO {
@@ -49,7 +50,8 @@ public class IntakeIOHardware implements IntakeIO {
     );
 
     deployMotor.setPosition(0.0);
-    SmartDashboard.putData("Intake/Set Zero", Commands.run(() -> deployMotor.setPosition(0)).ignoringDisable(true));
+    SmartDashboard.putData("Intake/Set Zero", Commands.runOnce(() -> deployMotor.setPosition(0)).ignoringDisable(true));
+    SmartDashboard.putData("Intake/Set Deployed", Commands.runOnce(() -> deployMotor.setPosition(DeployPosition.Deployed.position)).ignoringDisable(true));
   }
 
   public void updateInputs(IntakeIOInputs inputs) {

@@ -17,7 +17,7 @@ import frc.robot.aiming.AimParams.SpeedControl;
  */
 public class ToFAim implements AimStrategy {
   static final double EPSILON = 1e-3;
-  static final int ITERATIONS = 5;
+  static final int ITERATIONS = 15;
 
   private final AimConstraints constraints;
 

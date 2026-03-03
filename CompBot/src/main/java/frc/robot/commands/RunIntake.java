@@ -8,8 +8,6 @@ import frc.robot.superstructure.Superstructure.Subsystems;
 
 public class RunIntake implements CommandBuilder {
     public Command build(Subsystems subsystems, StateManager state) {
-        return Commands.sequence(
-            subsystems.intake().intakeAt(DeployPosition.Deployed)
-        );
+        return subsystems.intake().intakeAt(DeployPosition.Deployed);
     }
 }
