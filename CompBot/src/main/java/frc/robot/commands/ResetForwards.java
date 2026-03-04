@@ -7,7 +7,7 @@ import frc.robot.superstructure.Superstructure.Subsystems;
 
 public class ResetForwards implements CommandBuilder {
     public Command build(Subsystems subsystems, StateManager state) {
-        return Commands.runOnce(() -> subsystems.drivetrain().setOperatorPerspectiveForward(state.robotPose().getRotation()));
+        return Commands.runOnce(() -> subsystems.drivetrain().setOperatorPerspectiveForward(state.robotPose().getRotation())).ignoringDisable(true);
     }
     
 }

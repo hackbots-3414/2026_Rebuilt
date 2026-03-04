@@ -115,6 +115,10 @@ public class StateManager {
     return shootReady(false);
   }
 
+  public Trigger shouldAgitate() {
+    return shootReady();
+  }
+
   public AimParams aimParams() {
     if (params.status == AimStatus.Unchecked) {
       params =
