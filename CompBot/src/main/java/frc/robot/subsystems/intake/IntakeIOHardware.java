@@ -20,7 +20,7 @@ public class IntakeIOHardware implements IntakeIO {
   private final TalonFX intakeMotor;
   private final TalonFX deployMotor;
 
-  private final VoltageOut intakeControl = new VoltageOut(0).withEnableFOC(true);
+  private final VoltageOut intakeControl = new VoltageOut(0).withEnableFOC(false);
   private final PositionVoltage deployControl = new PositionVoltage(0);
 
   private Voltage lastVoltage = Volts.zero();
