@@ -2,6 +2,7 @@ package frc.robot.superstructure;
 
 import static edu.wpi.first.units.Units.Degrees;
 
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -88,7 +89,8 @@ public class StateManager {
   }
 
   public Trigger shouldShoot() {
-    return subsystems.shooter().shooting().and(() -> {
+    Trigger validdometry = subsystems.drivetrain().validOdemetry();
+    return shooting().and(validdometry).and(() -> {
       boolean teleop = DriverStation.isTeleop();
       boolean inZone = FieldUtils.inAllianceZone(robotPose());
       boolean activeHubOrFeeding = !inZone || ActivityCalculator.is(ActivityCalculator.us());
@@ -97,10 +99,16 @@ public class StateManager {
   }
 
   public Trigger shootReady(boolean forceWhenReady) {
-    return subsystems.turret().tracked(this::aimParams)
-        .and(subsystems.shooter().tracked(this::aimParams))
-        .and(() -> params.isOk())
-        .and(shouldShoot().or(() -> forceWhenReady));
+    final double SHOOTER_DEBOUNCE = 1.5;
+    final double TURRET_DEBOUNCE = 0.0;
+
+    Trigger aimOk = new Trigger(() -> aimParams().isOk() && predictedAimParams().isOk());
+    Trigger turretReady = subsystems.turret().tracked(this::aimParams).debounce(TURRET_DEBOUNCE, DebounceType.kFalling);
+    Trigger shooterReady = subsystems.shooter().tracked(this::aimParams).debounce(SHOOTER_DEBOUNCE, DebounceType.kFalling);
+    return aimOk
+      .and(turretReady)
+      .and(shooterReady)
+      .and(shouldShoot().or(() -> forceWhenReady));
   }
 
   public Trigger shootReady() {
