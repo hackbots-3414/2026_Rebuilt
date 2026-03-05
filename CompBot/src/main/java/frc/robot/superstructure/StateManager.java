@@ -27,15 +27,20 @@ public class StateManager {
   private AimParams params = new AimParams(AimStatus.Unchecked);
   private AimParams predictedParams = new AimParams(AimStatus.Unchecked);
 
+  public final Trigger shootReady;
+  public final Trigger forcedShootReady;
+
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
+    shootReady = shootReady();
+    forcedShootReady = shootReady(true);
     OnboardLogger log = new OnboardLogger("Robot");
     log.registerPose("Robot Pose", this::robotPose);
     log.registerTransform2d("Robot Velocity", this::robotVelocity);
     log.registerPose3d("Aim Target", this::aimTarget);
     log.registerPose3d("Turret Position", this::turretPose);
-    log.registerBoolean("Shoot Ready", shootReady());
-    log.registerBoolean("Shoot Ready (Forced)", shootReady(true));
+    log.registerBoolean("Shoot Ready", shootReady);
+    log.registerBoolean("Shoot Ready (Forced)", forcedShootReady);
     log.registerBoolean("Turret Tracked", subsystems.turret().tracked(this::aimParams));
     log.registerBoolean("Shooter Tracked", subsystems.shooter().tracked(this::aimParams));
     log.registerBoolean("In Alliance Zone", () -> FieldUtils.inAllianceZone(robotPose()));
@@ -140,8 +145,12 @@ public class StateManager {
   public void periodic() {
     params = new AimParams(AimStatus.Unchecked);
     predictedParams = new AimParams(AimStatus.Unchecked);
-    SmartDashboard.putBoolean("Robot/Shoot Ready", shootReady().getAsBoolean());
-    SmartDashboard.putBoolean("Robot/Shoot Ready (forced)", shootReady(true).getAsBoolean());
+    SmartDashboard.putBoolean("Robot/Aim OK", aimParams().isOk());
+    SmartDashboard.putBoolean("Robot/Shoot Ready", shootReady.getAsBoolean());
+    SmartDashboard.putBoolean("Robot/Shoot Ready (forced)", forcedShootReady.getAsBoolean());
+        SmartDashboard.putBoolean("Robot/Turret Ready",
+        subsystems.turret().tracked(this::aimParams).getAsBoolean());
+
     SmartDashboard.putBoolean("Robot/Shooter Ready",
         subsystems.shooter().tracked(this::aimParams).getAsBoolean());
   }

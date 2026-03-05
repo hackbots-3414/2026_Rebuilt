@@ -60,6 +60,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   private final double LOOKAHEAD = 2 * Robot.kDefaultPeriod;
 
+  private Pose2d memorySpot = Pose2d.kZero;
+
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
 
@@ -175,6 +177,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     ologger.registerDouble("Time since last estimate", () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
     sysIDCommands();
     SmartDashboard.putData("Drivetrain/Reset Pose (Our Hub)", resetOdometry(new Pose2d(4, 4, Rotation2d.kZero), true));
+    SmartDashboard.putData("Drivetrain/Set Memory Pose", setMemorySpot());
   }
 
   /**
@@ -431,4 +434,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       .finallyDo(() -> override = Optional.empty());
   }
 
+  public Command setMemorySpot() {
+    return this.runOnce(() -> memorySpot = robotPose());
+  }
+
+  public Command returnToMemory() {
+    return driveTo(() -> new APTarget(memorySpot), AutopilotConstants.kDefaultAutopilot);
+  }
 }
