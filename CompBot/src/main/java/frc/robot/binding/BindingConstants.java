@@ -24,7 +24,10 @@ public class BindingConstants {
 
         public static final int kDriveControllerPort = 0;
 
-        /* These values may not be correct. Test with chosen controller. */
+        /**
+         * PLEASE NOTE:
+         * X axis refers to robot/field X, not controller X. Same for Y.
+         */
         public static final int kXAxis = 1;
         public static final int kYAxis = 0;
         public static final int kRotAxis = 3;

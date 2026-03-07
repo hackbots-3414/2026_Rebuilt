@@ -1,6 +1,7 @@
 package frc.robot.superstructure;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -73,8 +74,8 @@ public class Superstructure {
     state = new StateManager(subsystems);
   }
 
-  public void bindDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot) {
-    subsystems.drivetrain.setDefaultCommand(subsystems.drivetrain.teleopDrive(vx, vy, vrot));
+  public void bindDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, BooleanSupplier robotRelative) {
+    subsystems.drivetrain.setDefaultCommand(subsystems.drivetrain.teleopDrive(vx, vy, vrot, robotRelative));
   }
 
   /**
