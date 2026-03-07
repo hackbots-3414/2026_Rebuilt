@@ -1,10 +1,8 @@
 package frc.robot.binding;
 
-import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Robot;
 import frc.robot.commands.CommandBuilder;
-import frc.robot.commands.FuelShotSim;
 import frc.robot.commands.RunClimb;
 import frc.robot.commands.RunIndex;
 import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;

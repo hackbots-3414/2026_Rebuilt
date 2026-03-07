@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.measure.Angle;
@@ -19,6 +20,7 @@ public class IntakeIOHardware implements IntakeIO {
 
   private final TalonFX intakeMotor;
   private final TalonFX deployMotor;
+  private final CANcoder deployCANcoder;
 
   private final VoltageOut intakeControl = new VoltageOut(0).withEnableFOC(false);
   private final PositionVoltage deployControl = new PositionVoltage(0);
@@ -30,6 +32,9 @@ public class IntakeIOHardware implements IntakeIO {
     intakeMotor.getConfigurator().apply(IntakeConstants.kIntakeMotorConfig);
     deployMotor = new TalonFX(DeployConstants.kDeployMotorId, StatusSignalUtil.canbus);
     deployMotor.getConfigurator().apply(DeployConstants.kDeployMotorConfig);
+
+    deployCANcoder = new CANcoder(DeployConstants.kDeployMotorId);
+    deployCANcoder.getConfigurator().apply(DeployConstants.kCANcoderConfig);
 
     StatusSignalUtil.registerRioSignals(
         intakeMotor.getSupplyCurrent(false),
@@ -46,7 +51,9 @@ public class IntakeIOHardware implements IntakeIO {
         deployMotor.getMotorVoltage(false),
         deployMotor.getDeviceTemp(false),
         deployMotor.getVelocity(false),
-        deployMotor.getPosition(false)
+        deployMotor.getPosition(false),
+        deployCANcoder.getPosition(false),
+        deployCANcoder.getVelocity(false)
     );
 
     deployMotor.setPosition(0.0);
@@ -86,6 +93,13 @@ public class IntakeIOHardware implements IntakeIO {
     inputs.deployTemperature = deployMotor.getDeviceTemp(false).getValue();
     inputs.deployVelocity = deployMotor.getVelocity(false).getValue();
     inputs.deployPosition = deployMotor.getPosition(false).getValue();
+
+    inputs.deployCANcoderConnected = BaseStatusSignal.isAllGood(
+      deployCANcoder.getPosition(false),
+      deployCANcoder.getVelocity(false)
+    );
+    inputs.deployCANcoderPosition = deployCANcoder.getPosition(false).getValue();
+    inputs.deployCANcoderVelocity = deployCANcoder.getVelocity(false).getValue();
   }
 
   public void setIntakeVoltage(Voltage voltage) {
