@@ -5,9 +5,11 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
+
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -16,6 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.therekrab.autopilot.APTarget;
+import com.therekrab.autopilot.Autopilot;
 import com.therekrab.autopilot.Autopilot.APResult;
 
 import edu.wpi.first.math.Matrix;
@@ -27,16 +30,16 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.util.datalog.StructLogEntry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.FieldManager;
@@ -45,13 +48,19 @@ import frc.robot.aiming.AimParams;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.AutopilotConstants.HeadingGains;
+import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
+import frc.robot.vision.localization.LocalizationConstants;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
 public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private static final double kSimLoopPeriod = 0.004; // 4 ms
   private Notifier simNotifier = null;
   private double lastSimTime;
+
+  private final double LOOKAHEAD = 2 * Robot.kDefaultPeriod;
+
+  private Pose2d memorySpot = Pose2d.kZero;
 
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
@@ -72,9 +81,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       .withHeadingPID(HeadingGains.kP, HeadingGains.kI, HeadingGains.kD);
 
   private SwerveDriveState state;
-  private final StructLogEntry<Pose2d> poseLogEntry;
 
-  private boolean hasReceivedVisionUpdate;
+  private double lastOkayVisionUpdateTime;
 
   /* Swerve requests to apply during SysId characterization */
   private final SwerveRequest.SysIdSwerveTranslation translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -101,7 +109,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
    * SysId routine for characterizing steer. This is used to find PID gains for
    * the steer motors.
    */
-  @SuppressWarnings("unused")
   private final SysIdRoutine sysIdRoutineSteer = new SysIdRoutine(
       new SysIdRoutine.Config(
           null, // Use default ramp rate (1 V/s)
@@ -140,6 +147,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
           null,
           this));
 
+  private Optional<AimParams> override = Optional.empty();
+
   /* The SysId routine to test */
   private SysIdRoutine sysIdRoutineToApply = sysIdRoutineTranslation;
 
@@ -161,11 +170,14 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     if (Utils.isSimulation()) {
       startSimThread();
     }
-    poseLogEntry = StructLogEntry.create(DataLogManager.getLog(), "Robot Pose", Pose2d.struct);
     state = getState();
     OnboardLogger ologger = new OnboardLogger("Drivetrain");
-    ologger.registerBoolean("Received vision update", () -> hasReceivedVisionUpdate);
+    ologger.registerBoolean("Valid Odometry", validOdemetry());
+    ologger.registerPose("Robot Pose", this::robotPose);
+    ologger.registerDouble("Time since last estimate", () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
     sysIDCommands();
+    SmartDashboard.putData("Drivetrain/Reset Pose (Our Hub)", resetOdometry(new Pose2d(4, 4, Rotation2d.kZero), true));
+    SmartDashboard.putData("Drivetrain/Set Memory Pose", setMemorySpot());
   }
 
   /**
@@ -231,15 +243,12 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     state = getState();
-    poseLogEntry.update(robotPose());
 
     FieldManager.getInstance().getField().setRobotPose(robotPose());
-    hasReceivedVisionUpdate = false;
   }
 
   private void startSimThread() {
     lastSimTime = Utils.getCurrentTimeSeconds();
-
     /* Run simulation at a faster rate so PID gains behave more reasonably */
     simNotifier = new Notifier(() -> {
       final double currentTime = Utils.getCurrentTimeSeconds();
@@ -312,6 +321,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       // Recalculate the *real* vx and vy to be operator-dependent
       Translation2d operatorRelative = new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
       Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
+      if (override.isPresent()) {
+        return autopilotControl.withVelocityX(fieldRelative.getX())
+          .withVelocityY(fieldRelative.getY())
+          .withTargetDirection(override.get().yaw);
+      }
       return drive
           .withVelocityX(fieldRelative.getX())
           .withVelocityY(fieldRelative.getY())
@@ -338,12 +352,18 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         Rotation2d.fromRadians(fieldRelative.omegaRadiansPerSecond));
   }
 
+  public Trigger validOdemetry() {
+    return new Trigger(() -> Timer.getTimestamp() - lastOkayVisionUpdateTime <= LocalizationConstants.kValidOdometryCutoff);
+  }
+
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
-    hasReceivedVisionUpdate = true;
+    lastOkayVisionUpdateTime = Timer.getTimestamp();
+    FieldManager.getInstance().getField().getObject("Estimate").setPose(estimate.pose());
     // This should NOT run in simulation!
     if (Robot.isSimulation()) {
       return;
     }
+    SmartDashboard.putNumber("stddevs", estimate.stdDevs().get(0,0));
     addVisionMeasurement(
         estimate.pose(),
         estimate.timestamp(),
@@ -370,32 +390,34 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     setControl(new SwerveRequest.SwerveDriveBrake());
   }
 
-  public Command driveTo(APTarget target) {
+  public Command driveTo(Supplier<APTarget> target, Autopilot autopilot) {
     return this.run(() -> {
-      APResult result = AutopilotConstants.kAutopilot.calculate(robotPose(), state.Speeds, target);
+      APResult result = autopilot.calculate(robotPose(), state.Speeds, target.get());
       setControl(autopilotControl
         .withVelocityX(result.vx())
         .withVelocityY(result.vy())
-        .withTargetDirection(result.targetAngle()));
+        .withTargetDirection(override.isPresent() ? override.get().yaw : result.targetAngle()));
     })
-      .until(() -> AutopilotConstants.kAutopilot.atTarget(robotPose(), target))
+      .until(() -> autopilot.atTarget(robotPose(), target.get()))
       .finallyDo(() -> {
         // Only stop if we are supposed to.
-        if (target.getVelocity() == 0) {
+        if (target.get().getVelocity() == 0) {
           stop();
         }
       });
   }
 
-  public Command resetOdometry(Pose2d pose) {
-    return this.runOnce(() -> resetPose(pose)).ignoringDisable(true);
+  public Command resetOdometry(Pose2d pose, boolean flip) {
+    return this.runOnce(() -> {
+      resetPose(flip ? FieldUtils.allianceRelativeFlip(pose) : pose);
+    }).ignoringDisable(true);
   }
   
   private Twist2d predictedTwist() {
     return new Twist2d(
-        state.Speeds.vxMetersPerSecond * Robot.kDefaultPeriod,
-        state.Speeds.vyMetersPerSecond * Robot.kDefaultPeriod,
-        state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod);
+        state.Speeds.vxMetersPerSecond * LOOKAHEAD,
+        state.Speeds.vyMetersPerSecond * LOOKAHEAD,
+        state.Speeds.omegaRadiansPerSecond * LOOKAHEAD);
   }
 
   public Pose2d predictedRobotPose() {
@@ -404,6 +426,19 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public Translation2d predictedRobotVelocity() {
     return robotVelocity().getTranslation().rotateBy(
-        Rotation2d.fromRadians(state.Speeds.omegaRadiansPerSecond * Robot.kDefaultPeriod));
+        Rotation2d.fromRadians(state.Speeds.omegaRadiansPerSecond * LOOKAHEAD));
+  }
+
+  public Command track(Supplier<AimParams> params) {
+    return Commands.run(() -> override = Optional.of(params.get()))
+      .finallyDo(() -> override = Optional.empty());
+  }
+
+  public Command setMemorySpot() {
+    return this.runOnce(() -> memorySpot = robotPose());
+  }
+
+  public Command returnToMemory() {
+    return driveTo(() -> new APTarget(memorySpot), AutopilotConstants.kDefaultAutopilot);
   }
 }

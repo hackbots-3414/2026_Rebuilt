@@ -46,7 +46,7 @@ public class LocalizationConstants {
       Degrees.of(77.4), // Horizontal FOV
       () -> Transform3d.kZero, // Pose supplier
       new CameraTrustConfig(
-          VecBuilder.fill(0.06, 0.06, 0.5 * Math.PI), // Base std devs
+          VecBuilder.fill(0.05, 0.05, 0.05), // Base std devs
           0.75, // Latency threshold
           1.3, // Latency multiplier
           0.5, // Field XY margin
@@ -54,11 +54,11 @@ public class LocalizationConstants {
           0.8, // Noisy distance
           5.0, // Distance multiplier
           0.2, // Ambiguity threshold
-          0.4, // Ambiguity multiplier
+          1.2, // Ambiguity multiplier
           0.2, // Ambiguity shifter
           80, // Target divisor
           0.1, // Difference threshold
-          200)); // Difference multiplier
+          20)); // Difference multiplier
 
   protected static final AprilTagFieldLayout kTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
@@ -99,14 +99,15 @@ public class LocalizationConstants {
   protected static final double kAvgErr = 0.08;
   protected static final double kErrStdDevs = 0.02;
 
-  public static final boolean kEnableTagFilter = true;
+  public static final boolean kEnableTagFilter = false;
 
-  protected static final Set<Integer> kApprovedTagIds = Set.of(
-      6, 7, 8, 9, 10, 11, // red reef tags
-      17, 18, 19, 20, 21, 22, // blue reef tags
-      3, 16 // processor tags are okay as well.
-  );
+  protected static final Set<Integer> kApprovedTagIds = Set.of(2, 3, 4, 5, 8, 9, 10, 11);
 
   public static final Transform3d kTurretAoRToTurretCameraOffset =
       new Transform3d(0.064, -0.02, 0.038, new Rotation3d(0, Units.degreesToRadians(-30), 0));
+
+  /** Maximum time since last pose estimate for odometry to be considered valid */
+  public static final double kValidOdometryCutoff = 0.5;
+
+  public static final boolean kUsePnPDistanceTrigSolve = false;
 }

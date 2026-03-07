@@ -5,7 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Volts;
-import com.ctre.phoenix6.HootAutoReplay;
+
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.ActivityCalculator;
+import frc.robot.util.ActivityCalculator.HubStatus;
 import frc.robot.util.OnboardLogger;
 import frc.robot.util.StatusSignalUtil;
-import frc.robot.util.ActivityCalculator.HubStatus;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -24,13 +24,6 @@ public class Robot extends TimedRobot {
   private boolean hasStartedVision;
 
   private final RobotContainer robotContainer;
-
-  private final OnboardLogger oLogger;
-
-  /* log and replay timestamp and joystick data */
-  private final HootAutoReplay timeAndJoystickReplay = new HootAutoReplay()
-      .withTimestampReplay()
-      .withJoystickReplay();
 
   public Robot() {
     robotContainer = new RobotContainer();
@@ -42,9 +35,13 @@ public class Robot extends TimedRobot {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
 
-    oLogger = new OnboardLogger("Robot");
-    oLogger.registerMeasurement("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
-    oLogger.registerString("Game Data", DriverStation::getGameSpecificMessage);
+    OnboardLogger logger = new OnboardLogger("Robot");
+    logger.registerMeasurement("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
+    logger.registerString("Game Data", DriverStation::getGameSpecificMessage);
+
+    ActivityCalculator.readGameData();
+    ActivityCalculator.startTimer();
+    ActivityCalculator.startLogging();
   }
 
   @Override
@@ -53,20 +50,19 @@ public class Robot extends TimedRobot {
 
     robotContainer.superstructure.periodic();
     StatusSignalUtil.refreshAll();
+    ActivityCalculator.update();
     CommandScheduler.getInstance().run();
 
     FieldManager.getInstance().drawFuel();
 
     OnboardLogger.logAll();
-    timeAndJoystickReplay.update();
 
-    ActivityCalculator.initialize();
     SmartDashboard.putNumber("DS/Match Time", DriverStation.getMatchTime());
-    HubStatus hubStatus = ActivityCalculator.update();
-    SmartDashboard.putString("DS/Active (Color)", hubStatus.color(ActivityCalculator.us()));
-    SmartDashboard.putBoolean("DS/Active (Boolean)", ActivityCalculator.is(ActivityCalculator.us()));
-    SmartDashboard.putNumber("DS/Hub Time", hubStatus.timeRemaining());
-    SmartDashboard.putString("DS/Current", hubStatus.active().toString());
+    HubStatus hubStatus = ActivityCalculator.status();
+    SmartDashboard.putString("Hub/Active (Color)", hubStatus.color(ActivityCalculator.us()));
+    SmartDashboard.putBoolean("Hub/Active (Boolean)", ActivityCalculator.is(ActivityCalculator.us()));
+    SmartDashboard.putString("Hub/Hub Time", hubStatus.timeText());
+    SmartDashboard.putString("Hub/Current", hubStatus.active().toString());
   }
 
   @Override
@@ -87,7 +83,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = robotContainer.getAutonomousCommand();
+    m_autonomousCommand = robotContainer.superstructure.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
@@ -95,23 +91,30 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+  }
 
   @Override
   public void teleopInit() {
+    ActivityCalculator.startTimer();
+    ActivityCalculator.readGameData();
+
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().cancel(m_autonomousCommand);
     }
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+  }
 
   @Override
   public void testInit() {
@@ -119,11 +122,14 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
-  public void testExit() {}
+  public void testExit() {
+  }
 
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+  }
 }

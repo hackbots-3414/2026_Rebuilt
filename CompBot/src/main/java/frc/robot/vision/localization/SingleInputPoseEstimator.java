@@ -15,8 +15,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ctre.phoenix6.Utils;
-
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -27,6 +26,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.vision.CameraConfig;
@@ -101,6 +101,7 @@ public class SingleInputPoseEstimator implements Runnable {
     }
   }
 
+  @SuppressWarnings("unused")
   private void combinedHandleResult(PhotonPipelineResult result) {
     // some prechecks before we do anything
     if (!precheckValidity(result)) {
@@ -110,17 +111,16 @@ public class SingleInputPoseEstimator implements Runnable {
     List<PhotonTrackedTarget> targets = result.getTargets();
     // use solvePnP every time if we can
     Optional<EstimatedRobotPose> est = estimator.estimateCoprocMultiTagPose(result);
-    if (est.isEmpty()) {
+    if (est.isEmpty() && LocalizationConstants.kUsePnPDistanceTrigSolve) {
       est = estimator.estimatePnpDistanceTrigSolvePose(result);
-    }
-    if (est.isEmpty()) {
-      est = estimator.estimateLowestAmbiguityPose(result);
     }
     // Now we are out of options
     if (est.isPresent()) {
       Pose3d estimatedPose = est.get().estimatedPose;
       process(result, estimatedPose).ifPresent(reporter);
+      return;
     }
+
     PhotonTrackedTarget target = targets.get(0);
     int fidId = target.getFiducialId();
     Optional<Pose3d> targetPosition = LocalizationConstants.kTagLayout
@@ -146,8 +146,8 @@ public class SingleInputPoseEstimator implements Runnable {
     double heading = pose.getRotation().getRadians();
     Transform2d bestDiff = best.toPose2d().minus(pose);
     Transform2d altDiff = alt.toPose2d().minus(pose);
-    double bestRotErr = Math.abs(bestHeading - heading);
-    double altRotErr = Math.abs(altHeading - heading);
+    double bestRotErr = Math.abs(MathUtil.angleModulus(bestHeading - heading));
+    double altRotErr = Math.abs(MathUtil.angleModulus(altHeading - heading));
     double bestXYErr = bestDiff.getTranslation().getNorm();
     double altXYErr = altDiff.getTranslation().getNorm();
     Pose3d estimate;
@@ -161,9 +161,10 @@ public class SingleInputPoseEstimator implements Runnable {
     process(result, estimate).ifPresent(reporter);
   }
 
+  @SuppressWarnings("unused")
   private boolean precheckValidity(PhotonPipelineResult result) {
     double latency = result.metadata.getLatencyMillis() * 1e-3;
-    if (latency > LocalizationConstants.kLatencyThreshold) {
+    if (latency > config.trust().latencyThreshold()) {
       logger.warn("({}) Refused old vision data, latency of {}", config.cameraName(), latency);
       return false;
     }
@@ -176,7 +177,7 @@ public class SingleInputPoseEstimator implements Runnable {
 
   private Optional<TimestampedPoseEstimate> process(PhotonPipelineResult result, Pose3d pose) {
     double latency = result.metadata.getLatencyMillis() / 1.0e+3;
-    double timestamp = Utils.getCurrentTimeSeconds() - latency;
+    double timestamp = Timer.getFPGATimestamp() - latency;
     double ambiguity = getAmbiguity(result);
     Pose2d flatPose = pose.toPose2d();
     Matrix<N3, N1> stdDevs = calculateStdDevs(result, flatPose);
@@ -192,7 +193,7 @@ public class SingleInputPoseEstimator implements Runnable {
   private boolean checkValidity(
       Pose3d pose,
       double ambiguity) {
-    if (ambiguity >= LocalizationConstants.kAmbiguityThreshold) {
+    if (ambiguity >= config.trust().ambiguityThreshold()) {
       return false;
     }
     return !isOutsideField(pose);
@@ -202,13 +203,13 @@ public class SingleInputPoseEstimator implements Runnable {
     double x = pose.getX();
     double y = pose.getY();
     double z = pose.getZ();
-    double xMax = LocalizationConstants.kXYMargin.magnitude()
-        + FieldConstants.kFieldLength.magnitude();
-    double yMax = LocalizationConstants.kXYMargin.magnitude()
-        + FieldConstants.kFieldWidth.magnitude();
-    double xyMin = -LocalizationConstants.kXYMargin.magnitude();
-    double zMax = LocalizationConstants.kZMargin.magnitude();
-    double zMin = -LocalizationConstants.kZMargin.magnitude();
+    double xMax = config.trust().fieldXYMargin()
+        + FieldConstants.kFieldLength.baseUnitMagnitude();
+    double yMax = config.trust().fieldXYMargin()
+        + FieldConstants.kFieldWidth.baseUnitMagnitude();
+    double xyMin = -config.trust().fieldXYMargin();
+    double zMax = config.trust().fieldZMargin();
+    double zMin = -config.trust().fieldZMargin();
     return x < xyMin
         || x > xMax
         || y < xyMin
@@ -237,25 +238,25 @@ public class SingleInputPoseEstimator implements Runnable {
     averageTagDistance /= result.getTargets().size();
     // calculate tag distance factor
     double distanceFactor = Math.max(1,
-        LocalizationConstants.kDistanceMultiplier
-            * (averageTagDistance - LocalizationConstants.kNoisyDistance));
+        config.trust().distanceMultiplier()
+            * (averageTagDistance - config.trust().noisyDistance()));
     // calculate an (average) ambiguity real quick:
     double ambiguity = getAmbiguity(result);
     // ambiguity factor
     double ambiguityFactor = Math.max(1,
-        LocalizationConstants.kAmbiguityMultiplier * ambiguity
-            + LocalizationConstants.kAmbiguityShifter);
+        config.trust().ambiguityMultiplier() * ambiguity
+            + config.trust().ambiguityShifter());
     // tag divisor
     double tags = result.getTargets().size();
-    double tagDivisor = 1 + (tags - 1) * LocalizationConstants.kTargetMultiplier;
+    double tagDivisor = 1 + (tags - 1) * config.trust().targetDivisor();
     // distance from last pose
     double poseDifferenceError = Math.max(0,
         lastPose.minus(pose).getTranslation().getNorm()
-            - LocalizationConstants.kDifferenceThreshold
+            - config.trust().differenceThreshold()
                 * superstructure.state.robotVelocity().getTranslation().getNorm());
     double diffMultiplier = Math.max(1,
-        poseDifferenceError * LocalizationConstants.kDifferenceMultiplier);
-    double timeMultiplier = Math.max(1, latency * LocalizationConstants.kLatencyMultiplier);
+        poseDifferenceError * config.trust().differenceMultiplier());
+    double timeMultiplier = Math.max(1, latency * config.trust().latencyMultiplier());
     // final calculation
     double stdDevMultiplier = ambiguityFactor
         * distanceFactor

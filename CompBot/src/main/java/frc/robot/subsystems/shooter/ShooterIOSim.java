@@ -14,13 +14,15 @@ public class ShooterIOSim implements ShooterIO {
 
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.shooter1MotorConnected = true;
+    inputs.shooter2MotorConnected = true;
     inputs.shooter1Velocity = shooterVelocity;
+    inputs.shooter2Velocity = shooterVelocity;
 
     inputs.hoodMotorConnected = true;
     inputs.hoodPosition = hoodAngle;
   }
 
-  public void setVelocity(AngularVelocity velocity) {
+  public void setVelocity(AngularVelocity velocity, boolean useRecovery) {
     shooterVelocity = velocity;
   }
 

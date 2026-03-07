@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -22,6 +21,7 @@ public class ShooterIOHardware implements ShooterIO {
   private final CANcoder hoodCANcoder;
 
   private AngularVelocity lastVelocity = RotationsPerSecond.zero();
+  private boolean lastRecoveryEnabled = false;
   private Angle lastAngle = Rotations.zero();
 
   private final VelocityTorqueCurrentFOC shooterControl = new VelocityTorqueCurrentFOC(0);
@@ -126,10 +126,11 @@ public class ShooterIOHardware implements ShooterIO {
     inputs.hoodCANcoderPosition = hoodCANcoder.getPosition(false).getValue();
   }
 
-  public void setVelocity(AngularVelocity velocity) {
-    if (!velocity.equals(lastVelocity)) {
-      shooter1Motor.setControl(shooterControl.withVelocity(velocity));
+  public void setVelocity(AngularVelocity velocity, boolean useRecovery) {
+    if (!velocity.equals(lastVelocity) || useRecovery != lastRecoveryEnabled) {
+      shooter1Motor.setControl(shooterControl.withVelocity(velocity).withSlot(useRecovery ? 1 : 0));
       lastVelocity = velocity;
+      lastRecoveryEnabled = useRecovery;
     }
   }
 

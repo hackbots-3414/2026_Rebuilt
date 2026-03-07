@@ -5,7 +5,9 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -27,6 +29,8 @@ public class Shooter extends SubsystemBase {
   private Angle hoodReference = Rotations.zero();
   private AngularVelocity shooterReference = RotationsPerSecond.zero();
 
+  private boolean activeShooting = false;
+
   public Shooter(ShooterIO io) {
     this.io = io;
 
@@ -38,6 +42,7 @@ public class Shooter extends SubsystemBase {
     OnboardLogger log = new OnboardLogger("Shooter");
     log.registerMeasurement("Hood Reference", () -> hoodReference, Rotations);
     log.registerMeasurement("Velocity Reference", () -> shooterReference, RotationsPerSecond);
+    log.registerBoolean("Enable Recovery Mode", () -> shouldEnableRecovery(shooterReference));
   }
 
   @Override
@@ -69,12 +74,20 @@ public class Shooter extends SubsystemBase {
    * This command tells the shooter to begin to track the desired target. When this command ends, it
    * does NOT turn off the shooter; we don't want to have to get all the way back up to speed.
    */
-  public Command shoot(Supplier<AimParams> params) {
+  public Command shoot(Supplier<AimParams> paramsSupplier) {
     return this.run(() -> {
-      shooterReference = projectileToShooterVelocity(params.get().output, params.get().control);
-      hoodReference = pitchToHoodAngle(params.get().pitch);
-      io.setVelocity(shooterReference);
+      activeShooting = true;
+      AimParams params = paramsSupplier.get();
+      // This runs each tick (no exceptions are possible), so we get to vary slot parameter here.
+      shooterReference = projectileToShooterVelocity(params.output, params.control);
+      hoodReference = pitchToHoodAngle(params.pitch);
+      io.setVelocity(shooterReference, shouldEnableRecovery(shooterReference));
       io.setAngle(hoodReference);
+    })
+    .finallyDo(() -> {
+      activeShooting = false;
+      shooterReference = RotationsPerSecond.zero();
+      io.setVelocity(shooterReference);
     });
   }
 
@@ -85,19 +98,36 @@ public class Shooter extends SubsystemBase {
         () -> io.setVelocity(RadiansPerSecond.zero()));
   }
 
+  private boolean shooterAtSpeed(AimParams params) {
+    double velocityError = inputs.shooter1Velocity
+          .minus(projectileToShooterVelocity(params.output, params.control)).baseUnitMagnitude();
+      boolean velocityOk =
+          Math.abs(velocityError) <= params.deltaOutput;
+      return velocityOk;
+  }
+
+  private boolean shouldEnableRecovery(AngularVelocity reference) {
+    AngularVelocity error = reference.minus(inputs.shooter1Velocity);
+    return error.baseUnitMagnitude() > ShooterConstants.kRecoveryErrorThreshold.baseUnitMagnitude();
+  }
+
+  private boolean hoodAtPosition(AimParams params) {
+    double hoodError =
+          inputs.hoodPosition.minus(pitchToHoodAngle(params.pitch)).baseUnitMagnitude();
+      boolean hoodOk =
+          Math.abs(hoodError) <= params.deltaPitch.getMeasure().baseUnitMagnitude();
+      return hoodOk;
+  }
+
   public Trigger tracked(Supplier<AimParams> params) {
     return new Trigger(() -> {
       AimParams realParams = params.get();
-      double velocityError = inputs.shooter1Velocity
-          .minus(projectileToShooterVelocity(realParams.output, realParams.control)).baseUnitMagnitude();
-      boolean velocityOk =
-          Math.abs(velocityError) <= realParams.deltaOutput;
 
-      double hoodError =
-          inputs.hoodPosition.minus(pitchToHoodAngle(realParams.pitch)).baseUnitMagnitude();
-      boolean hoodOk =
-          Math.abs(hoodError) <= realParams.deltaPitch.getMeasure().baseUnitMagnitude();
-      return velocityOk && hoodOk;
+      return shooterAtSpeed(realParams) && hoodAtPosition(realParams);
     });
+  }
+
+  public Trigger shooting() {
+    return new Trigger(() -> activeShooting);
   }
 }

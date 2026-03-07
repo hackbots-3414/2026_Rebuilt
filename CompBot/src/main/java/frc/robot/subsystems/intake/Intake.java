@@ -1,13 +1,11 @@
 
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.intake.IntakeConstants.DeployConstants;
 import frc.robot.subsystems.intake.IntakeConstants.DeployConstants.DeployPosition;
 import frc.robot.subsystems.intake.IntakeIO.IntakeIOInputs;
@@ -43,6 +41,20 @@ public class Intake extends SubsystemBase {
     return startEnd(
         () -> io.setIntakeVoltage(IntakeConstants.kEjectVoltage),
         () -> io.setIntakeVoltage(Volts.zero()));
+  }
+
+  public Command intakeAt(DeployPosition state) {
+    return Commands.sequence(
+      runOnce(() -> {
+          reference = state;
+          io.setDeployPosition(state.position);
+        }),
+        run(() -> {
+          io.setIntakeVoltage(IntakeConstants.kIntakeVoltage);
+        }))
+        .finallyDo(() -> {
+          io.setIntakeVoltage(Volts.zero());
+        });
   }
 
   public Command go(DeployPosition state) {

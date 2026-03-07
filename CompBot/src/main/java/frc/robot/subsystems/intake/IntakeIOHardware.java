@@ -1,16 +1,18 @@
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.intake.IntakeConstants.DeployConstants;
+import frc.robot.subsystems.intake.IntakeConstants.DeployConstants.DeployPosition;
 import frc.robot.util.StatusSignalUtil;
 
 public class IntakeIOHardware implements IntakeIO {
@@ -18,19 +20,15 @@ public class IntakeIOHardware implements IntakeIO {
   private final TalonFX intakeMotor;
   private final TalonFX deployMotor;
 
-  private final VoltageOut intakeControl = new VoltageOut(0).withEnableFOC(true);
-  private final DynamicMotionMagicTorqueCurrentFOC deployControl =
-      new DynamicMotionMagicTorqueCurrentFOC(
-          Rotations.zero(),
-          DeployConstants.kMaxVelocity,
-          DeployConstants.kMaxAcceleration);
+  private final VoltageOut intakeControl = new VoltageOut(0).withEnableFOC(false);
+  private final PositionVoltage deployControl = new PositionVoltage(0);
 
   private Voltage lastVoltage = Volts.zero();
 
   public IntakeIOHardware() {
     intakeMotor = new TalonFX(IntakeConstants.kIntakeMotorId);
     intakeMotor.getConfigurator().apply(IntakeConstants.kIntakeMotorConfig);
-    deployMotor = new TalonFX(DeployConstants.kDeployMotorId);
+    deployMotor = new TalonFX(DeployConstants.kDeployMotorId, StatusSignalUtil.canbus);
     deployMotor.getConfigurator().apply(DeployConstants.kDeployMotorConfig);
 
     StatusSignalUtil.registerRioSignals(
@@ -39,16 +37,21 @@ public class IntakeIOHardware implements IntakeIO {
         intakeMotor.getStatorCurrent(false),
         intakeMotor.getMotorVoltage(false),
         intakeMotor.getDeviceTemp(false),
-        intakeMotor.getVelocity(false),
+        intakeMotor.getVelocity(false));
 
+    StatusSignalUtil.registerCANivoreSignals(
         deployMotor.getSupplyCurrent(false),
         deployMotor.getTorqueCurrent(false),
         deployMotor.getStatorCurrent(false),
         deployMotor.getMotorVoltage(false),
         deployMotor.getDeviceTemp(false),
         deployMotor.getVelocity(false),
-        deployMotor.getPosition(false));
+        deployMotor.getPosition(false)
+    );
 
+    deployMotor.setPosition(0.0);
+    SmartDashboard.putData("Intake/Set Zero", Commands.runOnce(() -> deployMotor.setPosition(0)).ignoringDisable(true));
+    SmartDashboard.putData("Intake/Set Deployed", Commands.runOnce(() -> deployMotor.setPosition(DeployPosition.Deployed.position)).ignoringDisable(true));
   }
 
   public void updateInputs(IntakeIOInputs inputs) {

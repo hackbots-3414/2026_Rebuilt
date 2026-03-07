@@ -13,8 +13,8 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.FovParamsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.ProximityParamsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.ToFParamsConfigs;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -31,8 +31,8 @@ import edu.wpi.first.units.measure.Voltage;
 public class IntakeConstants {
   protected static final int kIntakeMotorId = 5;
 
-  protected static final Voltage kIntakeVoltage = Volts.of(5.0);
-  protected static final Voltage kEjectVoltage = Volts.of(-5);
+  protected static final Voltage kIntakeVoltage = Volts.of(12.0);
+  protected static final Voltage kEjectVoltage = Volts.of(-8);
 
   protected static final int kCANcoderId = 50; // FIXME Placeholder, replace with actual value
 
@@ -61,16 +61,6 @@ public class IntakeConstants {
   protected static final Current kJamStatorThreshold = Amps.of(70);
   protected static final AngularVelocity kJamVelocityThreshold = RotationsPerSecond.of(0.3);
 
-  protected static final CANrangeConfiguration kCANrangeConfig = new CANrangeConfiguration()
-      .withFovParams(new FovParamsConfigs()
-          .withFOVRangeX(6.5)
-          .withFOVRangeY(6.5))
-      .withProximityParams(new ProximityParamsConfigs()
-          .withMinSignalStrengthForValidMeasurement(15015)
-          .withProximityThreshold(0.1))
-      .withToFParams(new ToFParamsConfigs()
-          .withUpdateMode(UpdateModeValue.ShortRange100Hz));
-
   public static final class DeployConstants {
     protected static final int kDeployMotorId = 6;
 
@@ -79,17 +69,23 @@ public class IntakeConstants {
             .withNeutralMode(NeutralModeValue.Brake)
             .withInverted(InvertedValue.Clockwise_Positive))
 
+        .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+          .withForwardSoftLimitEnable(true)
+          .withForwardSoftLimitThreshold(13.5)
+          .withReverseSoftLimitEnable(true)
+          .withReverseSoftLimitThreshold(0.0))
+
         .withCurrentLimits(new CurrentLimitsConfigs()
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimit(20)
+            .withSupplyCurrentLimit(10)
             .withStatorCurrentLimit(20))
 
         .withSlot0(new Slot0Configs()
             .withKA(0)
             .withKV(0)
             .withKS(0)
-            .withKP(0)
+            .withKP(1.5)
             .withKI(0)
             .withKD(0));
 
@@ -98,7 +94,8 @@ public class IntakeConstants {
 
     public static enum DeployPosition {
       Stow(Rotations.zero()),
-      Deployed(Rotations.of(1.0));
+      Agitate(Rotations.of(7.0)),
+      Deployed(Rotations.of(13.5));
 
       protected final Angle position;
       private DeployPosition(Angle position) {
@@ -106,6 +103,6 @@ public class IntakeConstants {
       }
     }
 
-    protected static final Angle kTolerance = Rotations.of(0.02);
+    protected static final Angle kTolerance = Rotations.of(0.5);
   }
 }
