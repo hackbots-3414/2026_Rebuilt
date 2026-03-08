@@ -1,8 +1,6 @@
 package frc.robot.subsystems.drivetrain;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -26,7 +24,6 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -50,6 +47,7 @@ import frc.robot.aiming.AimParams;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.AutopilotConstants.HeadingGains;
+import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
 import frc.robot.vision.localization.LocalizationConstants;
@@ -71,6 +69,13 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   private double maxRotationalSpeed = 2.0; // rotations per second
 
+  public enum TeleopDriveMode {
+    /** Drive the robot with a field-relative control for translation and spin control (i.e. control over how fast we rotate) */
+    FieldRelativeSpin,
+    /** Drive robot relative. */
+    RobotRelative,
+  }
+
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity);
@@ -82,6 +87,12 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity)
       .withHeadingPID(HeadingGains.kP, HeadingGains.kI, HeadingGains.kD);
+
+  private final SwerveRequest.FieldCentricFacingAngle drivetrainAim = new SwerveRequest.FieldCentricFacingAngle()
+      .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
+      .withDriveRequestType(DriveRequestType.Velocity)
+      .withHeadingPID(HeadingGains.kP, HeadingGains.kI, HeadingGains.kD)
+      .withCenterOfRotation(TurretConstants.kOffset.getTranslation().toTranslation2d());
 
   private SwerveDriveState state;
 
@@ -318,12 +329,13 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
   }
 
-  public Command teleopDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, BooleanSupplier robotRelative) {
+  public Command teleopDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, Supplier<TeleopDriveMode> modeSupplier) {
     return this.applyRequest(() -> {
+      TeleopDriveMode mode = modeSupplier.get();
       // Recalculate the *real* vx and vy to be operator-dependent
       Translation2d operatorRelative = new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
 
-      if (robotRelative.getAsBoolean()) {
+      if (mode == TeleopDriveMode.RobotRelative) {
         return robotCentricDrive
             .withVelocityX(operatorRelative.getX())
             .withVelocityY(operatorRelative.getY())
@@ -331,8 +343,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       }
 
       Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
+
       if (override.isPresent()) {
-        return autopilotControl.withVelocityX(fieldRelative.getX())
+        return drivetrainAim.withVelocityX(fieldRelative.getX())
           .withVelocityY(fieldRelative.getY())
           .withTargetDirection(override.get().yaw);
       }
@@ -345,7 +358,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public Command teleopDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot) {
-    return teleopDrive(vx, vy, vrot, () -> false);
+    return teleopDrive(vx, vy, vrot, () -> TeleopDriveMode.FieldRelativeSpin);
   }
 
   /**

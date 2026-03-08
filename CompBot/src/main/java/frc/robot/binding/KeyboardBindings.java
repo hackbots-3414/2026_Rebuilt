@@ -6,10 +6,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AgitateIntake;
 import frc.robot.commands.AimPrep;
+import frc.robot.commands.DrivetrainAim;
 import frc.robot.commands.ResetForwards;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
+import frc.robot.subsystems.drivetrain.Drivetrain.TeleopDriveMode;
 import frc.robot.superstructure.Superstructure;
 
 public class KeyboardBindings implements Binder {
@@ -35,7 +37,7 @@ public class KeyboardBindings implements Binder {
     }
 
     public void bind(Superstructure superstructure) {
-        superstructure.bindDrive(vx, vy, vrot, robotCentricDrive);
+        superstructure.bindDrive(vx, vy, vrot, () -> robotCentricDrive.getAsBoolean() ? TeleopDriveMode.RobotRelative : TeleopDriveMode.FieldRelativeSpin);
 
         shoot.toggleOnTrue(superstructure.build(new AimPrep()));
         intake.whileTrue(superstructure.build(new RunIntake()));

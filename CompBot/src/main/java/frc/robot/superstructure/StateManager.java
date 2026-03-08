@@ -111,7 +111,7 @@ public class StateManager {
     Trigger turretReady = subsystems.turret().tracked(this::aimParams).debounce(TURRET_DEBOUNCE, DebounceType.kFalling);
     Trigger shooterReady = subsystems.shooter().tracked(this::aimParams).debounce(SHOOTER_DEBOUNCE, DebounceType.kFalling);
     return aimOk
-      .and(turretReady)
+      .and(turretReady) // Comment out this part to enable drivetrain aiming. Make sure the turret's at zero.
       .and(shooterReady)
       .and(shouldShoot().or(() -> forceWhenReady));
   }
