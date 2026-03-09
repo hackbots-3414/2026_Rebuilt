@@ -31,8 +31,6 @@ public class IntakeConstants {
   protected static final Voltage kIntakeVoltage = Volts.of(12.0);
   protected static final Voltage kEjectVoltage = Volts.of(-8);
 
-  protected static final int kCANcoderId = 50; // FIXME Placeholder, replace with actual value
-
   protected static final TalonFXConfiguration kIntakeMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
           .withNeutralMode(NeutralModeValue.Coast)
@@ -49,22 +47,16 @@ public class IntakeConstants {
 
   public static final class DeployConstants {
     protected static final int kDeployMotorId = 6;
+    protected static final int kCANcoderId = 29;
 
     protected static final TalonFXConfiguration kDeployMotorConfig = new TalonFXConfiguration()
         .withFeedback(new FeedbackConfigs()
             .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
-            .withFeedbackRemoteSensorID(kCANcoderId)
-            .withSensorToMechanismRatio(1.0))
+            .withFeedbackRemoteSensorID(kCANcoderId))
 
         .withMotorOutput(new MotorOutputConfigs()
             .withNeutralMode(NeutralModeValue.Brake)
             .withInverted(InvertedValue.Clockwise_Positive))
-
-        .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(13.5)
-            .withReverseSoftLimitEnable(true)
-            .withReverseSoftLimitThreshold(0.0))
 
         .withCurrentLimits(new CurrentLimitsConfigs()
             .withSupplyCurrentLimitEnable(true)
@@ -72,27 +64,34 @@ public class IntakeConstants {
             .withSupplyCurrentLimit(10)
             .withStatorCurrentLimit(20))
 
+        .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+            .withForwardSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(0.21)
+            .withReverseSoftLimitEnable(true)
+            .withReverseSoftLimitEnable(true))
+
         .withSlot0(new Slot0Configs()
             .withKA(0)
             .withKV(0)
             .withKS(0)
-            .withKP(1.5)
+            .withKP(50)
             .withKI(0)
-            .withKD(0));
+            .withKD(1)
+            .withKG(-0.5));
 
     protected static final CANcoderConfiguration kCANcoderConfig = new CANcoderConfiguration()
         .withMagnetSensor(new MagnetSensorConfigs()
             .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
-            .withAbsoluteSensorDiscontinuityPoint(1.0) // We'll never get to this point
-            .withMagnetOffset(0)); // FIXME Replace with actual values
+            .withAbsoluteSensorDiscontinuityPoint(0.5)
+            .withMagnetOffset(0.460205078125));
 
     protected static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(0.4);
     protected static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(4);
 
     public static enum DeployPosition {
       Stow(Rotations.zero()),
-      Agitate(Rotations.of(7.0)),
-      Deployed(Rotations.of(13.5));
+      Agitate(Rotations.of(0.1)),
+      Deployed(Rotations.of(0.21));
 
       protected final Angle position;
 

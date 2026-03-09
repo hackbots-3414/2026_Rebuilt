@@ -30,11 +30,13 @@ public class IntakeIOHardware implements IntakeIO {
   public IntakeIOHardware() {
     intakeMotor = new TalonFX(IntakeConstants.kIntakeMotorId);
     intakeMotor.getConfigurator().apply(IntakeConstants.kIntakeMotorConfig);
-    deployMotor = new TalonFX(DeployConstants.kDeployMotorId, StatusSignalUtil.canbus);
+
+    deployCANcoder = new CANcoder(DeployConstants.kCANcoderId, StatusSignalUtil.canivore);
+    deployCANcoder.getConfigurator().apply(DeployConstants.kCANcoderConfig);
+
+    deployMotor = new TalonFX(DeployConstants.kDeployMotorId, StatusSignalUtil.canivore);
     deployMotor.getConfigurator().apply(DeployConstants.kDeployMotorConfig);
 
-    deployCANcoder = new CANcoder(DeployConstants.kDeployMotorId);
-    deployCANcoder.getConfigurator().apply(DeployConstants.kCANcoderConfig);
 
     StatusSignalUtil.registerRioSignals(
         intakeMotor.getSupplyCurrent(false),
@@ -52,9 +54,9 @@ public class IntakeIOHardware implements IntakeIO {
         deployMotor.getDeviceTemp(false),
         deployMotor.getVelocity(false),
         deployMotor.getPosition(false),
+        
         deployCANcoder.getPosition(false),
-        deployCANcoder.getVelocity(false)
-    );
+        deployCANcoder.getVelocity(false));
 
     deployMotor.setPosition(0.0);
     SmartDashboard.putData("Intake/Set Zero", Commands.runOnce(() -> deployMotor.setPosition(0)).ignoringDisable(true));

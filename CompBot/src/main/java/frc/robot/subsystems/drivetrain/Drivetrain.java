@@ -69,7 +69,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private boolean hasAppliedOperatorPerspective = false;
 
   private double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-  private double maxRotationalSpeed = 2.0; // rotations per second
+  private double maxRotationalSpeed = 6.0; // rotations per second
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)

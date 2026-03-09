@@ -1,9 +1,16 @@
 package frc.robot.subsystems.led;
 
+import com.ctre.phoenix6.configs.CANdleConfiguration;
+import com.ctre.phoenix6.configs.LEDConfigs;
+import com.ctre.phoenix6.signals.StripTypeValue;
+
 public class LedConstants {
     // Offsets & numLEds & IDS
 
-    public static final int candle1 = 5;
+    public static final int kCANdleId = 5;
+    public static final CANdleConfiguration kLedConfig = new CANdleConfiguration()
+        .withLED(new LEDConfigs()
+            .withStripType(StripTypeValue.RGB));
     
     public static final int startIndex = 0;
     public static final int endIndex = 53;

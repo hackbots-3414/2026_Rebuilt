@@ -15,7 +15,7 @@ public class StatusSignalUtil {
   private static List<BaseStatusSignal> rioSignals = new ArrayList<>();
   private static List<BaseStatusSignal> canivoreSignals = new ArrayList<>();
 
-  public static final CANBus canbus = new CANBus("CANivore"); 
+  public static final CANBus canivore = new CANBus("CANivore"); 
 
   public static void registerRioSignals(StatusSignal... signals) {
     for (StatusSignal signal : signals) {
