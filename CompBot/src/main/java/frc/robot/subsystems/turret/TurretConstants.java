@@ -99,7 +99,7 @@ public class TurretConstants {
           .withMotionMagicJerk(kMaxJerk));
 
   /** The turret's relative position on the robot */
-  protected static final Transform3d kOffset = new Transform3d(
+  public static final Transform3d kOffset = new Transform3d(
       -0.11,
       0.11,
       0.512,

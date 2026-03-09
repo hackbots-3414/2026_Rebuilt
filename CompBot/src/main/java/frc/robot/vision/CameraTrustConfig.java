@@ -18,6 +18,7 @@ import edu.wpi.first.math.numbers.N3;
  * @param noisyDistance The average tag distance after which we begin to add extra standard devs.
  * @param distanceMultiplier The additional standard deviations per meter of average distance to the
  *        tags above the noisy distance.
+ * @param distanceMax The maximum average target distance we'll even consider.
  * @param ambiguityThreshold The maximum ambiguity acceptable.
  * @param ambiguityMultiplier The additional standard deviations per unit of ambiguity the camera
  *        reads.
@@ -38,6 +39,7 @@ public record CameraTrustConfig(
     double fieldZMargin,
     double noisyDistance,
     double distanceMultiplier,
+    double distanceMax,
     double ambiguityThreshold,
     double ambiguityMultiplier,
     double ambiguityShifter,
@@ -55,6 +57,7 @@ public record CameraTrustConfig(
         fieldZMargin,
         noisyDistance,
         distanceMultiplier,
+        distanceMax,
         ambiguityThreshold,
         ambiguityMultiplier,
         ambiguityShifter,

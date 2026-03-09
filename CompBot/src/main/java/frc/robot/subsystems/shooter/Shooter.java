@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -31,6 +32,8 @@ public class Shooter extends SubsystemBase {
 
   private boolean activeShooting = false;
 
+  private double lastSignificantDrop = 0;
+
   public Shooter(ShooterIO io) {
     this.io = io;
 
@@ -48,6 +51,11 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+
+    double error = shooterReference.baseUnitMagnitude() - inputs.shooter1Velocity.baseUnitMagnitude();
+    if (error > ShooterConstants.kShootingErrorDetectionThreshold.baseUnitMagnitude()) {
+      lastSignificantDrop = Timer.getTimestamp();
+    }
   }
 
   private AngularVelocity projectileToShooterVelocity(double output, SpeedControl control) {
@@ -129,5 +137,12 @@ public class Shooter extends SubsystemBase {
 
   public Trigger shooting() {
     return new Trigger(() -> activeShooting);
+  }
+
+  public Trigger seenBall(double seconds) {
+    return new Trigger(() -> {
+      double timeSinceLastShot = Timer.getTimestamp() - lastSignificantDrop;
+      return timeSinceLastShot > seconds;
+    });
   }
 }

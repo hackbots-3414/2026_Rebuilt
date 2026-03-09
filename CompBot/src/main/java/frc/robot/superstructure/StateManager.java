@@ -105,13 +105,13 @@ public class StateManager {
 
   public Trigger shootReady(boolean forceWhenReady) {
     final double SHOOTER_DEBOUNCE = 1.5;
-    final double TURRET_DEBOUNCE = 0.0;
+    final double TURRET_DEBOUNCE = 0.1;
 
     Trigger aimOk = new Trigger(() -> aimParams().isOk() && predictedAimParams().isOk());
     Trigger turretReady = subsystems.turret().tracked(this::aimParams).debounce(TURRET_DEBOUNCE, DebounceType.kFalling);
     Trigger shooterReady = subsystems.shooter().tracked(this::aimParams).debounce(SHOOTER_DEBOUNCE, DebounceType.kFalling);
     return aimOk
-      .and(turretReady)
+      .and(turretReady) // Comment out this part to enable drivetrain aiming. Make sure the turret's at zero.
       .and(shooterReady)
       .and(shouldShoot().or(() -> forceWhenReady));
   }
@@ -121,7 +121,7 @@ public class StateManager {
   }
 
   public Trigger shouldAgitate() {
-    return shootReady();
+    return forcedShootReady;
   }
 
   public AimParams aimParams() {

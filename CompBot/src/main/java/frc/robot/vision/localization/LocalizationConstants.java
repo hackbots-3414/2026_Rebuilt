@@ -16,28 +16,6 @@ import frc.robot.vision.CameraConfig;
 import frc.robot.vision.CameraTrustConfig;
 
 public class LocalizationConstants {
-  public static final CameraConfig kTurretBaseCameraConfig = new CameraConfig(
-      "", // Name
-      480, // Resolution height
-      640, // Resolution width
-      Degrees.of(92), // Diagonal FOV
-      Degrees.of(77.4), // Horizontal FOV
-      () -> Transform3d.kZero, // Pose supplier
-      new CameraTrustConfig(
-          VecBuilder.fill(0.06, 0.06, 0.5 * Math.PI), // Base std devs
-          0.75, // Latency threshold
-          1.3, // Latency multiplier
-          0.5, // Field XY margin
-          1.5, // Field Z margin
-          0.8, // Noisy distance
-          5.0, // Distance multiplier
-          0.2, // Ambiguity threshold
-          0.4, // Ambiguity multiplier
-          0.2, // Ambiguity shifter
-          80, // Target divisor
-          0.1, // Difference threshold
-          200)); // Difference multiplier
-
   public static final CameraConfig kRegularBaseCameraConfig = new CameraConfig(
       "", // Name
       480, // Resolution height
@@ -46,15 +24,16 @@ public class LocalizationConstants {
       Degrees.of(77.4), // Horizontal FOV
       () -> Transform3d.kZero, // Pose supplier
       new CameraTrustConfig(
-          VecBuilder.fill(0.05, 0.05, 0.05), // Base std devs
+          VecBuilder.fill(0.3, 0.3, 0.3), // Base std devs
           0.75, // Latency threshold
           1.3, // Latency multiplier
-          0.5, // Field XY margin
+          2.5, // Field XY margin
           1.5, // Field Z margin
           0.8, // Noisy distance
-          5.0, // Distance multiplier
+          70.0, // Distance multiplier
+          4.5, // Distance max
           0.2, // Ambiguity threshold
-          1.2, // Ambiguity multiplier
+          5, // Ambiguity multiplier
           0.2, // Ambiguity shifter
           80, // Target divisor
           0.1, // Difference threshold

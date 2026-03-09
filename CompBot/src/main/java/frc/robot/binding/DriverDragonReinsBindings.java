@@ -9,6 +9,7 @@ import frc.robot.commands.AgitateIntake;
 import frc.robot.commands.AimPrep;
 import frc.robot.commands.ResetForwards;
 import frc.robot.commands.RunIntake;
+import frc.robot.subsystems.drivetrain.Drivetrain.TeleopDriveMode;
 import frc.robot.superstructure.Superstructure;
 
 public class DriverDragonReinsBindings implements Binder {
@@ -31,7 +32,7 @@ public class DriverDragonReinsBindings implements Binder {
   }
 
   public void bind(Superstructure superstructure) {
-    superstructure.bindDrive(vx, vy, vrot, robotRelativeDrive);
+    superstructure.bindDrive(vx, vy, vrot, () -> robotRelativeDrive.getAsBoolean() ? TeleopDriveMode.RobotRelative : TeleopDriveMode.FieldRelativeSpin);
 
     shoot.toggleOnTrue(superstructure.build(new AimPrep()));
     intake.whileTrue(superstructure.build(new RunIntake()));
