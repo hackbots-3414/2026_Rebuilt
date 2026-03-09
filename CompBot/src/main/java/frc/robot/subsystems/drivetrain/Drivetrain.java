@@ -69,6 +69,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   private double maxRotationalSpeed = 6.0; // rotations per second
 
+  private Pose2d memorySpot = Pose2d.kZero;
+
   public enum TeleopDriveMode {
     /** Drive the robot with a field-relative control for translation and spin control (i.e. control over how fast we rotate) */
     FieldRelativeSpin,
@@ -191,6 +193,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     ologger.registerDouble("Time since last estimate", () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
     sysIDCommands();
     SmartDashboard.putData("Drivetrain/Reset Pose (Our Hub)", resetOdometry(new Pose2d(4, 4, Rotation2d.kZero), true));
+    SmartDashboard.putData("Drivetrain/Set Home", setMemorySpot());
+    SmartDashboard.putData("Drivetrain/Go Home", goHome());
   }
 
   /**
@@ -459,5 +463,13 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   public Command track(Supplier<AimParams> params) {
     return Commands.run(() -> override = Optional.of(params.get()))
       .finallyDo(() -> override = Optional.empty());
+  }
+
+  public Command setMemorySpot() {
+    return Commands.runOnce(() -> memorySpot = robotPose());
+  }
+
+  public Command goHome() {
+    return driveTo(() -> new APTarget(memorySpot), AutopilotConstants.kDefaultAutopilot);
   }
 }
