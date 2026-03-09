@@ -98,9 +98,6 @@ public class Superstructure {
   public AprilTagVisionHandler createAprilTagVisionHandler() {
     // These configs could be somewhere else.
     List<CameraConfig> configs = List.of(
-        // LocalizationConstants.kTurretBaseCameraConfig.cameraCopy(
-        //     "turret",
-        //     subsystems.turret()::turretCameraOffset),
         LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
             "cam1",
             () -> new Transform3d(-0.207, -0.318, 0.473,

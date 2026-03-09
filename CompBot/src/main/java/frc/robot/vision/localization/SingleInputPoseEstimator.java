@@ -25,8 +25,10 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.FieldManager;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.vision.CameraConfig;
@@ -168,6 +170,9 @@ public class SingleInputPoseEstimator implements Runnable {
       logger.warn("({}) Refused old vision data, latency of {}", config.cameraName(), latency);
       return false;
     }
+    if (averageTagDistance(result) > config.trust().distanceMax()) {
+      return false;
+    }
     // Ensure we only accept reef-focused estimates
     return result.hasTargets()
         && (!LocalizationConstants.kEnableTagFilter
@@ -186,6 +191,10 @@ public class SingleInputPoseEstimator implements Runnable {
     if (!checkValidity(pose, ambiguity)) {
       return Optional.empty();
     }
+
+    // Log each camera's estimates
+    FieldManager.getInstance().getField().getObject(config.cameraName()).setPose(flatPose);
+
     return Optional.of(
         new TimestampedPoseEstimate(flatPose, timestamp, stdDevs));
   }
@@ -196,7 +205,8 @@ public class SingleInputPoseEstimator implements Runnable {
     if (ambiguity >= config.trust().ambiguityThreshold()) {
       return false;
     }
-    return !isOutsideField(pose);
+    // return !isOutsideField(pose);
+    return true;
   }
 
   private boolean isOutsideField(Pose3d pose) {
@@ -221,6 +231,7 @@ public class SingleInputPoseEstimator implements Runnable {
   private Matrix<N3, N1> calculateStdDevs(PhotonPipelineResult result, Pose2d pose) {
     double latency = result.metadata.getLatencyMillis() * 1e-3;
     double multiplier = calculateStdDevMultiplier(result, latency, pose);
+    SmartDashboard.putNumber(config.cameraName() + "std devs", multiplier);
     return config.trust().baseStdDevs().times(multiplier);
   }
 
@@ -228,14 +239,7 @@ public class SingleInputPoseEstimator implements Runnable {
       PhotonPipelineResult result,
       double latency,
       Pose2d pose) {
-    double averageTagDistance = 0;
-    for (PhotonTrackedTarget tag : result.getTargets()) {
-      averageTagDistance += tag
-          .getBestCameraToTarget()
-          .getTranslation()
-          .getNorm();
-    }
-    averageTagDistance /= result.getTargets().size();
+    double averageTagDistance = averageTagDistance(result);
     // calculate tag distance factor
     double distanceFactor = Math.max(1,
         config.trust().distanceMultiplier()
@@ -258,10 +262,10 @@ public class SingleInputPoseEstimator implements Runnable {
         poseDifferenceError * config.trust().differenceMultiplier());
     double timeMultiplier = Math.max(1, latency * config.trust().latencyMultiplier());
     // final calculation
-    double stdDevMultiplier = ambiguityFactor
-        * distanceFactor
-        * diffMultiplier
-        * timeMultiplier
+    double stdDevMultiplier = (ambiguityFactor
+        + distanceFactor
+        + diffMultiplier
+        + timeMultiplier)
         / tagDivisor;
     return stdDevMultiplier;
   }
@@ -276,5 +280,17 @@ public class SingleInputPoseEstimator implements Runnable {
 
   private Transform3d robotToCamera() {
     return config.robotToCamera().get();
+  }
+
+  private double averageTagDistance(PhotonPipelineResult result) {
+    double averageTagDistance = 0.0;
+    for (PhotonTrackedTarget tag : result.getTargets()) {
+      averageTagDistance += tag
+          .getBestCameraToTarget()
+          .getTranslation()
+          .getNorm();
+    }
+    averageTagDistance /= result.getTargets().size();
+    return averageTagDistance;
   }
 }
