@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimStrategy;
@@ -33,7 +34,7 @@ public class Constants {
   }
 
   public static class AimConstants {
-    public static final AimStrategy kPhysicsAim = new PhysicsAim(
+    private static final AimStrategy kPhysicsAim = new PhysicsAim(
         new AimConstraints(
             Rotation2d.fromDegrees(49.5), // Min pitch
             Rotation2d.fromDegrees(72.0), // Max pitch
@@ -41,14 +42,15 @@ public class Constants {
         2,
         10);
 
-    public static final AimStrategy kRealAim = new ToFAim(
+    private static final AimStrategy kTofAim = new ToFAim(
         ShooterConstants.measurements,
         new AimConstraints(
             Rotation2d.fromDegrees(49.5), // Min pitch
             Rotation2d.fromDegrees(72.0), // Max pitch
             ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond))); // Max output (speed));
 
-    public static final AimStrategy kSimulationAim = kRealAim;
+    private static final AimStrategy kSimulationAim = kPhysicsAim;
+    private static final AimStrategy kRealAim = kTofAim;
 
     public static final AimStrategy kAim = Robot.isReal() ? kRealAim : kSimulationAim;
   }

@@ -6,13 +6,18 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -25,6 +30,8 @@ public class IntakeConstants {
 
   protected static final Voltage kIntakeVoltage = Volts.of(12.0);
   protected static final Voltage kEjectVoltage = Volts.of(-8);
+
+  protected static final int kCANcoderId = 50; // FIXME Placeholder, replace with actual value
 
   protected static final TalonFXConfiguration kIntakeMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
@@ -44,15 +51,20 @@ public class IntakeConstants {
     protected static final int kDeployMotorId = 6;
 
     protected static final TalonFXConfiguration kDeployMotorConfig = new TalonFXConfiguration()
+        .withFeedback(new FeedbackConfigs()
+            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+            .withFeedbackRemoteSensorID(kCANcoderId)
+            .withSensorToMechanismRatio(1.0))
+
         .withMotorOutput(new MotorOutputConfigs()
             .withNeutralMode(NeutralModeValue.Brake)
             .withInverted(InvertedValue.Clockwise_Positive))
 
         .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-          .withForwardSoftLimitEnable(true)
-          .withForwardSoftLimitThreshold(13.5)
-          .withReverseSoftLimitEnable(true)
-          .withReverseSoftLimitThreshold(0.0))
+            .withForwardSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(13.5)
+            .withReverseSoftLimitEnable(true)
+            .withReverseSoftLimitThreshold(0.0))
 
         .withCurrentLimits(new CurrentLimitsConfigs()
             .withSupplyCurrentLimitEnable(true)
@@ -68,6 +80,12 @@ public class IntakeConstants {
             .withKI(0)
             .withKD(0));
 
+    protected static final CANcoderConfiguration kCANcoderConfig = new CANcoderConfiguration()
+        .withMagnetSensor(new MagnetSensorConfigs()
+            .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
+            .withAbsoluteSensorDiscontinuityPoint(1.0) // We'll never get to this point
+            .withMagnetOffset(0)); // FIXME Replace with actual values
+
     protected static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(0.4);
     protected static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(4);
 
@@ -77,6 +95,7 @@ public class IntakeConstants {
       Deployed(Rotations.of(13.5));
 
       protected final Angle position;
+
       private DeployPosition(Angle position) {
         this.position = position;
       }

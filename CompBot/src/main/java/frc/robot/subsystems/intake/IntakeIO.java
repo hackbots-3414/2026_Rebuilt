@@ -34,6 +34,10 @@ public interface IntakeIO {
     public Temperature deployTemperature = Celsius.zero();
     public Angle deployPosition = Rotations.zero();
 
+    public boolean deployCANcoderConnected = false;
+    public Angle deployCANcoderPosition = Rotations.zero();
+    public AngularVelocity deployCANcoderVelocity = RadiansPerSecond.of(0);
+
     public IntakeIOInputs() {
       OnboardLogger log = new OnboardLogger("Intake");
       log.registerBoolean("Intake Motor/Connected", () -> intakeMotorConnected);

@@ -5,8 +5,8 @@ import frc.robot.subsystems.intake.IntakeConstants.DeployConstants.DeployPositio
 import frc.robot.superstructure.StateManager;
 import frc.robot.superstructure.Superstructure.Subsystems;
 
-public class RunIntake implements CommandBuilder {
+public class RetractIntake implements CommandBuilder {
     public Command build(Subsystems subsystems, StateManager state) {
-        return subsystems.intake().intakeAt(DeployPosition.Deployed);
-    }
+        return subsystems.intake().go(DeployPosition.Stow);
+    } 
 }

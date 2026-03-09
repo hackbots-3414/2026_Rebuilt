@@ -51,6 +51,7 @@ public final class ShooterConstants {
       .withKP(25);
 
   protected static final AngularVelocity kRecoveryErrorThreshold = RotationsPerSecond.of(4);
+  protected static final AngularVelocity kShootingErrorDetectionThreshold = RotationsPerSecond.of(8);
 
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withSlot0(Slot0Configs.from(regularControl))

@@ -1,12 +1,11 @@
 package frc.robot.subsystems.drivetrain;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -48,6 +47,7 @@ import frc.robot.aiming.AimParams;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.AutopilotConstants.HeadingGains;
+import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
 import frc.robot.vision.localization.LocalizationConstants;
@@ -60,25 +60,39 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   private final double LOOKAHEAD = 2 * Robot.kDefaultPeriod;
 
-  private Pose2d memorySpot = Pose2d.kZero;
-
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
 
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean hasAppliedOperatorPerspective = false;
 
-  private double maxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-  private double maxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+  private double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+  private double maxRotationalSpeed = 2.0; // rotations per second
+
+  public enum TeleopDriveMode {
+    /** Drive the robot with a field-relative control for translation and spin control (i.e. control over how fast we rotate) */
+    FieldRelativeSpin,
+    /** Drive robot relative. */
+    RobotRelative,
+  }
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
+      .withDriveRequestType(DriveRequestType.Velocity);
+  
+  private final SwerveRequest.RobotCentric robotCentricDrive = new SwerveRequest.RobotCentric()
       .withDriveRequestType(DriveRequestType.Velocity);
 
   private final SwerveRequest.FieldCentricFacingAngle autopilotControl = new SwerveRequest.FieldCentricFacingAngle()
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity)
       .withHeadingPID(HeadingGains.kP, HeadingGains.kI, HeadingGains.kD);
+
+  private final SwerveRequest.FieldCentricFacingAngle drivetrainAim = new SwerveRequest.FieldCentricFacingAngle()
+      .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
+      .withDriveRequestType(DriveRequestType.Velocity)
+      .withHeadingPID(HeadingGains.kP, HeadingGains.kI, HeadingGains.kD)
+      .withCenterOfRotation(TurretConstants.kOffset.getTranslation().toTranslation2d());
 
   private SwerveDriveState state;
 
@@ -177,7 +191,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     ologger.registerDouble("Time since last estimate", () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
     sysIDCommands();
     SmartDashboard.putData("Drivetrain/Reset Pose (Our Hub)", resetOdometry(new Pose2d(4, 4, Rotation2d.kZero), true));
-    SmartDashboard.putData("Drivetrain/Set Memory Pose", setMemorySpot());
   }
 
   /**
@@ -316,22 +329,36 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
   }
 
-  public Command teleopDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot) {
+  public Command teleopDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, Supplier<TeleopDriveMode> modeSupplier) {
     return this.applyRequest(() -> {
+      TeleopDriveMode mode = modeSupplier.get();
       // Recalculate the *real* vx and vy to be operator-dependent
       Translation2d operatorRelative = new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
+
+      if (mode == TeleopDriveMode.RobotRelative) {
+        return robotCentricDrive
+            .withVelocityX(operatorRelative.getX())
+            .withVelocityY(operatorRelative.getY())
+            .withRotationalRate(vrot.getAsDouble() * maxRotationalSpeed);
+      }
+
       Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
+
       if (override.isPresent()) {
-        return autopilotControl.withVelocityX(fieldRelative.getX())
+        return drivetrainAim.withVelocityX(fieldRelative.getX())
           .withVelocityY(fieldRelative.getY())
           .withTargetDirection(override.get().yaw);
       }
       return drive
           .withVelocityX(fieldRelative.getX())
           .withVelocityY(fieldRelative.getY())
-          .withRotationalRate(vrot.getAsDouble() * maxAngularRate);
+          .withRotationalRate(vrot.getAsDouble() * maxRotationalSpeed);
     })
         .withName("Teleop Drive");
+  }
+
+  public Command teleopDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot) {
+    return teleopDrive(vx, vy, vrot, () -> TeleopDriveMode.FieldRelativeSpin);
   }
 
   /**
@@ -432,13 +459,5 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   public Command track(Supplier<AimParams> params) {
     return Commands.run(() -> override = Optional.of(params.get()))
       .finallyDo(() -> override = Optional.empty());
-  }
-
-  public Command setMemorySpot() {
-    return this.runOnce(() -> memorySpot = robotPose());
-  }
-
-  public Command returnToMemory() {
-    return driveTo(() -> new APTarget(memorySpot), AutopilotConstants.kDefaultAutopilot);
   }
 }
