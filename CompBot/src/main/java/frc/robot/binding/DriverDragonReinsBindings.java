@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.binding.BindingConstants.Driver;
 import frc.robot.commands.AgitateIntake;
 import frc.robot.commands.AimPrep;
+import frc.robot.commands.DrivetrainAim;
 import frc.robot.commands.ResetForwards;
 import frc.robot.commands.RunIntake;
 import frc.robot.subsystems.drivetrain.Drivetrain.TeleopDriveMode;
@@ -34,7 +35,7 @@ public class DriverDragonReinsBindings implements Binder {
   public void bind(Superstructure superstructure) {
     superstructure.bindDrive(vx, vy, vrot, () -> robotRelativeDrive.getAsBoolean() ? TeleopDriveMode.RobotRelative : TeleopDriveMode.FieldRelativeSpin);
 
-    shoot.toggleOnTrue(superstructure.build(new AimPrep()));
+    shoot.toggleOnTrue(superstructure.build(new DrivetrainAim()));
     intake.whileTrue(superstructure.build(new RunIntake()));
     resetPerspective.onTrue(superstructure.build(new ResetForwards()));
 

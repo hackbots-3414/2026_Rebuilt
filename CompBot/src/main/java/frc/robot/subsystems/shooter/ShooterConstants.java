@@ -127,7 +127,7 @@ public final class ShooterConstants {
         .withMagnetSensor(new MagnetSensorConfigs()
             .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
             .withAbsoluteSensorDiscontinuityPoint(0.8) // We'll never get to this point
-            .withMagnetOffset(-0.0546875));
+            .withMagnetOffset(-0.150146484375));
 
     protected static final int kSlot = 0;
 
@@ -146,7 +146,8 @@ public final class ShooterConstants {
       new AimMeasurement(Meters.of(5.23), Rotation2d.fromDegrees(55), 42, Seconds.of(1.20)),
       new AimMeasurement(Meters.of(5.73), Rotation2d.fromDegrees(54), 46, Seconds.of(1.21)),
       new AimMeasurement(Meters.of(6.252), Rotation2d.fromDegrees(54), 46, Seconds.of(1.21)),
-      new AimMeasurement(Meters.of(6.696), Rotation2d.fromDegrees(54), 49, Seconds.of(1.25)),
-      new AimMeasurement(Meters.of(7.185), Rotation2d.fromDegrees(52), 50, Seconds.of(1.31))
+      new AimMeasurement(Meters.of(6.696), Rotation2d.fromDegrees(54), 50, Seconds.of(1.25)),
+      new AimMeasurement(Meters.of(7.185), Rotation2d.fromDegrees(52), 51, Seconds.of(1.31)),
+      new AimMeasurement(Meters.of(10.0), Rotation2d.fromDegrees(45), 80, Seconds.of(1.71))
   );
 }

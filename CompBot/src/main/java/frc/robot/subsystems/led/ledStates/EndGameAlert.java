@@ -16,7 +16,7 @@ public class EndGameAlert implements LedState {
     }
 
     public ControlRequest apply(LedIO io){
-       return  io.createAnimation(new RGBWColor(Color.kRed), LedIO.ANIMATION_TYPE.FLOW);
+       return io.createAnimation(new RGBWColor(Color.kRed), LedIO.ANIMATION_TYPE.FLOW);
     }
 
 }

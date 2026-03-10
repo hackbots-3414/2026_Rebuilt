@@ -61,8 +61,8 @@ public class IntakeConstants {
         .withCurrentLimits(new CurrentLimitsConfigs()
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimit(10)
-            .withStatorCurrentLimit(20))
+            .withSupplyCurrentLimit(40)
+            .withStatorCurrentLimit(40))
 
         .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
@@ -90,7 +90,7 @@ public class IntakeConstants {
 
     public static enum DeployPosition {
       Stow(Rotations.zero()),
-      Agitate(Rotations.of(0.1)),
+      Agitate(Rotations.of(0.15)),
       Deployed(Rotations.of(0.21));
 
       protected final Angle position;
