@@ -10,13 +10,16 @@ public class RumbleUtil {
 
   private static final RumbleType BOTH = RumbleType.kBothRumble;
 
+  private static final double ALERT_ON = 0.15;
+  private static final double ALERT_OFF = 0.25;
+
   /**
    * Constant, labelled strengths for the controller. This is better than passing
    * around raw doubles everywhere because this ensure the data makes sense and
    * reads declaratively.
    */
   public enum RumbleStrength {
-    Low(0.2),
+    Low(0.15),
     Medium(0.6),
     High(1.0);
 
@@ -36,10 +39,10 @@ public class RumbleUtil {
         .ignoringDisable(true);
   }
 
-  public static Command alert(CommandGenericHID controller, RumbleStrength strength, double alertTime, double inactiveTime) {
+  public static Command alert(CommandGenericHID controller, RumbleStrength strength) {
     return Commands.repeatingSequence(
-      rumble(controller, strength).withTimeout(alertTime),
-      Commands.waitSeconds(inactiveTime)
+      rumble(controller, strength).withTimeout(ALERT_ON),
+      Commands.waitSeconds(ALERT_OFF)
     )
         .ignoringDisable(true);
   }

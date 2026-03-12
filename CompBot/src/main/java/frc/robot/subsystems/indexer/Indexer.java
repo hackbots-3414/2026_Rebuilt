@@ -17,8 +17,8 @@ public class Indexer extends SubsystemBase {
   public Indexer(IndexerIO io) {
     this.io = io;
 
-    SmartDashboard.putData("Indexer/Index", this.index());
-    SmartDashboard.putData("Indexer/Eject", this.eject());
+    // SmartDashboard.putData("Indexer/Index", this.index());
+    // SmartDashboard.putData("Indexer/Eject", this.eject());
   }
 
   @Override

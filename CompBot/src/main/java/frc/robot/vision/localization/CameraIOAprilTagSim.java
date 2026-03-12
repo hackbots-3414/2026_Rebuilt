@@ -37,7 +37,7 @@ public class CameraIOAprilTagSim implements CameraIO {
     cameraSim = new PhotonCameraSim(camera, simProps);
     cameraSim.enableDrawWireframe(true);
     simSystem.addCamera(cameraSim, config.robotToCamera().get());
-    SmartDashboard.putBoolean("Vision/" + config.cameraName() + " connected", true);
+    // SmartDashboard.putBoolean("Vision/" + config.cameraName() + " connected", true);
   }
 
   public void updateInputs(CameraIOInputs inputs) {

@@ -23,15 +23,15 @@ public class Climber extends SubsystemBase {
     this.io = io;
     OnboardLogger log = new OnboardLogger("Climber");
     log.registerString("State", () -> reference.toString());
-    SmartDashboard.putData("Climber/Home", go(ClimbPosition.Home));
-    SmartDashboard.putData("Climber/Ready", go(ClimbPosition.Ready));
-    SmartDashboard.putData("Climber/Climb", go(ClimbPosition.Climbed));
+    // SmartDashboard.putData("Climber/Home", go(ClimbPosition.Home));
+    // SmartDashboard.putData("Climber/Ready", go(ClimbPosition.Ready));
+    // SmartDashboard.putData("Climber/Climb", go(ClimbPosition.Climbed));
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    SmartDashboard.putNumber("Climber/ClimbLevel", inputs.position.in(Degrees));
+    // SmartDashboard.putNumber("Climber/ClimbLevel", inputs.position.in(Degrees));
   }
 
   public Command go(ClimbPosition climbLevel) {

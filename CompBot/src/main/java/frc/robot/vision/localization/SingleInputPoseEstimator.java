@@ -231,7 +231,7 @@ public class SingleInputPoseEstimator implements Runnable {
   private Matrix<N3, N1> calculateStdDevs(PhotonPipelineResult result, Pose2d pose) {
     double latency = result.metadata.getLatencyMillis() * 1e-3;
     double multiplier = calculateStdDevMultiplier(result, latency, pose);
-    SmartDashboard.putNumber(config.cameraName() + "std devs", multiplier);
+    // SmartDashboard.putNumber(config.cameraName() + "std devs", multiplier);
     return config.trust().baseStdDevs().times(multiplier);
   }
 
