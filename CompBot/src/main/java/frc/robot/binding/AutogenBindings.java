@@ -30,14 +30,30 @@ public class AutogenBindings implements Binder {
         Autogen.registerCommand("Seed Left", superstructure.build(new ResetOdometry(AutonConstants.kLeftStart, true)));
         Autogen.registerCommand("Seed Right", superstructure.build(new ResetOdometry(AutonConstants.kRightStart, true)));
 
-        registerAPTarget("Cross Left", AutonConstants.kCrossLeft, superstructure);
         registerAPTarget("Cross Right", AutonConstants.kCrossRight, superstructure);
+        registerAPTarget("Cross Right Closer", AutonConstants.kCrossRightCloser, superstructure);
+        registerAPTarget("Cross Right Angle", AutonConstants.kCrossRightAngle, superstructure);
 
+        registerAPTarget("Cross Left", AutonConstants.kCrossLeft, superstructure);
+        registerAPTarget("Cross Left Closer", AutonConstants.kCrossLeftCloser, superstructure);
+        registerAPTarget("Cross Left Angle", AutonConstants.kCrossLeftAngle, superstructure);
+        
         registerAPTarget("Surf Left", AutonConstants.kSurfLeft, superstructure);
+        registerAPTarget("Surf Left Second", AutonConstants.kSurfLeftSecond, superstructure);
+        registerAPTarget("Surf Left Close",AutonConstants.kSurfLeftClose, superstructure);  
+
         registerAPTarget("Surf Right", AutonConstants.kSurfRight, superstructure);
+        registerAPTarget("Surf Right Second", AutonConstants.kSurfRightSecond, superstructure);
+        registerAPTarget("Surf Right Close",AutonConstants.kSurfRightClose, superstructure);
+
+        registerAPTarget("Surf Up Right", AutonConstants.kSurfUpRight, superstructure);
+        registerAPTarget("Surf Up Left", AutonConstants.kSurfUpLeft, superstructure);
+
 
         registerAPTarget("Return Left", AutonConstants.kReturnLeft, superstructure);
+        registerAPTarget("Return Left Angle", AutonConstants.kReturnLeftAngle, superstructure);        
         registerAPTarget("Return Right", AutonConstants.kReturnRight, superstructure);
+        registerAPTarget("Return Right Angle", AutonConstants.kReturnRightAngle, superstructure);
 
         registerAPTarget("Depot", AutonConstants.kDepot, superstructure);
         registerAPTarget("Tower", AutonConstants.kTower, superstructure);

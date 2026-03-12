@@ -62,11 +62,32 @@ public class Constants {
     public static final APTarget kCrossLeft = new APTarget(new Pose2d(7.5, 5.7, Rotation2d.fromDegrees(-45)));
     public static final APTarget kCrossRight = new APTarget(new Pose2d(7.5, 2.3, Rotation2d.fromDegrees(45)));
 
+    public static final APTarget kCrossRightCloser = new APTarget(new Pose2d(5.825,2.3,Rotation2d.fromDegrees(45)));
+    public static final APTarget kCrossRightAngle = new APTarget(new Pose2d(5.825, 3.7, Rotation2d.fromDegrees(45))).withEntryAngle(Rotation2d.k180deg);
+
+    public static final APTarget kCrossLeftCloser = new APTarget(new Pose2d(5.67,5.6,Rotation2d.fromDegrees(-45)));
+    public static final APTarget kCrossLeftAngle = new APTarget(new Pose2d(5.825, 3.7, Rotation2d.fromDegrees(-45))).withEntryAngle(Rotation2d.k180deg);
+    
+
+
     public static final APTarget kReturnLeft = new APTarget(kLeftStart).withEntryAngle(Rotation2d.k180deg);
     public static final APTarget kReturnRight = new APTarget(kRightStart).withEntryAngle(Rotation2d.k180deg);
+    
+    public static final APTarget kReturnRightAngle = new APTarget(new Pose2d(3.6, 2.3, Rotation2d.kCW_90deg)).withEntryAngle(Rotation2d.k180deg);
+    public static final APTarget kReturnLeftAngle = new APTarget(new Pose2d(3.6, 5.7, Rotation2d.kCCW_90deg)).withEntryAngle(Rotation2d.k180deg);
+    
 
     public static final APTarget kSurfLeft = new APTarget(new Pose2d(7.5, 4.0, Rotation2d.kCW_90deg));
     public static final APTarget kSurfRight = new APTarget(new Pose2d(7.5, 4.0, Rotation2d.kCCW_90deg));
+    public static final APTarget kSurfUpRight = new APTarget(new Pose2d(7.7,4.3,Rotation2d.kCW_90deg));
+    public static final APTarget kSurfUpLeft = new APTarget(new Pose2d(7.7,3.3,Rotation2d.kCCW_90deg));
+    
+
+    public static final APTarget kSurfLeftSecond = new APTarget(new Pose2d(7.7, 2.9, Rotation2d.fromDegrees(45)));
+    public static final APTarget kSurfRightSecond = new APTarget(new Pose2d(7.5, 2.5, Rotation2d.fromDegrees(-45)));
+
+    public static final APTarget kSurfRightClose = new APTarget(new Pose2d(5.8,5.4,Rotation2d.kCCW_90deg));
+    public static final APTarget kSurfLeftClose = new APTarget(new Pose2d(5.8,2.5,Rotation2d.kCW_90deg));
 
     public static final APTarget kTower = new APTarget(new Pose2d(1.3,3.8,Rotation2d.k180deg)).withEntryAngle(Rotation2d.k180deg);
     public static final APTarget kDepot = new APTarget(new Pose2d(0.55, 5.9, Rotation2d.k180deg)).withEntryAngle(Rotation2d.k180deg);
