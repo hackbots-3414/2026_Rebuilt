@@ -37,7 +37,7 @@ public class TurretConstants {
 
   // MotionMagic configuration
   protected static final double kGearRatio = 30.0;
-  protected static final double kMaxSpeed = 1.0;
+  protected static final double kMaxSpeed = 3.0;
   protected static final double kMaxAcceleration = 10;
 
   protected static final Angle kTolerance = Degrees.of(1);
