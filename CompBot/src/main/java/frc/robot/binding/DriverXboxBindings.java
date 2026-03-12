@@ -2,16 +2,24 @@ package frc.robot.binding;
 
 import java.util.function.DoubleSupplier;
 
+import javax.accessibility.AccessibilityProvider;
+
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.binding.BindingConstants.Driver;
 import frc.robot.commands.AgitateIntake;
+import frc.robot.commands.AimPrep;
 import frc.robot.commands.DrivetrainAim;
 import frc.robot.commands.ResetForwards;
 import frc.robot.commands.RunIntake;
 import frc.robot.subsystems.drivetrain.Drivetrain.TeleopDriveMode;
 import frc.robot.superstructure.Superstructure;
+import frc.robot.util.ActivityCalculator;
 import frc.robot.util.RumbleUtil;
+import frc.robot.util.ActivityCalculator.HubActivity;
 import frc.robot.util.RumbleUtil.RumbleStrength;
 
 public class DriverXboxBindings implements Binder {
@@ -37,12 +45,12 @@ public class DriverXboxBindings implements Binder {
   public void bind(Superstructure superstructure) {
     superstructure.bindDrive(vx, vy, vrot, () -> robotRelativeDrive.getAsBoolean() ? TeleopDriveMode.RobotRelative : TeleopDriveMode.FieldRelativeSpin);
 
-    shoot.toggleOnTrue(superstructure.build(new DrivetrainAim()));
+    shoot.toggleOnTrue(superstructure.build(new AimPrep()));
     intake.whileTrue(superstructure.build(new RunIntake()));
     resetPerspective.onTrue(superstructure.build(new ResetForwards()));
 
-    shoot.and(superstructure.state.shootReady()).onTrue(RumbleUtil.alert(controller, RumbleStrength.Medium, 0.5, 0.5).withTimeout(3.0));
-
     superstructure.state.shouldAgitate().and(intake.negate()).whileTrue(superstructure.build(new AgitateIntake()));
+
+    RobotModeTriggers.teleop().and(ActivityCalculator.when(HubActivity.Both, 3.0)).whileTrue(RumbleUtil.alert(controller, RumbleStrength.High).withTimeout(3.0));
   }
 }

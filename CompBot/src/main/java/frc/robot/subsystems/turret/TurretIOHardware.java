@@ -40,9 +40,9 @@ public class TurretIOHardware implements TurretIO {
     gear2CANcoder.getConfigurator().apply(TurretConstants.kEncoder2Config);
 
     control = new DynamicMotionMagicVoltage(
+        0,
         TurretConstants.kMaxSpeed,
-        TurretConstants.kMaxAcceleration,
-        TurretConstants.kMaxJerk).withEnableFOC(true);
+        TurretConstants.kMaxAcceleration).withEnableFOC(true);
 
     StatusSignalUtil.registerRioSignals(
         motor.getMotorVoltage(false),

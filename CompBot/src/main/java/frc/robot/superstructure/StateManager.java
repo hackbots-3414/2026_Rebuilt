@@ -145,14 +145,14 @@ public class StateManager {
   public void periodic() {
     params = new AimParams(AimStatus.Unchecked);
     predictedParams = new AimParams(AimStatus.Unchecked);
-    SmartDashboard.putBoolean("Robot/Aim OK", aimParams().isOk());
-    SmartDashboard.putBoolean("Robot/Shoot Ready", shootReady.getAsBoolean());
-    SmartDashboard.putBoolean("Robot/Shoot Ready (forced)", forcedShootReady.getAsBoolean());
-        SmartDashboard.putBoolean("Robot/Turret Ready",
-        subsystems.turret().tracked(this::aimParams).getAsBoolean());
+    // SmartDashboard.putBoolean("Robot/Aim OK", aimParams().isOk());
+    // SmartDashboard.putBoolean("Robot/Shoot Ready", shootReady.getAsBoolean());
+    // SmartDashboard.putBoolean("Robot/Shoot Ready (forced)", forcedShootReady.getAsBoolean());
+    //     SmartDashboard.putBoolean("Robot/Turret Ready",
+    //     subsystems.turret().tracked(this::aimParams).getAsBoolean());
 
-    SmartDashboard.putBoolean("Robot/Shooter Ready",
-        subsystems.shooter().tracked(this::aimParams).getAsBoolean());
+    // SmartDashboard.putBoolean("Robot/Shooter Ready",
+    //     subsystems.shooter().tracked(this::aimParams).getAsBoolean());
   }
 
   public Trigger climbing() {

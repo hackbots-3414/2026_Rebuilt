@@ -59,8 +59,8 @@ public class IntakeIOHardware implements IntakeIO {
         deployCANcoder.getVelocity(false));
 
     deployMotor.setPosition(0.0);
-    SmartDashboard.putData("Intake/Set Zero", Commands.runOnce(() -> deployMotor.setPosition(0)).ignoringDisable(true));
-    SmartDashboard.putData("Intake/Set Deployed", Commands.runOnce(() -> deployMotor.setPosition(DeployPosition.Deployed.position)).ignoringDisable(true));
+    // SmartDashboard.putData("Intake/Set Zero", Commands.runOnce(() -> deployMotor.setPosition(0)).ignoringDisable(true));
+    // SmartDashboard.putData("Intake/Set Deployed", Commands.runOnce(() -> deployMotor.setPosition(DeployPosition.Deployed.position)).ignoringDisable(true));
   }
 
   public void updateInputs(IntakeIOInputs inputs) {

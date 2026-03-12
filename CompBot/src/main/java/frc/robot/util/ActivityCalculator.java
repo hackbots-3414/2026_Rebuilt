@@ -151,7 +151,7 @@ public class ActivityCalculator {
   }
 
   public static boolean is(HubActivity active, double timeCutoff) {
-    return (status.active == active || status.active == HubActivity.Both)
+    return (status.active == active || status.active == HubActivity.Both || active == HubActivity.Both)
         && status.timeRemaining <= timeCutoff;
   }
 

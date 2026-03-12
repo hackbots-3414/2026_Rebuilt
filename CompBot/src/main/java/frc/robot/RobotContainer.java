@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.binding.AutogenBindings;
 import frc.robot.binding.Binder;
-import frc.robot.binding.DriverDragonReinsBindings;
+import frc.robot.binding.DriverXboxBindings;
 import frc.robot.binding.KeyboardBindings;
 import frc.robot.binding.MultiBindings;
 import frc.robot.binding.OperatorPS5Bindings;
@@ -17,8 +17,8 @@ public class RobotContainer {
   public final Superstructure superstructure;
   public final AprilTagVisionHandler aprilTagVisionHandler;
 
-  public final Binder hidBinder = (Robot.isReal()) ? new MultiBindings(
-    new DriverDragonReinsBindings(),
+  public final Binder hidBinder = (true) ? new MultiBindings(
+    new DriverXboxBindings(),
     new OperatorPS5Bindings()
   ) : new KeyboardBindings();
 
@@ -33,6 +33,6 @@ public class RobotContainer {
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();
     superstructure.createAutonChooser();
 
-    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
+    // SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
   }
 }

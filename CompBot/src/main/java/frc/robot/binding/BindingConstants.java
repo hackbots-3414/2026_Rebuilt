@@ -30,11 +30,11 @@ public class BindingConstants {
          */
         public static final int kXAxis = 1;
         public static final int kYAxis = 0;
-        public static final int kRotAxis = 3;
+        public static final int kRotAxis = 4;
 
-        public static final boolean kFlipX = false;
+        public static final boolean kFlipX = true;
         public static final boolean kFlipY = true;
-        public static final boolean kFlipRot = false;
+        public static final boolean kFlipRot = true;
     }
 
     public static class Operator {

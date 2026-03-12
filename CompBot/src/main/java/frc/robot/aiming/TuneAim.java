@@ -14,8 +14,8 @@ public class TuneAim implements AimStrategy {
         double pitch = SmartDashboard.getNumber("Aim Tuning/Pitch", 60.0);
         double output = SmartDashboard.getNumber("Aim Tuning/Output", 0);
 
-        SmartDashboard.putNumber("Aim Tuning/Pitch", pitch);
-        SmartDashboard.putNumber("Aim Tuning/Output", output);
+        // SmartDashboard.putNumber("Aim Tuning/Pitch", pitch);
+        // SmartDashboard.putNumber("Aim Tuning/Output", output);
 
         params.pitch = Rotation2d.fromDegrees(pitch);
         params.output = output;

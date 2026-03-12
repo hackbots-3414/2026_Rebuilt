@@ -37,15 +37,14 @@ public class TurretConstants {
 
   // MotionMagic configuration
   protected static final double kGearRatio = 30.0;
-  protected static final double kMaxSpeed = 40;
-  protected static final double kMaxAcceleration = 70;
-  protected static final double kMaxJerk = 480;
+  protected static final double kMaxSpeed = 1.0;
+  protected static final double kMaxAcceleration = 10;
 
   protected static final Angle kTolerance = Degrees.of(1);
 
   // CRT-focused constants
-  protected static final double kEncoder1Offset = -0.11474609375;
-  protected static final double kEncoder2Offset = -0.634521484375;
+  protected static final double kEncoder1Offset = -0.10400390625;
+  protected static final double kEncoder2Offset = -0.50634765625;
   protected static final double kEncoder1GearRatio = 72.0 / 12.0;
   protected static final double kEncoder2GearRatio = (72.0 * 25.0) / (12.0 * 27.0);
 
@@ -95,8 +94,7 @@ public class TurretConstants {
 
       .withMotionMagic(new MotionMagicConfigs()
           .withMotionMagicCruiseVelocity(kMaxSpeed)
-          .withMotionMagicAcceleration(kMaxAcceleration)
-          .withMotionMagicJerk(kMaxJerk));
+          .withMotionMagicAcceleration(kMaxAcceleration));
 
   /** The turret's relative position on the robot */
   public static final Transform3d kOffset = new Transform3d(

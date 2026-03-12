@@ -26,7 +26,7 @@ public class PhysicsAim implements AimStrategy {
 
   public AimParams update(Pose3d target, Pose3d shooter, Translation2d shooterVelocity) {
     Translation3d offset = target.getTranslation().minus(shooter.getTranslation());
-    SmartDashboard.putNumber("Distance", offset.toTranslation2d().getNorm());
+    // SmartDashboard.putNumber("Distance", offset.toTranslation2d().getNorm());
 
     // Calculate the pitch values for the minimum and maximum possible v_zf values:
     AimParams minParams = quicksolve(offset, shooterVelocity, minDescentVelocity);

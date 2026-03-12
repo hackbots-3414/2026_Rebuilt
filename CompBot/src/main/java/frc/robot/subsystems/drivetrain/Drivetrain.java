@@ -44,8 +44,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.FieldManager;
 import frc.robot.Robot;
 import frc.robot.aiming.AimParams;
-import frc.robot.generated.TunerConstants;
-import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.generated.CompBotTunerConstants;
+import frc.robot.generated.CompBotTunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.AutopilotConstants.HeadingGains;
 import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.util.FieldUtils;
@@ -66,7 +66,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean hasAppliedOperatorPerspective = false;
 
-  private double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+  private double maxSpeed = CompBotTunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   private double maxRotationalSpeed = 6.0; // rotations per second
 
   private Pose2d memorySpot = Pose2d.kZero;
@@ -192,9 +192,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     ologger.registerPose("Robot Pose", this::robotPose);
     ologger.registerDouble("Time since last estimate", () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
     sysIDCommands();
-    SmartDashboard.putData("Drivetrain/Reset Pose (Our Hub)", resetOdometry(new Pose2d(4, 4, Rotation2d.kZero), true));
-    SmartDashboard.putData("Drivetrain/Set Home", setMemorySpot());
-    SmartDashboard.putData("Drivetrain/Go Home", goHome());
+    // SmartDashboard.putData("Drivetrain/Reset Pose (Our Hub)", resetOdometry(new Pose2d(4, 4, Rotation2d.kZero), true));
+    // SmartDashboard.putData("Drivetrain/Set Home", setMemorySpot());
+    // SmartDashboard.putData("Drivetrain/Go Home", goHome());
   }
 
   /**
@@ -394,7 +394,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     if (Robot.isSimulation()) {
       return;
     }
-    SmartDashboard.putNumber("stddevs", estimate.stdDevs().get(0,0));
+    // SmartDashboard.putNumber("stddevs", estimate.stdDevs().get(0,0));
     addVisionMeasurement(
         estimate.pose(),
         estimate.timestamp(),
@@ -407,14 +407,14 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   private void sysIDCommands(){
-    SmartDashboard.putData("sysID/dynamic forward steer", sysIdDynamicSteer(Direction.kForward));
-    SmartDashboard.putData("sysID/dynamic reverse steer", sysIdDynamicSteer(Direction.kReverse));
-    SmartDashboard.putData("sysID/dynamic forward drive", sysIdDynamic(Direction.kForward));
-    SmartDashboard.putData("sysID/dynamic reverse drive", sysIdDynamic(Direction.kReverse));
-    SmartDashboard.putData("sysID/quasistatic forward drive", sysIdQuasistatic(Direction.kForward));
-    SmartDashboard.putData("sysID/quasistatic reverse drive", sysIdQuasistatic(Direction.kReverse));
-    SmartDashboard.putData("sysID/quasistatic reverse steer", sysIdQuasistaticSteer(Direction.kReverse));
-    SmartDashboard.putData("sysID/ quasistatic forward steer", sysIdQuasistaticSteer(Direction.kForward));
+    // SmartDashboard.putData("sysID/dynamic forward steer", sysIdDynamicSteer(Direction.kForward));
+    // SmartDashboard.putData("sysID/dynamic reverse steer", sysIdDynamicSteer(Direction.kReverse));
+    // SmartDashboard.putData("sysID/dynamic forward drive", sysIdDynamic(Direction.kForward));
+    // SmartDashboard.putData("sysID/dynamic reverse drive", sysIdDynamic(Direction.kReverse));
+    // SmartDashboard.putData("sysID/quasistatic forward drive", sysIdQuasistatic(Direction.kForward));
+    // SmartDashboard.putData("sysID/quasistatic reverse drive", sysIdQuasistatic(Direction.kReverse));
+    // SmartDashboard.putData("sysID/quasistatic reverse steer", sysIdQuasistaticSteer(Direction.kReverse));
+    // SmartDashboard.putData("sysID/ quasistatic forward steer", sysIdQuasistaticSteer(Direction.kForward));
   }
 
   private void stop() {
