@@ -1,3 +1,8 @@
 Seed Left
-Aim * (Depot * Intake + 5 + Climb Ready + Tower)
+(Cross Left + Surf Left) * Intake
+
+Aim * (Return Left + (Depot ? Intake) + 5)
+((Return Left + Cross Left + Surf Left) * Intake ) 
+
+#Climb Ready + Tower
 Climb
