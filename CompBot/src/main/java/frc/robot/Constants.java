@@ -5,13 +5,14 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.List;
+
 import com.therekrab.autopilot.APTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimStrategy;
@@ -30,7 +31,9 @@ public class Constants {
     public static final Distance kAllianceZoneLength = Meters.of(3.8);
 
     public static final Pose3d kBlueHub = new Pose3d(4.632516, 4.011139, 1.83, Rotation3d.kZero);
-    public static final Pose3d kFeedTarget = new Pose3d(4.5, 2, 1.0, Rotation3d.kZero);
+    public static final List<Pose2d> kFeedTargets = List.of(
+        new Pose2d(4.5, 2, Rotation2d.kZero),
+        new Pose2d(4.5, 6.0, Rotation2d.kZero));
   }
 
   public static class AimConstants {
@@ -78,9 +81,9 @@ public class Constants {
     
 
 
-    public static final APTarget kReturnLeft = new APTarget(kLeftStart).withEntryAngle(Rotation2d.k180deg)
+    public static final APTarget kReturnLeft = new APTarget(new Pose2d(2.5, 5.7, Rotation2d.fromDegrees(-45))).withEntryAngle(Rotation2d.k180deg)
         .withVelocity(2);
-    public static final APTarget kReturnRight = new APTarget(kRightStart).withEntryAngle(Rotation2d.k180deg)
+    public static final APTarget kReturnRight = new APTarget(new Pose2d(2.5, 2.3, Rotation2d.fromDegrees(45))).withEntryAngle(Rotation2d.k180deg)
         .withVelocity(2);
     
     public static final APTarget kReturnRightAngle = new APTarget(new Pose2d(3.6, 2.3, Rotation2d.kCW_90deg))

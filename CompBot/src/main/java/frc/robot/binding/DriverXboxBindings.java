@@ -6,6 +6,7 @@ import javax.accessibility.AccessibilityProvider;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -29,6 +30,8 @@ public class DriverXboxBindings implements Binder {
 
   private final Trigger shoot, intake, resetPerspective, robotRelativeDrive;
 
+  private boolean intaking = false;
+
   public DriverXboxBindings() {
     controller = new CommandXboxController(Driver.kDriveControllerPort);
 
@@ -45,11 +48,9 @@ public class DriverXboxBindings implements Binder {
   public void bind(Superstructure superstructure) {
     superstructure.bindDrive(vx, vy, vrot, () -> robotRelativeDrive.getAsBoolean() ? TeleopDriveMode.RobotRelative : TeleopDriveMode.FieldRelativeSpin);
 
-    shoot.toggleOnTrue(superstructure.build(new AimPrep()));
-    intake.whileTrue(superstructure.build(new RunIntake()));
+    shoot.toggleOnTrue(superstructure.build(new AimPrep()).alongWith(Commands.runOnce(() -> intaking = true)).finallyDo(() -> intaking = false));
+    intake.toggleOnTrue(superstructure.build(new RunIntake()));
     resetPerspective.onTrue(superstructure.build(new ResetForwards()));
-
-    superstructure.state.shouldAgitate().and(intake.negate()).whileTrue(superstructure.build(new AgitateIntake()));
 
     RobotModeTriggers.teleop().and(ActivityCalculator.when(HubActivity.Both, 3.0)).whileTrue(RumbleUtil.alert(controller, RumbleStrength.High).withTimeout(3.0));
   }

@@ -26,9 +26,9 @@ public class Led extends SubsystemBase  {
     private List<LedState> hierarchy = List.of(
         new BadController(),
         // new Climbed(),
-        new EndGameWarning(),
-        new EndGameAlert(),
-        new TransitionShift(),
+        // new EndGameWarning(),
+        // new EndGameAlert(),
+        // new TransitionShift(),
         new ShootReady(),
         new Default()
     );

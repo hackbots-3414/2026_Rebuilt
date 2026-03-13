@@ -99,7 +99,7 @@ public class StateManager {
     if (FieldUtils.inAllianceZone(robotPose())) {
       return FieldUtils.hub();
     } else {
-      return FieldUtils.feedTarget();
+      return FieldUtils.feedTarget(robotPose());
     }
   }
 

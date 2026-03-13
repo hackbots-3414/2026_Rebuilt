@@ -53,8 +53,8 @@ public class FieldUtils {
     return local.getX() <= FieldConstants.kAllianceZoneLength.in(Meters);
   }
 
-  public static Pose3d feedTarget() {
-    return allianceRelativeFlip(FieldConstants.kFeedTarget);
+  public static Pose3d feedTarget(Pose2d robotPose) {
+    return new Pose3d(allianceRelativeFlip(allianceRelativeFlip(robotPose).nearest(FieldConstants.kFeedTargets)));
   }
 
   public static APTarget targetFlip(APTarget original) {
