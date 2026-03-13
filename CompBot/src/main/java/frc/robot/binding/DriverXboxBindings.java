@@ -30,8 +30,6 @@ public class DriverXboxBindings implements Binder {
 
   private final Trigger shoot, intake, resetPerspective, robotRelativeDrive;
 
-  private boolean intaking = false;
-
   public DriverXboxBindings() {
     controller = new CommandXboxController(Driver.kDriveControllerPort);
 
@@ -48,7 +46,7 @@ public class DriverXboxBindings implements Binder {
   public void bind(Superstructure superstructure) {
     superstructure.bindDrive(vx, vy, vrot, () -> robotRelativeDrive.getAsBoolean() ? TeleopDriveMode.RobotRelative : TeleopDriveMode.FieldRelativeSpin);
 
-    shoot.toggleOnTrue(superstructure.build(new AimPrep()).alongWith(Commands.runOnce(() -> intaking = true)).finallyDo(() -> intaking = false));
+    shoot.toggleOnTrue(superstructure.build(new AimPrep()));
     intake.toggleOnTrue(superstructure.build(new RunIntake()));
     resetPerspective.onTrue(superstructure.build(new ResetForwards()));
 
