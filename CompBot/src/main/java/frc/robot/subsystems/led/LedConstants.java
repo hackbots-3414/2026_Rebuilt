@@ -19,17 +19,11 @@ public class LedConstants {
     public static final int endgameAlert = 15;
 
 
-    public static final String dragonReinsName = "spark";
-    public static final String ps5Name= "Dual";
+    public static final String driverName = "controller";
+    public static final String operatorName= "dual";
 
     // Animation Attributes
 
     public static final double flashSpeed = 0.75;
     public static final double strobeSpeed = 0.1;
-
-
-
-    // Binding Constants for Now. This have to be moved to actual Constants
-    public static final int kDriverPort = 0;
-    public static final int kOperatorPort = 1;
 }

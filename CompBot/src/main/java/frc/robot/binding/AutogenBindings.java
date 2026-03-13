@@ -3,6 +3,7 @@ package frc.robot.binding;
 import com.therekrab.autopilot.APTarget;
 import com.therekrab.autopilot.Autopilot;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.autogen.Autogen;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.commands.AimPrep;
@@ -29,8 +30,8 @@ public class AutogenBindings implements Binder {
         Autogen.registerStartingPose("right", AutonConstants.kRightStart);
         Autogen.registerStartingPose("depot", AutonConstants.kLeftStart);
 
-        Autogen.registerCommand("Seed Left", superstructure.build(new ResetOdometry(AutonConstants.kLeftStart, true)));
-        Autogen.registerCommand("Seed Right", superstructure.build(new ResetOdometry(AutonConstants.kRightStart, true)));
+        Autogen.registerCommand("Seed Left", Commands.none());
+        Autogen.registerCommand("Seed Right", Commands.none());
 
         registerAPTargetLoose("Cross Right", AutonConstants.kCrossRight, superstructure);
         registerAPTargetLoose("Cross Right Closer", AutonConstants.kCrossRightCloser, superstructure);

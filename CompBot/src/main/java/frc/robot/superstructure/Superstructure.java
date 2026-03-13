@@ -78,7 +78,7 @@ public class Superstructure {
   }
 
   public void bindDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, Supplier<TeleopDriveMode> mode) {
-    subsystems.drivetrain.setDefaultCommand(subsystems.drivetrain.teleopDrive(vx, vy, vrot, mode));
+    subsystems.drivetrain.setDefaultCommand(subsystems.drivetrain.teleopDrive(vx, vy, vrot, () -> state.shooting().getAsBoolean() ? TeleopDriveMode.SlowFieldRelativeSpin : mode.get()));
   }
 
   /**

@@ -22,14 +22,13 @@ public class Led extends SubsystemBase  {
             }
         }
     }
-    //todo assign priority values to each ledstate (ORDERED)
+    
     private List<LedState> hierarchy = List.of(
         new BadController(),
-        new Climbed(),
+        // new Climbed(),
         new EndGameWarning(),
         new EndGameAlert(),
         new TransitionShift(),
-        new FuelOnBoard(),
         new ShootReady(),
         new Default()
     );

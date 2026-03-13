@@ -27,7 +27,7 @@ public class Constants {
     /** The shorter side, corresponds to Y values */
     public static final Distance kFieldWidth = Meters.of(8.069);
     /** The length of the alliance zone, corresponds to X axis */
-    public static final Distance kAllianceZoneLength = Inches.of(182.11);
+    public static final Distance kAllianceZoneLength = Meters.of(3.8);
 
     public static final Pose3d kBlueHub = new Pose3d(4.632516, 4.011139, 1.83, Rotation3d.kZero);
     public static final Pose3d kFeedTarget = new Pose3d(4.5, 2, 1.0, Rotation3d.kZero);
@@ -56,12 +56,12 @@ public class Constants {
   }
 
   public static class AutonConstants {
-    public static final Pose2d kLeftStart = new Pose2d(3.6, 5.7, Rotation2d.fromDegrees(-45));
-    public static final Pose2d kRightStart = new Pose2d(3.6, 2.3, Rotation2d.fromDegrees(45));
+    public static final Pose2d kLeftStart = new Pose2d(3.3, 5.7, Rotation2d.fromDegrees(-45));
+    public static final Pose2d kRightStart = new Pose2d(3.3, 2.3, Rotation2d.fromDegrees(45));
 
-    public static final APTarget kCrossLeft = new APTarget(new Pose2d(7.5, 5.7, Rotation2d.fromDegrees(-45)))
+    public static final APTarget kCrossLeft = new APTarget(new Pose2d(7.5, 6.7, Rotation2d.fromDegrees(-45)))
         .withVelocity(2);
-    public static final APTarget kCrossRight = new APTarget(new Pose2d(7.5, 2.3, Rotation2d.fromDegrees(45)))
+    public static final APTarget kCrossRight = new APTarget(new Pose2d(7.5, 1.3, Rotation2d.fromDegrees(45)))
         .withVelocity(2);
 
     public static final APTarget kCrossRightCloser = new APTarget(new Pose2d(5.825,2.3,Rotation2d.fromDegrees(45)))

@@ -11,7 +11,7 @@ import com.therekrab.autopilot.Autopilot;
 
 public class AutopilotConstants {
     private static final APConstraints kConstraints = new APConstraints()
-        .withVelocity(5.0)
+        .withVelocity(2.0)
         .withAcceleration(10.0)
         .withJerk(8.0);
 

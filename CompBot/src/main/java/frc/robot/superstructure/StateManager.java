@@ -24,8 +24,22 @@ import frc.robot.util.OnboardLogger;
 public class StateManager {
   private final Subsystems subsystems;
 
+  public enum ShootMode {
+    Shooting,
+    Feeding;
+  }
+
+  private ShootMode calculateShootMode() {
+    if (FieldUtils.inAllianceZone(robotPose())) {
+      return ShootMode.Shooting;
+    }
+    return ShootMode.Feeding;
+  }
+
   private AimParams params = new AimParams(AimStatus.Unchecked);
   private AimParams predictedParams = new AimParams(AimStatus.Unchecked);
+
+  private ShootMode shootMode;
 
   public final Trigger shootReady;
   public final Trigger forcedShootReady;
@@ -97,9 +111,10 @@ public class StateManager {
     Trigger validdometry = subsystems.drivetrain().validOdemetry();
     return shooting().and(validdometry).and(() -> {
       boolean teleop = DriverStation.isTeleop();
-      boolean inZone = FieldUtils.inAllianceZone(robotPose());
-      boolean activeHubOrFeeding = !inZone || ActivityCalculator.is(ActivityCalculator.us());
-      return (teleop || inZone) && activeHubOrFeeding;
+      boolean auton = DriverStation.isAutonomous();
+      boolean feeding = shootMode == ShootMode.Feeding;
+      boolean activeHub = ActivityCalculator.is(ActivityCalculator.us());
+      return (teleop && (activeHub || feeding)) || (auton && !feeding);
     });
   }
 
@@ -109,11 +124,13 @@ public class StateManager {
 
     Trigger aimOk = new Trigger(() -> aimParams().isOk() && predictedAimParams().isOk());
     Trigger turretReady = subsystems.turret().tracked(this::aimParams).debounce(TURRET_DEBOUNCE, DebounceType.kFalling);
-    Trigger shooterReady = subsystems.shooter().tracked(this::aimParams).debounce(SHOOTER_DEBOUNCE, DebounceType.kFalling);
+    Trigger shooterReady = subsystems.shooter().tracked(this::aimParams).debounce(SHOOTER_DEBOUNCE,
+        DebounceType.kFalling);
     return aimOk
-      .and(turretReady) // Comment out this part to enable drivetrain aiming. Make sure the turret's at zero.
-      .and(shooterReady)
-      .and(shouldShoot().or(() -> forceWhenReady));
+        .and(turretReady) // Comment out this part to enable drivetrain aiming. Make sure the turret's at
+                          // zero.
+        .and(shooterReady)
+        .and(shouldShoot().or(() -> forceWhenReady));
   }
 
   public Trigger shootReady() {
@@ -126,8 +143,7 @@ public class StateManager {
 
   public AimParams aimParams() {
     if (params.status == AimStatus.Unchecked) {
-      params =
-          AimConstants.kAim.update(aimTarget(), turretPose(), robotVelocity().getTranslation());
+      params = AimConstants.kAim.update(aimTarget(), turretPose(), robotVelocity().getTranslation());
     }
     return params;
   }
@@ -135,9 +151,8 @@ public class StateManager {
   public AimParams predictedAimParams() {
     if (predictedParams.status == AimStatus.Unchecked) {
       Pose2d predictedPose = subsystems.drivetrain().predictedRobotPose();
-      predictedParams =
-          AimConstants.kAim.update(aimTarget(), subsystems.turret().turretPose(predictedPose),
-              subsystems.drivetrain().predictedRobotVelocity());
+      predictedParams = AimConstants.kAim.update(aimTarget(), subsystems.turret().turretPose(predictedPose),
+          subsystems.drivetrain().predictedRobotVelocity());
     }
     return predictedParams;
   }
@@ -145,14 +160,7 @@ public class StateManager {
   public void periodic() {
     params = new AimParams(AimStatus.Unchecked);
     predictedParams = new AimParams(AimStatus.Unchecked);
-    // SmartDashboard.putBoolean("Robot/Aim OK", aimParams().isOk());
-    // SmartDashboard.putBoolean("Robot/Shoot Ready", shootReady.getAsBoolean());
-    // SmartDashboard.putBoolean("Robot/Shoot Ready (forced)", forcedShootReady.getAsBoolean());
-    //     SmartDashboard.putBoolean("Robot/Turret Ready",
-    //     subsystems.turret().tracked(this::aimParams).getAsBoolean());
-
-    // SmartDashboard.putBoolean("Robot/Shooter Ready",
-    //     subsystems.shooter().tracked(this::aimParams).getAsBoolean());
+    shootMode = calculateShootMode();
   }
 
   public Trigger climbing() {

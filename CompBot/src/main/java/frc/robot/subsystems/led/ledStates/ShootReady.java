@@ -12,15 +12,10 @@ import frc.robot.superstructure.StateManager;
 public class ShootReady implements LedState{
     
     public boolean check(StateManager manager) {
-        return SmartDashboard.getBoolean("/LedState ShootReady", false);
-        // return manager.shootReady().getAsBoolean();
+        return manager.shootReady().getAsBoolean();
     }
 
     public ControlRequest apply(LedIO io) {
         return io.createAnimation(new RGBWColor(Color.kBlue), LedIO.ANIMATION_TYPE.FLOW);
-
     }
-
-   
-    
 }

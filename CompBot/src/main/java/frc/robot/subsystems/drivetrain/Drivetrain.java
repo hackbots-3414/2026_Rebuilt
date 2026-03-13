@@ -74,6 +74,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   public enum TeleopDriveMode {
     /** Drive the robot with a field-relative control for translation and spin control (i.e. control over how fast we rotate) */
     FieldRelativeSpin,
+    /** Drive the robot slower than FieldRelativeSpin */
+    SlowFieldRelativeSpin,
     /** Drive robot relative. */
     RobotRelative,
   }
@@ -347,6 +349,10 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       }
 
       Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
+
+      if (mode == TeleopDriveMode.SlowFieldRelativeSpin) {
+        fieldRelative = fieldRelative.times(0.3);
+      }
 
       if (override.isPresent()) {
         return drivetrainAim.withVelocityX(fieldRelative.getX())

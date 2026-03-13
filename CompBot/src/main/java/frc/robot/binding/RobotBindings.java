@@ -12,9 +12,7 @@ import frc.robot.superstructure.Superstructure;
 public class RobotBindings implements Binder {
     public void bind(Superstructure superstructure) {
         CommandBuilder shoot = (Robot.isReal()) ? new RunIndex() : new FuelShotSim();
-        superstructure.state.shootReady(true).and(superstructure.state.shooting()).whileTrue(
-            superstructure.build(shoot).repeatedly()
-        );
+        superstructure.state.shootReady().whileTrue(superstructure.build(shoot).repeatedly());
         RobotModeTriggers.teleop().onTrue(
             superstructure.build(new RunClimb(ClimbPosition.Ready)).onlyIf(superstructure.state.climbing())
         );
