@@ -31,7 +31,7 @@ public class LocalizationConstants {
           1.5, // Field Z margin
           0.8, // Noisy distance
           70.0, // Distance multiplier
-          4.5, // Distance max
+          6.5, // Distance max
           0.2, // Ambiguity threshold
           5, // Ambiguity multiplier
           0.2, // Ambiguity shifter

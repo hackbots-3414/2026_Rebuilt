@@ -21,12 +21,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LedIO extends SubsystemBase {
 
-  public static enum ANIMATION_TYPE {
-    TWINKLE, STROBE, LARSON, FLASH, SOLID, CLEAR, RAINBOW, FADE, FLOW;
+  public static enum AnimationType {
+    Twinkle, Strobe, Larson, Flash, Solid, Clear, Rainbow, Fade, Flow;
   }
 
   CANdle ledController = new CANdle(LedConstants.kCANdleId);
-  int slot = 2;
+  int slot = 0;
 
   public LedIO() {
     super();
@@ -41,21 +41,21 @@ public class LedIO extends SubsystemBase {
     ledController.setControl(new EmptyAnimation(slot));
   }
 
-  public ControlRequest createAnimation(RGBWColor color, ANIMATION_TYPE type) {
+  public ControlRequest createAnimation(RGBWColor color, AnimationType type) {
     switch (type) {
-      case TWINKLE:
+      case Twinkle:
         return new TwinkleAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-      case STROBE:
+      case Strobe:
         return new StrobeAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-      case FADE:
+      case Fade:
         return new SingleFadeAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-      case RAINBOW:
+      case Rainbow:
         return new RainbowAnimation(LedConstants.startIndex, LedConstants.endIndex).withSlot(slot);
-      case LARSON:
+      case Larson:
         return new LarsonAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-      case FLOW:
+      case Flow:
         return new ColorFlowAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-      case SOLID:
+      case Solid:
         return new SolidColor(LedConstants.startIndex, LedConstants.endIndex).withColor(color);
       default:
         return new EmptyAnimation(slot);

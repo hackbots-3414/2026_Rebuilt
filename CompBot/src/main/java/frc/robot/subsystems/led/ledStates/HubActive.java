@@ -15,15 +15,15 @@ import frc.robot.util.ActivityCalculator.HubActivity;
 public class HubActive implements LedState {
 
     public boolean check(StateManager manager) {
-        return ActivityCalculator.is(ActivityCalculator.us());
+        return ActivityCalculator.is(ActivityCalculator.us()) && DriverStation.isEnabled();
     }
 
     public ControlRequest apply(LedIO io) {
         
         if (ActivityCalculator.us() ==(HubActivity.Red)) {
-            return io.createAnimation(new RGBWColor(Color.kRed), LedIO.ANIMATION_TYPE.SOLID);
+            return io.createAnimation(new RGBWColor(Color.kRed), LedIO.AnimationType.Solid);
         }
-        return io.createAnimation(new RGBWColor(Color.kBlue), LedIO.ANIMATION_TYPE.SOLID);
+        return io.createAnimation(new RGBWColor(Color.kBlue), LedIO.AnimationType.Solid);
     }
 
 }

@@ -25,6 +25,8 @@ public class Led extends SubsystemBase  {
     
     private List<LedState> hierarchy = List.of(
         new BadController(),
+        new TestRslEnabled(),
+        new TestRsl(),
         // new Climbed(),
         // new EndGameWarning(),
         // new EndGameAlert(),
@@ -50,7 +52,7 @@ public class Led extends SubsystemBase  {
             }
             io.applyAnimation(state.apply(io));
             appliedState = state;
-            break;
+            return;
         }
     }
 }

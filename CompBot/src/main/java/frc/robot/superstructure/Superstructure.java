@@ -66,7 +66,7 @@ public class Superstructure {
 
   public Superstructure() {
     Drivetrain drivetrain = TestBotTunerConstants.createDrivetrain();
-    Turret turret = new Turret(Robot.isReal() ? new TurretIOHardware() : new TurretIOSim());
+    Turret turret = new Turret(Robot.isReal() ? new TurretIOSim() : new TurretIOSim());
     Shooter shooter = new Shooter(Robot.isReal() ? new ShooterIOHardware() : new ShooterIOSim());
     Indexer indexer = new Indexer(Robot.isReal() ? new IndexerIOHardware() : new IndexerIOSim());
     Intake intake = new Intake(Robot.isReal() ? new IntakeIOHardware() : new IntakeIOSim());

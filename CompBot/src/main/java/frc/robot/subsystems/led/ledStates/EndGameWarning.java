@@ -18,7 +18,7 @@ public class EndGameWarning implements LedState {
     }
 
     public ControlRequest apply(LedIO io) {
-       return io.createAnimation(new RGBWColor(Color.kOrange), LedIO.ANIMATION_TYPE.STROBE);
+       return io.createAnimation(new RGBWColor(Color.kOrange), LedIO.AnimationType.Strobe);
     }
 
 }
