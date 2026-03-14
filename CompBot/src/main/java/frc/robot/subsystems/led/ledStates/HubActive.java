@@ -20,7 +20,7 @@ public class HubActive implements LedState {
 
     public ControlRequest apply(LedIO io) {
         
-        if (ActivityCalculator.us().equals(HubActivity.Red)) {
+        if (ActivityCalculator.us() ==(HubActivity.Red)) {
             return io.createAnimation(new RGBWColor(Color.kRed), LedIO.ANIMATION_TYPE.SOLID);
         }
         return io.createAnimation(new RGBWColor(Color.kBlue), LedIO.ANIMATION_TYPE.SOLID);

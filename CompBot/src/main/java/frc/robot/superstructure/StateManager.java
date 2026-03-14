@@ -161,6 +161,8 @@ public class StateManager {
     params = new AimParams(AimStatus.Unchecked);
     predictedParams = new AimParams(AimStatus.Unchecked);
     shootMode = calculateShootMode();
+
+    SmartDashboard.putBoolean("Shoot ready", shootReady.getAsBoolean());
   }
 
   public Trigger climbing() {
