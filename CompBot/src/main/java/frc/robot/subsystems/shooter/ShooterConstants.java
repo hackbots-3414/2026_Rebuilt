@@ -137,7 +137,7 @@ public final class ShooterConstants {
 
   public static final List<AimMeasurement> measurements = List.of(
       new AimMeasurement(Meters.of(1.70), Rotation2d.fromDegrees(72), 32, Seconds.of(0.95)),
-      new AimMeasurement(Meters.of(2.34), Rotation2d.fromDegrees(70), 36, Seconds.of(1.11)),
+      new AimMeasurement(Meters.of(2.34), Rotation2d.fromDegrees(70), 34, Seconds.of(1.11)),
       new AimMeasurement(Meters.of(2.73), Rotation2d.fromDegrees(65), 36, Seconds.of(1.10)),
       new AimMeasurement(Meters.of(3.212), Rotation2d.fromDegrees(65), 37.5, Seconds.of(1.12)),
       new AimMeasurement(Meters.of(3.79), Rotation2d.fromDegrees(60), 38, Seconds.of(1.07)),

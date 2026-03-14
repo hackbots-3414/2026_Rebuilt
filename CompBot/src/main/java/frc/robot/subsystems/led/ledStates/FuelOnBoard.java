@@ -14,7 +14,7 @@ public class FuelOnBoard implements LedState{
     }
 
     public ControlRequest apply(LedIO io){
-        return io.createAnimation(new RGBWColor(Color.kYellow), LedIO.ANIMATION_TYPE.STROBE);
+        return io.createAnimation(new RGBWColor(Color.kYellow), LedIO.AnimationType.Strobe);
     }
     // Have to implement check
 }

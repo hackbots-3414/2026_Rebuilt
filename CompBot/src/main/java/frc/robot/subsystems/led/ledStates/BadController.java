@@ -18,7 +18,7 @@ public class BadController implements LedState {
   }
 
   public ControlRequest apply(LedIO io) {
-    return io.createAnimation(new RGBWColor(Color.kRed), LedIO.ANIMATION_TYPE.STROBE);
+    return io.createAnimation(new RGBWColor(Color.kRed), LedIO.AnimationType.Strobe);
   }
 
   private boolean badController() {

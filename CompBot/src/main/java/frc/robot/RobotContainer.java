@@ -20,7 +20,7 @@ public class RobotContainer {
   public final Superstructure superstructure;
   public final AprilTagVisionHandler aprilTagVisionHandler;
 
-  public final Binder hidBinder = (Robot.isReal()) ? new MultiBindings(
+  public final Binder hidBinder = (true) ? new MultiBindings(
     new DriverXboxBindings(),
     new OperatorPS5Bindings()
   ) : new KeyboardBindings();

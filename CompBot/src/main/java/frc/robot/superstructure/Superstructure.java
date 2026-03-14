@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Robot;
 import frc.robot.commands.CommandBuilder;
 import frc.robot.generated.CompBotTunerConstants;
+import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberIOSim;
@@ -65,7 +66,7 @@ public class Superstructure {
 
   public Superstructure() {
     Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain();
-    Turret turret = new Turret(Robot.isReal() ? new TurretIOHardware() : new TurretIOSim());
+    Turret turret = new Turret(Robot.isReal() ? new TurretIOSim() : new TurretIOSim());
     Shooter shooter = new Shooter(Robot.isReal() ? new ShooterIOHardware() : new ShooterIOSim());
     Indexer indexer = new Indexer(Robot.isReal() ? new IndexerIOHardware() : new IndexerIOSim());
     Intake intake = new Intake(Robot.isReal() ? new IntakeIOHardware() : new IntakeIOSim());

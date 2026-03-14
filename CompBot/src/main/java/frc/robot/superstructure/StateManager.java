@@ -109,7 +109,7 @@ public class StateManager {
 
   public Trigger shouldShoot() {
     Trigger validdometry = subsystems.drivetrain().validOdemetry();
-    return shooting().and(validdometry).and(() -> {
+    return shooting().and(() -> {
       boolean teleop = DriverStation.isTeleop();
       boolean auton = DriverStation.isAutonomous();
       boolean feeding = shootMode == ShootMode.Feeding;
@@ -163,6 +163,8 @@ public class StateManager {
     shootMode = calculateShootMode();
 
     SmartDashboard.putBoolean("Shoot ready", shootReady.getAsBoolean());
+    SmartDashboard.putBoolean("Shooting", shooting().getAsBoolean());
+    SmartDashboard.putBoolean("Forced Shoot ready", forcedShootReady.getAsBoolean());
   }
 
   public Trigger climbing() {

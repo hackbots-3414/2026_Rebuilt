@@ -14,6 +14,6 @@ public class Climbed implements LedState {
     }
 
     public ControlRequest apply(LedIO io) {
-        return io.createAnimation(new RGBWColor(), LedIO.ANIMATION_TYPE.RAINBOW);
+        return io.createAnimation(new RGBWColor(), LedIO.AnimationType.Rainbow);
     }
 }
