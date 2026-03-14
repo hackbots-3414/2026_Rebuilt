@@ -16,6 +16,10 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.therekrab.autopilot.APTarget;
 import com.therekrab.autopilot.Autopilot;
 import com.therekrab.autopilot.Autopilot.APResult;
@@ -85,6 +89,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       .withDriveRequestType(DriveRequestType.Velocity);
   
   private final SwerveRequest.RobotCentric robotCentricDrive = new SwerveRequest.RobotCentric()
+      .withDriveRequestType(DriveRequestType.Velocity);
+
+  private final SwerveRequest.ApplyRobotSpeeds robotSpeeds = new SwerveRequest.ApplyRobotSpeeds()
       .withDriveRequestType(DriveRequestType.Velocity);
 
   private final SwerveRequest.FieldCentricFacingAngle autopilotControl = new SwerveRequest.FieldCentricFacingAngle()
@@ -197,6 +204,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     // SmartDashboard.putData("Drivetrain/Reset Pose (Our Hub)", resetOdometry(new Pose2d(4, 4, Rotation2d.kZero), true));
     // SmartDashboard.putData("Drivetrain/Set Home", setMemorySpot());
     // SmartDashboard.putData("Drivetrain/Go Home", goHome());
+    configurePathplanner();
   }
 
   /**
@@ -477,5 +485,45 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public Command goHome() {
     return driveTo(() -> new APTarget(memorySpot), AutopilotConstants.kDefaultAutopilot);
+  }
+
+  private void driveRobotRelative(ChassisSpeeds speeds) {
+    setControl(robotSpeeds.withSpeeds(speeds));
+  }
+
+  private void configurePathplanner() {
+    RobotConfig config;
+    try{
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+      return;
+    }
+
+    // Configure AutoBuilder last
+    AutoBuilder.configure(
+            this::robotPose, // Robot pose supplier
+            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            () -> state.Speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(1.7, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(3.0, 0.0, 0.0) // Rotation PID constants
+            ),
+            config, // The robot configuration
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
   }
 }

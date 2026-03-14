@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
     this.io = io;
     inputs = new IntakeIOInputs();
 
-    setDefaultCommand(agitate());
+    // setDefaultCommand(agitate());
   }
 
   @Override
