@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Robot;
 import frc.robot.commands.CommandBuilder;
 import frc.robot.generated.CompBotTunerConstants;
+import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberIOSim;
@@ -64,7 +65,7 @@ public class Superstructure {
       new Alert("Robot not in configured starting pose for auton", AlertType.kWarning);
 
   public Superstructure() {
-    Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain();
+    Drivetrain drivetrain = TestBotTunerConstants.createDrivetrain();
     Turret turret = new Turret(Robot.isReal() ? new TurretIOHardware() : new TurretIOSim());
     Shooter shooter = new Shooter(Robot.isReal() ? new ShooterIOHardware() : new ShooterIOSim());
     Indexer indexer = new Indexer(Robot.isReal() ? new IndexerIOHardware() : new IndexerIOSim());

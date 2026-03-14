@@ -49,15 +49,15 @@
     {
       "anchor": {
         "x": 2.9651497860199716,
-        "y": 6.059900142653353
+        "y": 5.555292439372327
       },
       "prevControl": {
         "x": 3.8579172610556345,
-        "y": 6.059900142653353
+        "y": 5.555292439372327
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Left Return"
+      "linkedName": "Left 2 Start"
     }
   ],
   "rotationTargets": [
@@ -73,6 +73,12 @@
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.3192567567567567,
+      "endWaypointRelativePos": 2.5084459459459465,
+      "command": null
+    },
     {
       "name": "Deploy Intake",
       "waypointRelativePos": 0.45914922349762477,
@@ -90,7 +96,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -32.19573393471325
+    "rotation": -55.88552705465882
   },
   "reversed": false,
   "folder": null,
