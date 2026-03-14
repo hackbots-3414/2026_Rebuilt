@@ -30,6 +30,7 @@ public class Led extends SubsystemBase  {
         // new EndGameAlert(),
         // new TransitionShift(),
         new ShootReady(),
+        new HubActive(),
         new Default()
     );
     
