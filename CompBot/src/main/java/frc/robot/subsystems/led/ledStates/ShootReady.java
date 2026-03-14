@@ -15,6 +15,6 @@ public class ShootReady implements LedState{
     }
 
     public ControlRequest apply(LedIO io) {
-        return io.createAnimation(new RGBWColor(Color.kBlue), LedIO.ANIMATION_TYPE.SOLID);
+        return io.createAnimation(new RGBWColor(Color.kBlue), LedIO.ANIMATION_TYPE.STROBE);
     }
 }
