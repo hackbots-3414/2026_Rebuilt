@@ -1,7 +1,6 @@
 package frc.robot.superstructure;
 
 import java.util.List;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -16,10 +15,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.autogen.Autogen;
 import frc.robot.Robot;
 import frc.robot.commands.CommandBuilder;
-import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.generated.CompBotTunerConstants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIOHardware;
@@ -38,10 +35,8 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOHardware;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.turret.Turret;
-import frc.robot.subsystems.turret.TurretIODisabled;
 import frc.robot.subsystems.turret.TurretIOHardware;
 import frc.robot.subsystems.turret.TurretIOSim;
-import frc.robot.util.AutonWarn;
 import frc.robot.vision.CameraConfig;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 import frc.robot.vision.localization.LocalizationConstants;
@@ -138,7 +133,6 @@ public class Superstructure {
 
   public void createAutonChooser() {
     autoChooser = AutoBuilder.buildAutoChooser(); // or use Autogen.autoChooser() for autogen.
-    autoChooser.setDefaultOption("Do Nothing", Commands.none());
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
