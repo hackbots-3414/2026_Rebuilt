@@ -148,6 +148,6 @@ public final class ShooterConstants {
       new AimMeasurement(Meters.of(6.252), Rotation2d.fromDegrees(54), 46, Seconds.of(1.21)),
       new AimMeasurement(Meters.of(6.696), Rotation2d.fromDegrees(54), 50, Seconds.of(1.25)),
       new AimMeasurement(Meters.of(7.185), Rotation2d.fromDegrees(52), 51, Seconds.of(1.31)),
-      new AimMeasurement(Meters.of(10.0), Rotation2d.fromDegrees(45), 80, Seconds.of(1.71))
+      new AimMeasurement(Meters.of(10.0), Rotation2d.fromDegrees(50), 80, Seconds.of(1.71))
   );
 }

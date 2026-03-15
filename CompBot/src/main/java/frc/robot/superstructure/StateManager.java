@@ -160,7 +160,11 @@ public class StateManager {
   public void periodic() {
     params = new AimParams(AimStatus.Unchecked);
     predictedParams = new AimParams(AimStatus.Unchecked);
+    
     shootMode = calculateShootMode();
+
+    params = aimParams();
+    predictedParams = predictedAimParams();
 
     SmartDashboard.putBoolean("Shoot ready", shootReady.getAsBoolean());
     SmartDashboard.putBoolean("Shooting", shooting().getAsBoolean());

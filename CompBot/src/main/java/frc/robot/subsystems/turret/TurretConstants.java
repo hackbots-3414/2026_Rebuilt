@@ -50,7 +50,7 @@ public class TurretConstants {
 
   // These parameters define the range of valid angles for the turret
   protected static final Angle kMinAngle = Rotations.of(-0.5);
-  protected static final Angle kMaxAngle = Rotations.of(0.5);
+  protected static final Angle kMaxAngle = Rotations.of(0.25);
 
   // CANcoder configurations
   protected static final CANcoderConfiguration kEncoder1Config = new CANcoderConfiguration()

@@ -32,8 +32,8 @@ public class Constants {
 
     public static final Pose3d kBlueHub = new Pose3d(4.632516, 4.011139, 1.83, Rotation3d.kZero);
     public static final List<Pose2d> kFeedTargets = List.of(
-        new Pose2d(4.5, 2, Rotation2d.kZero),
-        new Pose2d(4.5, 6.0, Rotation2d.kZero));
+        new Pose2d(2.5, 2, Rotation2d.kZero),
+        new Pose2d(2.5, 6.0, Rotation2d.kZero));
   }
 
   public static class AimConstants {
@@ -52,7 +52,7 @@ public class Constants {
             Rotation2d.fromDegrees(72.0), // Max pitch
             ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond))); // Max output (speed));
 
-    private static final AimStrategy kSimulationAim = kPhysicsAim;
+    private static final AimStrategy kSimulationAim = kTofAim;
     private static final AimStrategy kRealAim = kTofAim;
 
     public static final AimStrategy kAim = Robot.isReal() ? kRealAim : kSimulationAim;

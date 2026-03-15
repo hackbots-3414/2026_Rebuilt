@@ -139,29 +139,28 @@ public class Turret extends SubsystemBase {
   /**
    * Returns the Closest Conguent value in the range [min,max], modulo 1
    *
-   * WARNING: this only works if you're SURE that max - min >= 1
-   *
    * @param position the current, non-wrapped position
    * @param reference the goal position, in the range [0,1]
    * @param min the minimum position
    * @param max the maximum position
    */
   protected static double findCC(double position, double reference, double min, double max) {
-    if (max - min < 1.0) {
-      DriverStation.reportError(
-          "Invalid range passed to Turret.findCC: " + min + " to " + max,
-          true);
-      return position;
-    }
     // Ensure reference is already a valid reference
     while (reference > max) {
       reference -= 1.0;
     }
+
     while (reference < min) {
       reference += 1.0;
     }
+
+    if (reference > max) {
+      // We've reached a reference that CANNOT be valid, ever. Bummer, just stay put i guess?
+      return max;
+    }
+
     double error = Math.abs(reference - position);
-    if (Math.abs(error) < 0.5) {
+    if (error < 0.5) {
       return reference;
     }
     double offset = (reference > position) ? -1 : 1;
@@ -171,9 +170,6 @@ public class Turret extends SubsystemBase {
         break;
       }
       double newError = Math.abs(newReference - position);
-      if (newError > error) {
-        break;
-      }
       if (Math.abs(newError) < 0.5) {
         // This is the closest we'll get
         return newReference;
