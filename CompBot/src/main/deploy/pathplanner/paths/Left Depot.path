@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.9651497860199716,
-        "y": 5.555292439372327
+        "x": 2.9910271041369465,
+        "y": 5.503537803138374
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0684566042017893,
-        "y": 5.586212893917782
+        "x": 2.0943339223187643,
+        "y": 5.53445825768383
       },
       "isLocked": false,
       "linkedName": "Left 2 Start"
@@ -45,7 +45,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 5.0,
+    "maxVelocity": 2.0,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -60,7 +60,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 1.0,
-    "rotation": -55.88552705465882
+    "rotation": 150.82821578384676
   },
   "useDefaultConstraints": true
 }
