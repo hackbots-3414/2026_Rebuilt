@@ -7,19 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Dangerous Right Sweep"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 5.0
+            "pathName": "Far Right"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Right 2"
+            "pathName": "Outpost"
           }
         }
       ]

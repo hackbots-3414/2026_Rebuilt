@@ -9,7 +9,7 @@ import frc.robot.superstructure.Superstructure.Subsystems;
 public class ShootWhenReady implements CommandBuilder {
     public Command build(Subsystems subsystems, StateManager state) {
         Command composition = Commands.sequence(
-            Commands.waitUntil(state.shootReady(true)),
+            Commands.waitUntil(state.shootReady),
             subsystems.indexer().index());
         if (Robot.isReal()) {
             return composition;

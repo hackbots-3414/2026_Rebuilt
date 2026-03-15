@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Far Left"
+          }
+        },
+        {
           "type": "race",
           "data": {
             "commands": [
@@ -17,29 +23,22 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.0
+                  "waitTime": 6.0
                 }
               }
             ]
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Left 1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Aim"
-                }
-              }
-            ]
+            "pathName": "Left Cleanup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Aim"
           }
         }
       ]

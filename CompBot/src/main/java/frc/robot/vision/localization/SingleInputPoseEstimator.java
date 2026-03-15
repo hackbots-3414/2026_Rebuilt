@@ -25,10 +25,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.FieldManager;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.vision.CameraConfig;
@@ -191,9 +189,6 @@ public class SingleInputPoseEstimator implements Runnable {
     if (!checkValidity(pose, ambiguity)) {
       return Optional.empty();
     }
-
-    // Log each camera's estimates
-    FieldManager.getInstance().getField().getObject(config.cameraName()).setPose(flatPose);
 
     return Optional.of(
         new TimestampedPoseEstimate(flatPose, timestamp, stdDevs));

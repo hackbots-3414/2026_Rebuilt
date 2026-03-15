@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left"
+            "pathName": "Right"
           }
         },
         {
@@ -23,7 +23,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 6.0
+                  "waitTime": 5.0
                 }
               }
             ]
@@ -32,7 +32,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left Cleanup"
+            "pathName": "Right Cleanup"
           }
         }
       ]

@@ -81,13 +81,15 @@ public class Intake extends SubsystemBase {
       intakeAt(DeployPosition.Agitate).withTimeout(0.5)
     )
         .onlyWhile(() -> agitating)
-        .onlyIf(() -> agitating);
+        .onlyIf(() -> agitating)
+        .withName("Agitate");
   }
 
   public Command enableAgitation() {
     return Commands.sequence(
       Commands.runOnce(() -> agitating = true),
       Commands.idle()
-    ).finallyDo(() -> agitating = false);
+    )
+        .finallyDo(() -> agitating = false);
   }
 }

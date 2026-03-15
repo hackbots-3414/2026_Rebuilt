@@ -42,19 +42,16 @@ public class StateManager {
   private ShootMode shootMode;
 
   public final Trigger shootReady;
-  public final Trigger forcedShootReady;
 
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
-    shootReady = shootReady();
-    forcedShootReady = shootReady(true);
+    shootReady = initShootReady();
     OnboardLogger log = new OnboardLogger("Robot");
     log.registerPose("Robot Pose", this::robotPose);
     log.registerTransform2d("Robot Velocity", this::robotVelocity);
     log.registerPose3d("Aim Target", this::aimTarget);
     log.registerPose3d("Turret Position", this::turretPose);
     log.registerBoolean("Shoot Ready", shootReady);
-    log.registerBoolean("Shoot Ready (Forced)", forcedShootReady);
     log.registerBoolean("Turret Tracked", subsystems.turret().tracked(this::aimParams));
     log.registerBoolean("Shooter Tracked", subsystems.shooter().tracked(this::aimParams));
     log.registerBoolean("In Alliance Zone", () -> FieldUtils.inAllianceZone(robotPose()));
@@ -107,7 +104,7 @@ public class StateManager {
     return subsystems.shooter().shooting();
   }
 
-  public Trigger shouldShoot() {
+  private Trigger shouldShoot() {
     Trigger validdometry = subsystems.drivetrain().validOdemetry();
     return shooting().and(() -> {
       boolean teleop = DriverStation.isTeleop();
@@ -118,7 +115,7 @@ public class StateManager {
     });
   }
 
-  public Trigger shootReady(boolean forceWhenReady) {
+  public Trigger initShootReady() {
     final double SHOOTER_DEBOUNCE = 1.5;
     final double TURRET_DEBOUNCE = 0.1;
 
@@ -130,15 +127,11 @@ public class StateManager {
         .and(turretReady) // Comment out this part to enable drivetrain aiming. Make sure the turret's at
                           // zero.
         .and(shooterReady)
-        .and(shouldShoot().or(() -> forceWhenReady));
-  }
-
-  public Trigger shootReady() {
-    return shootReady(false);
+        .and(shouldShoot());
   }
 
   public Trigger shouldAgitate() {
-    return forcedShootReady;
+    return shootReady;
   }
 
   public AimParams aimParams() {
@@ -168,7 +161,6 @@ public class StateManager {
 
     SmartDashboard.putBoolean("Shoot ready", shootReady.getAsBoolean());
     SmartDashboard.putBoolean("Shooting", shooting().getAsBoolean());
-    SmartDashboard.putBoolean("Forced Shoot ready", forcedShootReady.getAsBoolean());
   }
 
   public Trigger climbing() {

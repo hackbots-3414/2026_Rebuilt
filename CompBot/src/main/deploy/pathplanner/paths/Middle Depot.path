@@ -33,22 +33,26 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Deploy Intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
       "name": "Aim",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": 1.0,
-      "command": null
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Aim"
+        }
+      }
     },
     {
       "name": "Intake",
-      "waypointRelativePos": 0.05,
-      "endWaypointRelativePos": 1.0,
-      "command": null
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
     }
   ],
   "globalConstraints": {

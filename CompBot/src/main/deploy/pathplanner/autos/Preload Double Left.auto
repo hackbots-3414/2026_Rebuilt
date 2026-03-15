@@ -9,37 +9,49 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "Dangerous Left Sweep"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Aim"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.5
                 }
               }
             ]
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
+          "data": {
+            "pathName": "Left"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Left 2"
-                }
-              },
               {
                 "type": "named",
                 "data": {
                   "name": "Aim"
                 }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Cleanup"
           }
         }
       ]

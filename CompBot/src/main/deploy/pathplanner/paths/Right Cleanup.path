@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.5489999999999995,
-        "y": 2.5611250000000005
+        "x": 5.949542597381162,
+        "y": 2.6035907240316907
       },
       "prevControl": {
-        "x": 4.982125,
-        "y": 2.0251704545454547
+        "x": 5.382667597381163,
+        "y": 2.067636178577145
       },
       "nextControl": {
-        "x": 6.30602389850642,
-        "y": 3.2768566858606176
+        "x": 6.706566495887583,
+        "y": 3.3193224098923078
       },
       "isLocked": false,
       "linkedName": null
@@ -95,7 +95,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.6035767511177347,
-      "rotationDegrees": 45.0
+      "rotationDegrees": -136.82971854628641
     },
     {
       "waypointRelativePos": 1.3412816691505234,
@@ -122,22 +122,26 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Aim",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": 5.0,
-      "command": null
-    },
-    {
-      "name": "Deploy Intake",
-      "waypointRelativePos": 0.8783783783783785,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
       "name": "Intake",
       "waypointRelativePos": 0.9290540540540544,
       "endWaypointRelativePos": 4.189189189189193,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    },
+    {
+      "name": "Aim",
+      "waypointRelativePos": 4.429070354578099,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Aim"
+        }
+      }
     }
   ],
   "globalConstraints": {
@@ -156,7 +160,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 126.50144112050634
+    "rotation": -136.07170117171438
   },
   "useDefaultConstraints": true
 }

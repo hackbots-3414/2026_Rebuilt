@@ -2,25 +2,18 @@ package frc.robot.binding;
 
 import java.util.function.DoubleSupplier;
 
-import javax.accessibility.AccessibilityProvider;
-
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.binding.BindingConstants.Driver;
-import frc.robot.commands.AgitateIntake;
 import frc.robot.commands.AimPrep;
-import frc.robot.commands.DrivetrainAim;
 import frc.robot.commands.ResetForwards;
 import frc.robot.commands.RunIntake;
 import frc.robot.subsystems.drivetrain.Drivetrain.TeleopDriveMode;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.util.ActivityCalculator;
-import frc.robot.util.RumbleUtil;
 import frc.robot.util.ActivityCalculator.HubActivity;
+import frc.robot.util.RumbleUtil;
 import frc.robot.util.RumbleUtil.RumbleStrength;
 
 public class DriverXboxBindings implements Binder {

@@ -7,25 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right 1"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 5.0
+            "pathName": "Far Left"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Right 2"
+            "pathName": "Depot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Aim"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }

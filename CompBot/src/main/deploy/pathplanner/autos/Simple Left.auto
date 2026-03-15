@@ -5,22 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "race",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Left 1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Aim"
-                }
-              }
-            ]
+            "pathName": "Left"
           }
         },
         {

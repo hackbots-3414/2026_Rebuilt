@@ -79,7 +79,7 @@ public class Turret extends SubsystemBase {
           // full range. We don't generally want to do this, because it would mean that while
           // shooting, we would be more likely to hit the turret's physical max and *force*
           // ourselves to rotate the turret all the way around... nonideal.
-          setPosition(mechanismAngle, !state.shootReady().getAsBoolean());
+          setPosition(mechanismAngle, !state.shootReady.getAsBoolean());
         }))
         .finallyDo(() -> tracking = false);
   }
