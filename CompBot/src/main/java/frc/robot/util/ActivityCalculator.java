@@ -179,6 +179,10 @@ public class ActivityCalculator {
     return teamHub;
   }
 
+  public static HubActivity other() {
+    return teamHub == HubActivity.Blue ? HubActivity.Red : HubActivity.Blue;
+  }
+
   /** Returns the last cached hub status. Only calls to {@code update()} will actually change this value. */
   public static HubStatus status() {
     return status;

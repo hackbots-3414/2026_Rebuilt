@@ -105,17 +105,21 @@ public class StateManager {
   }
 
   private Trigger shouldShoot() {
+    double SHOT_TIME = 4.0; // This accounts for the time it takes to score the shots.
+
     Trigger validdometry = subsystems.drivetrain().validOdemetry();
-    return shooting().and(() -> {
-      boolean teleop = DriverStation.isTeleop();
-      boolean auton = DriverStation.isAutonomous();
-      boolean feeding = shootMode == ShootMode.Feeding;
-      boolean activeHub = ActivityCalculator.is(ActivityCalculator.us());
-      return (teleop && (activeHub || feeding)) || (auton && !feeding);
-    });
+    return shooting()
+        // .and(validdometry)
+        .and(() -> {
+          boolean teleop = DriverStation.isTeleop();
+          boolean auton = DriverStation.isAutonomous();
+          boolean feeding = shootMode == ShootMode.Feeding;
+          boolean activeHub = ActivityCalculator.is(ActivityCalculator.us()) || ActivityCalculator.is(ActivityCalculator.other(), SHOT_TIME);
+          return (teleop && (activeHub || feeding)) || (auton && !feeding);
+        });
   }
 
-  public Trigger initShootReady() {
+  private Trigger initShootReady() {
     final double SHOOTER_DEBOUNCE = 1.5;
     final double TURRET_DEBOUNCE = 0.1;
 
@@ -153,7 +157,7 @@ public class StateManager {
   public void periodic() {
     params = new AimParams(AimStatus.Unchecked);
     predictedParams = new AimParams(AimStatus.Unchecked);
-    
+
     shootMode = calculateShootMode();
 
     params = aimParams();
