@@ -82,10 +82,11 @@ public class Intake extends SubsystemBase {
     )
         .onlyWhile(() -> agitating)
         .onlyIf(() -> agitating)
-        .withName("Agitate");
+        .withName("Intake Default");
   }
 
   public Command enableAgitation() {
+    // This doesn't require this subsystem so that this doesn't interfere with the default command.
     return Commands.sequence(
       Commands.runOnce(() -> agitating = true),
       Commands.idle()

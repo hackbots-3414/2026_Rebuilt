@@ -125,23 +125,13 @@
       "name": "Intake",
       "waypointRelativePos": 0.9290540540540544,
       "endWaypointRelativePos": 4.189189189189193,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Intake"
-        }
-      }
+      "command": null
     },
     {
       "name": "Aim",
       "waypointRelativePos": 4.429070354578099,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Aim"
-        }
-      }
+      "endWaypointRelativePos": 5.0,
+      "command": null
     }
   ],
   "globalConstraints": {
@@ -154,7 +144,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 112.83365417791747
+    "rotation": 138.3179186825468
   },
   "reversed": false,
   "folder": null,

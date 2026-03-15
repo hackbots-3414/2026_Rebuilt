@@ -98,13 +98,8 @@
     {
       "name": "Intake",
       "waypointRelativePos": 0.8912896691424599,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Intake"
-        }
-      }
+      "endWaypointRelativePos": 3.0,
+      "command": null
     }
   ],
   "globalConstraints": {

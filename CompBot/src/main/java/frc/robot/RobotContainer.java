@@ -27,12 +27,12 @@ public class RobotContainer {
 
   public final Binder robotBinder = new RobotBindings();
   public final Binder autogenBinder = new AutogenBindings();
-  public final Binder ppBinder = new NamedCommandBindings();
+  public final Binder namedCommandsBinder = new NamedCommandBindings();
 
   public RobotContainer() {
     superstructure = new Superstructure();
     robotBinder.bind(superstructure);
-    ppBinder.bind(superstructure);
+    namedCommandsBinder.bind(superstructure);
     hidBinder.bind(superstructure);
     autogenBinder.bind(superstructure);
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();

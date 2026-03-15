@@ -4,9 +4,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AgitateIntake;
 import frc.robot.commands.AimPrep;
-import frc.robot.commands.DrivetrainAim;
 import frc.robot.commands.ResetForwards;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.RunIndex;
@@ -44,8 +42,6 @@ public class KeyboardBindings implements Binder {
         resetForwards.onTrue(superstructure.build(new ResetForwards()));
         index.whileTrue(superstructure.build(new RunIndex()));
         retractIntake.onTrue(superstructure.build(new RetractIntake()));
-
-        superstructure.state.shouldAgitate().and(intake.negate()).whileTrue(superstructure.build(new AgitateIntake()));
 
     }
     
