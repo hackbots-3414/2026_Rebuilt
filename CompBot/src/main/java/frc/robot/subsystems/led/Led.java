@@ -10,7 +10,7 @@ import frc.robot.subsystems.led.ledStates.*;
 import frc.robot.superstructure.StateManager;
 
 public class Led extends SubsystemBase  {
-    private LedState appliedState;
+    private LedState appliedState = new Default();
     private LedIO io;
 
     public Led(LedIO io) {
@@ -28,11 +28,10 @@ public class Led extends SubsystemBase  {
         new TestRslEnabled(),
         new TestRsl(),
         // new Climbed(),
-        // new EndGameWarning(),
-        // new EndGameAlert(),
-        // new TransitionShift(),
-        new ShootReady(),
-        new HubActive(),
+        new EndGameAlert(),
+        new EndGameWarning(),
+        // new ShootReady(),
+        // new HubActive(),
         new Default()
     );
     
@@ -47,7 +46,7 @@ public class Led extends SubsystemBase  {
             if (!check) {
                 continue;
             }
-            if (appliedState == state) {
+            if (appliedState.equals(state)) {
                 break;
             }
             io.applyAnimation(state.apply(io));

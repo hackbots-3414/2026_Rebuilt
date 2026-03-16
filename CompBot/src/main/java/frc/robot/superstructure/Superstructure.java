@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Robot;
 import frc.robot.commands.CommandBuilder;
 import frc.robot.generated.CompBotTunerConstants;
+import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberIOSim;
@@ -37,6 +37,7 @@ import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIOHardware;
 import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.superstructure.StateManager.ShootMode;
+import frc.robot.util.RobotIdentifier;
 import frc.robot.vision.CameraConfig;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 import frc.robot.vision.localization.LocalizationConstants;
@@ -66,15 +67,49 @@ public class Superstructure {
       new Alert("Robot not in configured starting pose for auton", AlertType.kWarning);
 
   public Superstructure() {
-    Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain();
-    Turret turret = new Turret(Robot.isReal() ? new TurretIOHardware() : new TurretIOSim());
-    Shooter shooter = new Shooter(Robot.isReal() ? new ShooterIOHardware() : new ShooterIOSim());
-    Indexer indexer = new Indexer(Robot.isReal() ? new IndexerIOHardware() : new IndexerIOSim());
-    Intake intake = new Intake(Robot.isReal() ? new IntakeIOHardware() : new IntakeIOSim());
-    Climber climber = new Climber(Robot.isReal() ? new ClimberIOHardware() : new ClimberIOSim());
-    Led led = new Led(new LedIO());
-    subsystems = new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
+    subsystems = switch(RobotIdentifier.id()) {
+      case CompBot -> createCompBotSubsystems();
+      case SimBot -> createSimBotSubsystems();
+      case TestBot -> createTestBotSubsystems();
+    };
     state = new StateManager(subsystems);
+  }
+
+  /** Creates subsystems initialized for real comp robot. */
+  private Subsystems createCompBotSubsystems() {
+    Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain();
+    Turret turret = new Turret(new TurretIOHardware());
+    Shooter shooter = new Shooter(new ShooterIOHardware());
+    Indexer indexer = new Indexer(new IndexerIOHardware());
+    Intake intake = new Intake(new IntakeIOHardware());
+    Climber climber = new Climber(new ClimberIOHardware());
+    Led led = new Led(new LedIO());
+    return new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
+  }
+
+  /** Creates subsystems initialized for simulation robot */
+  private Subsystems createSimBotSubsystems() {
+    Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain();
+    Turret turret = new Turret(new TurretIOSim());
+    Shooter shooter = new Shooter(new ShooterIOSim());
+    Indexer indexer = new Indexer(new IndexerIOSim());
+    Intake intake = new Intake(new IntakeIOSim());
+    Climber climber = new Climber(new ClimberIOSim());
+    Led led = new Led(new LedIO());
+    return new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
+  }
+
+  /** Creates subsystems initialized for test bot */
+  private Subsystems createTestBotSubsystems() {
+    Drivetrain drivetrain = TestBotTunerConstants.createDrivetrain();
+    // Sim everything besides drivetrain and LEDs.
+    Turret turret = new Turret(new TurretIOSim());
+    Shooter shooter = new Shooter(new ShooterIOSim());
+    Indexer indexer = new Indexer(new IndexerIOSim());
+    Intake intake = new Intake(new IntakeIOSim());
+    Climber climber = new Climber(new ClimberIOSim());
+    Led led = new Led(new LedIO());
+    return new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
   }
 
   public void bindDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, Supplier<TeleopDriveMode> mode) {

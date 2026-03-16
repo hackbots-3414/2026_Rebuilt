@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.ActivityCalculator;
 import frc.robot.util.ActivityCalculator.HubStatus;
 import frc.robot.util.OnboardLogger;
+import frc.robot.util.RobotIdentifier;
+import frc.robot.util.RobotIdentifier.RobotId;
 import frc.robot.util.StatusSignalUtil;
 
 public class Robot extends TimedRobot {
@@ -42,6 +44,8 @@ public class Robot extends TimedRobot {
     ActivityCalculator.readGameData();
     ActivityCalculator.startTimer();
     ActivityCalculator.startLogging();
+
+    RobotIdentifier.processRobotId();
   }
 
   @Override
@@ -68,7 +72,9 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     if (!hasStartedVision) {
-      robotContainer.aprilTagVisionHandler.startThread();
+      if (RobotIdentifier.id() != RobotId.TestBot) {
+        robotContainer.aprilTagVisionHandler.startThread();
+      }
       hasStartedVision = true;
     }
   }
@@ -110,6 +116,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    if (!ActivityCalculator.ok()) {
+      ActivityCalculator.readGameData();
+    }
   }
 
   @Override

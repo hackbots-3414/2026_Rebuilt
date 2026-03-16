@@ -94,6 +94,10 @@ public class ActivityCalculator {
     }
   }
 
+  public static boolean ok() {
+    return !failed;
+  }
+
   public static void startTimer() {
     end = Timer.getTimestamp() + 140.0; // 140s in teleop
   }

@@ -1,5 +1,6 @@
 package frc.robot.subsystems.led;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.ColorFlowAnimation;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.EmptyAnimation;
@@ -13,6 +14,7 @@ import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.signals.RGBWColor;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.StatusSignalUtil;
 
 public class LedIO extends SubsystemBase {
 
@@ -20,7 +22,7 @@ public class LedIO extends SubsystemBase {
     Twinkle, Strobe, Larson, Flash, Solid, Clear, Rainbow, Fade, Flow;
   }
 
-  CANdle ledController = new CANdle(LedConstants.kCANdleId);
+  CANdle ledController = new CANdle(LedConstants.kCANdleId, LedConstants.kCanbus);
   int slot = 0;
 
   public LedIO() {
@@ -29,6 +31,7 @@ public class LedIO extends SubsystemBase {
   }
 
   public void applyAnimation(ControlRequest animation) {
+    clearAnimation();
     ledController.setControl(animation);
   }
 
@@ -37,24 +40,16 @@ public class LedIO extends SubsystemBase {
   }
 
   public ControlRequest createAnimation(RGBWColor color, AnimationType type) {
-    switch (type) {
-      case Twinkle:
-        return new TwinkleAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-      case Strobe:
-        return new StrobeAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-      case Fade:
-        return new SingleFadeAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-      case Rainbow:
-        return new RainbowAnimation(LedConstants.startIndex, LedConstants.endIndex).withSlot(slot);
-      case Larson:
-        return new LarsonAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-      case Flow:
-        return new ColorFlowAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-      case Solid:
-        return new SolidColor(LedConstants.startIndex, LedConstants.endIndex).withColor(color);
-      default:
-        return new EmptyAnimation(slot);
-    }
-
+    return switch (type) {
+          case Twinkle -> new TwinkleAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
+          case Strobe -> new StrobeAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot).withFrameRate(LedConstants.kStrobeRate);
+          case Fade -> new SingleFadeAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
+          case Rainbow -> new RainbowAnimation(LedConstants.startIndex, LedConstants.endIndex).withSlot(slot);
+          case Larson -> new LarsonAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
+          case Flow -> new ColorFlowAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
+          case Solid -> new SolidColor(LedConstants.startIndex, LedConstants.endIndex).withColor(color);
+          case Flash -> new StrobeAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot).withFrameRate(LedConstants.kFlashRate);
+          case Clear -> new EmptyAnimation(slot);
+    };
   }
 }

@@ -10,6 +10,7 @@ public final class Main {
   private Main() {}
 
   public static void main(String... args) {
+    // This makes sure that we know who we are
     RobotBase.startRobot(Robot::new);
   }
 }

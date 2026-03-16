@@ -14,11 +14,11 @@ import frc.robot.superstructure.StateManager;
 public class EndGameWarning implements LedState {
 
     public boolean check(StateManager manager) {
-        return DriverStation.getMatchTime() < LedConstants.endgameWarning && DriverStation.isTeleopEnabled() && DriverStation.getMatchType() != MatchType.None;
+        return DriverStation.getMatchTime() < LedConstants.endgameWarning && DriverStation.isTeleopEnabled();
     }
 
     public ControlRequest apply(LedIO io) {
-       return io.createAnimation(new RGBWColor(Color.kOrange), LedIO.AnimationType.Strobe);
+       return io.createAnimation(new RGBWColor(Color.kOrange), LedIO.AnimationType.Flash);
     }
 
 }
