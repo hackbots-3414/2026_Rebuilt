@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.409945504324777,
-        "y": 5.1847645350864955
+        "x": 2.1395542168674693,
+        "y": 6.2533253012048196
       },
       "isLocked": false,
       "linkedName": "Left 2 Start"
     },
     {
       "anchor": {
-        "x": 0.6738749999999998,
-        "y": 6.384954545454545
+        "x": 0.45668674698795175,
+        "y": 6.286108433734939
       },
       "prevControl": {
-        "x": 0.6864256504603797,
-        "y": 3.918350917271206
+        "x": 0.1397831325301208,
+        "y": 3.2700602409638555
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.5558867362146049,
-      "rotationDegrees": 133.852
+      "rotationDegrees": 107.80583310090535
     }
   ],
   "constraintZones": [
