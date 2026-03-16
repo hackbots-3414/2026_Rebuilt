@@ -136,5 +136,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {
+    SmartDashboard.putBoolean("Shoot Ready", robotContainer.superstructure.state.shootReady.getAsBoolean());
   }
 }

@@ -74,11 +74,6 @@ public class Turret extends SubsystemBase {
             return;
           }
           Angle mechanismAngle = params.yaw.minus(robot).getMeasure().plus(TurretConstants.kForwards);
-          // We're only in "tracking" mode if we're just trying to get to a happy spot. If everybody
-          // else is ready, we don't want to hold up shooting, so we allow the turret access to its
-          // full range. We don't generally want to do this, because it would mean that while
-          // shooting, we would be more likely to hit the turret's physical max and *force*
-          // ourselves to rotate the turret all the way around... nonideal.
           setPosition(mechanismAngle, !state.shootReady.getAsBoolean());
         }))
         .finallyDo(() -> tracking = false);

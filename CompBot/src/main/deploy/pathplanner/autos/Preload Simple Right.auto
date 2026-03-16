@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Far Right"
-          }
-        },
-        {
           "type": "race",
           "data": {
             "commands": [
@@ -23,7 +17,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 5.0
+                  "waitTime": 2.0
                 }
               }
             ]
@@ -32,7 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right Cleanup"
+            "pathName": "Far Right"
           }
         },
         {

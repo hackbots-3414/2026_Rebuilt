@@ -68,12 +68,15 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private boolean hasAppliedOperatorPerspective = false;
 
   private double maxSpeed = CompBotTunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-  private double maxRotationalSpeed = 6.0; // rotations per second
+  private double maxRotationalSpeed = 2.0 * Math.PI; // radians per second
 
   private Pose2d memorySpot = Pose2d.kZero;
 
   public enum TeleopDriveMode {
-    /** Drive the robot with a field-relative control for translation and spin control (i.e. control over how fast we rotate) */
+    /**
+     * Drive the robot with a field-relative control for translation and spin
+     * control (i.e. control over how fast we rotate)
+     */
     FieldRelativeSpin,
     /** Drive the robot slower than FieldRelativeSpin */
     SlowFieldRelativeSpin,
@@ -84,7 +87,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity);
-  
+
   private final SwerveRequest.RobotCentric robotCentricDrive = new SwerveRequest.RobotCentric()
       .withDriveRequestType(DriveRequestType.Velocity);
 
@@ -152,7 +155,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   @SuppressWarnings("unused")
   private final SysIdRoutine sysIdRoutineRotation = new SysIdRoutine(
       new SysIdRoutine.Config(
-          /* This is in radians per second^2, but SysId only supports "volts per second" */
+          /*
+           * This is in radians per second^2, but SysId only supports "volts per second"
+           */
           Volts.of(Math.PI / 6).per(Second),
           /* This is in radians per second, but SysId only supports "volts" */
           Volts.of(Math.PI),
@@ -183,7 +188,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
    * the classes.
    *
    * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
-   * @param modules Constants for each specific module
+   * @param modules             Constants for each specific module
    */
   public Drivetrain(
       SwerveDrivetrainConstants drivetrainConstants,
@@ -198,7 +203,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     ologger.registerPose("Robot Pose", this::robotPose);
     ologger.registerDouble("Time since last estimate", () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
     sysIDCommands();
-    // SmartDashboard.putData("Drivetrain/Reset Pose (Our Hub)", resetOdometry(new Pose2d(4, 4, Rotation2d.kZero), true));
+    // SmartDashboard.putData("Drivetrain/Reset Pose (Our Hub)", resetOdometry(new
+    // Pose2d(4, 4, Rotation2d.kZero), true));
     // SmartDashboard.putData("Drivetrain/Set Home", setMemorySpot());
     // SmartDashboard.putData("Drivetrain/Go Home", goHome());
     configurePathplanner();
@@ -239,21 +245,25 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return sysIdRoutineToApply.dynamic(direction);
   }
 
-   public Command sysIdQuasistaticSteer(SysIdRoutine.Direction direction) {
-        return sysIdRoutineSteer.quasistatic(direction);
-    }
+  public Command sysIdQuasistaticSteer(SysIdRoutine.Direction direction) {
+    return sysIdRoutineSteer.quasistatic(direction);
+  }
 
-    public Command sysIdDynamicSteer(SysIdRoutine.Direction direction) {
-        return sysIdRoutineSteer.dynamic(direction);
-    }
+  public Command sysIdDynamicSteer(SysIdRoutine.Direction direction) {
+    return sysIdRoutineSteer.dynamic(direction);
+  }
 
   @Override
   public void periodic() {
     /*
-     * Periodically try to apply the operator perspective. If we haven't applied the operator
-     * perspective before, then we should apply it regardless of DS state. This allows us to correct
-     * the perspective in case the robot code restarts mid-match. Otherwise, only check and apply
-     * the operator perspective if the DS is disabled. This ensures driving behavior doesn't change
+     * Periodically try to apply the operator perspective. If we haven't applied the
+     * operator
+     * perspective before, then we should apply it regardless of DS state. This
+     * allows us to correct
+     * the perspective in case the robot code restarts mid-match. Otherwise, only
+     * check and apply
+     * the operator perspective if the DS is disabled. This ensures driving behavior
+     * doesn't change
      * until an explicit disable event occurs during testing.
      */
     if (!hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
@@ -340,34 +350,38 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
   }
 
-  public Command teleopDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, Supplier<TeleopDriveMode> modeSupplier) {
+  public Command teleopDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot,
+      Supplier<TeleopDriveMode> modeSupplier) {
     return this.applyRequest(() -> {
       TeleopDriveMode mode = modeSupplier.get();
       // Recalculate the *real* vx and vy to be operator-dependent
       Translation2d operatorRelative = new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
 
+      Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
+      double spin = vrot.getAsDouble() * maxRotationalSpeed;
+
       if (mode == TeleopDriveMode.RobotRelative) {
         return robotCentricDrive
             .withVelocityX(operatorRelative.getX())
             .withVelocityY(operatorRelative.getY())
-            .withRotationalRate(vrot.getAsDouble() * maxRotationalSpeed);
+            .withRotationalRate(spin);
       }
-
-      Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
 
       if (mode == TeleopDriveMode.SlowFieldRelativeSpin) {
         fieldRelative = fieldRelative.times(0.3);
+        spin *= 0.5;
       }
 
       if (override.isPresent()) {
         return drivetrainAim.withVelocityX(fieldRelative.getX())
-          .withVelocityY(fieldRelative.getY())
-          .withTargetDirection(override.get().yaw);
+            .withVelocityY(fieldRelative.getY())
+            .withTargetDirection(override.get().yaw);
       }
+
       return drive
           .withVelocityX(fieldRelative.getX())
           .withVelocityY(fieldRelative.getY())
-          .withRotationalRate(vrot.getAsDouble() * maxRotationalSpeed);
+          .withRotationalRate(spin);
     })
         .withName("Teleop Drive");
   }
@@ -395,7 +409,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public Trigger validOdemetry() {
-    return new Trigger(() -> Timer.getTimestamp() - lastOkayVisionUpdateTime <= LocalizationConstants.kValidOdometryCutoff);
+    return new Trigger(
+        () -> Timer.getTimestamp() - lastOkayVisionUpdateTime <= LocalizationConstants.kValidOdometryCutoff);
   }
 
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
@@ -416,15 +431,23 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         () -> new SwerveRequest.RobotCentric().withRotationalRate(0.5 * Math.PI));
   }
 
-  private void sysIDCommands(){
-    // SmartDashboard.putData("sysID/dynamic forward steer", sysIdDynamicSteer(Direction.kForward));
-    // SmartDashboard.putData("sysID/dynamic reverse steer", sysIdDynamicSteer(Direction.kReverse));
-    // SmartDashboard.putData("sysID/dynamic forward drive", sysIdDynamic(Direction.kForward));
-    // SmartDashboard.putData("sysID/dynamic reverse drive", sysIdDynamic(Direction.kReverse));
-    // SmartDashboard.putData("sysID/quasistatic forward drive", sysIdQuasistatic(Direction.kForward));
-    // SmartDashboard.putData("sysID/quasistatic reverse drive", sysIdQuasistatic(Direction.kReverse));
-    // SmartDashboard.putData("sysID/quasistatic reverse steer", sysIdQuasistaticSteer(Direction.kReverse));
-    // SmartDashboard.putData("sysID/ quasistatic forward steer", sysIdQuasistaticSteer(Direction.kForward));
+  private void sysIDCommands() {
+    // SmartDashboard.putData("sysID/dynamic forward steer",
+    // sysIdDynamicSteer(Direction.kForward));
+    // SmartDashboard.putData("sysID/dynamic reverse steer",
+    // sysIdDynamicSteer(Direction.kReverse));
+    // SmartDashboard.putData("sysID/dynamic forward drive",
+    // sysIdDynamic(Direction.kForward));
+    // SmartDashboard.putData("sysID/dynamic reverse drive",
+    // sysIdDynamic(Direction.kReverse));
+    // SmartDashboard.putData("sysID/quasistatic forward drive",
+    // sysIdQuasistatic(Direction.kForward));
+    // SmartDashboard.putData("sysID/quasistatic reverse drive",
+    // sysIdQuasistatic(Direction.kReverse));
+    // SmartDashboard.putData("sysID/quasistatic reverse steer",
+    // sysIdQuasistaticSteer(Direction.kReverse));
+    // SmartDashboard.putData("sysID/ quasistatic forward steer",
+    // sysIdQuasistaticSteer(Direction.kForward));
   }
 
   private void stop() {
@@ -435,17 +458,17 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return this.run(() -> {
       APResult result = autopilot.calculate(robotPose(), state.Speeds, target.get());
       setControl(autopilotControl
-        .withVelocityX(result.vx())
-        .withVelocityY(result.vy())
-        .withTargetDirection(override.isPresent() ? override.get().yaw : result.targetAngle()));
+          .withVelocityX(result.vx())
+          .withVelocityY(result.vy())
+          .withTargetDirection(override.isPresent() ? override.get().yaw : result.targetAngle()));
     })
-      .until(() -> autopilot.atTarget(robotPose(), target.get()))
-      .finallyDo(() -> {
-        // Only stop if we are supposed to.
-        if (target.get().getVelocity() == 0) {
-          stop();
-        }
-      });
+        .until(() -> autopilot.atTarget(robotPose(), target.get()))
+        .finallyDo(() -> {
+          // Only stop if we are supposed to.
+          if (target.get().getVelocity() == 0) {
+            stop();
+          }
+        });
   }
 
   public Command resetOdometry(Pose2d pose, boolean flip) {
@@ -453,7 +476,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       resetPose(flip ? FieldUtils.allianceRelativeFlip(pose) : pose);
     }).ignoringDisable(true);
   }
-  
+
   private Twist2d predictedTwist() {
     return new Twist2d(
         state.Speeds.vxMetersPerSecond * LOOKAHEAD,
@@ -472,7 +495,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public Command track(Supplier<AimParams> params) {
     return Commands.run(() -> override = Optional.of(params.get()))
-      .finallyDo(() -> override = Optional.empty());
+        .finallyDo(() -> override = Optional.empty());
   }
 
   public Command setMemorySpot() {
@@ -489,7 +512,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   private void configurePathplanner() {
     RobotConfig config;
-    try{
+    try {
       config = RobotConfig.fromGUISettings();
     } catch (Exception e) {
       // Handle exception as needed
@@ -499,27 +522,31 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
     // Configure AutoBuilder last
     AutoBuilder.configure(
-            this::robotPose, // Robot pose supplier
-            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-            () -> state.Speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(1.7, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(3.0, 0.0, 0.0) // Rotation PID constants
-            ),
-            config, // The robot configuration
-            () -> {
-              // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
-              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+        this::robotPose, // Robot pose supplier
+        this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+        () -> state.Speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE
+                                                              // ChassisSpeeds. Also optionally outputs individual
+                                                              // module feedforwards
+        new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic
+                                        // drive trains
+            new PIDConstants(1.7, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(3.0, 0.0, 0.0) // Rotation PID constants
+        ),
+        config, // The robot configuration
+        () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red
+          // alliance
+          // This will flip the path being followed to the red side of the field.
+          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            this // Reference to this subsystem to set requirements
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+          }
+          return false;
+        },
+        this // Reference to this subsystem to set requirements
     );
   }
 }

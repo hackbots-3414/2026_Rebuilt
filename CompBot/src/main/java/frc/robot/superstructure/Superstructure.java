@@ -38,6 +38,7 @@ import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIOHardware;
 import frc.robot.subsystems.turret.TurretIOSim;
+import frc.robot.superstructure.StateManager.ShootMode;
 import frc.robot.vision.CameraConfig;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 import frc.robot.vision.localization.LocalizationConstants;
@@ -77,7 +78,7 @@ public class Superstructure {
   }
 
   public void bindDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, Supplier<TeleopDriveMode> mode) {
-    subsystems.drivetrain.setDefaultCommand(subsystems.drivetrain.teleopDrive(vx, vy, vrot, () -> state.shooting().getAsBoolean() ? TeleopDriveMode.SlowFieldRelativeSpin : mode.get()));
+    subsystems.drivetrain.setDefaultCommand(subsystems.drivetrain.teleopDrive(vx, vy, vrot, () -> state.shooting(ShootMode.Scoring).getAsBoolean() ? TeleopDriveMode.SlowFieldRelativeSpin : mode.get()));
   }
 
   /**
@@ -127,7 +128,7 @@ public class Superstructure {
   }
 
   public void periodic() {
-    state.periodic();
+    state.update();
     subsystems.led().update(state);
     // autonAlert.set(!AutonWarn.checkPose(getAutonomousCommand().getName(), state.robotPose()));
   }

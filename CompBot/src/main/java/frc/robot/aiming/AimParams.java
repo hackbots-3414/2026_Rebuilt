@@ -1,6 +1,11 @@
 package frc.robot.aiming;
 
+import static edu.wpi.first.units.Units.Degrees;
+
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.util.OnboardLogger;
 
 /**
  * The parameters of a shooter at a particlar moment in time. This is the type that is returned when
@@ -70,5 +75,16 @@ public class AimParams {
      * appropriate units.
      */
     MechanismControl;
+  }
+
+  public static void setupLogging(OnboardLogger log, Supplier<AimParams> params) {
+    log.registerString("Status", () -> params.get().status.toString());
+    log.registerMeasurement("Pitch", () -> params.get().pitch.getMeasure(), Degrees);
+    log.registerMeasurement("Yaw", () -> params.get().yaw.getMeasure(), Degrees);
+    log.registerDouble("Velocity", () -> params.get().output);
+    log.registerMeasurement("Error/Pitch", () -> params.get().deltaPitch.getMeasure(),
+        Degrees);
+    log.registerMeasurement("Error/Yaw", () -> params.get().deltaYaw.getMeasure(), Degrees);
+    log.registerDouble("Error/Velocity", () -> params.get().deltaOutput);
   }
 }

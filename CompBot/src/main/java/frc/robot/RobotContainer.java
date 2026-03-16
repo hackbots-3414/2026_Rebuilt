@@ -37,7 +37,5 @@ public class RobotContainer {
     autogenBinder.bind(superstructure);
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();
     superstructure.createAutonChooser();
-
-    // SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
   }
 }

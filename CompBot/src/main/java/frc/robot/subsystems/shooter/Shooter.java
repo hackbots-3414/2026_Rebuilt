@@ -30,7 +30,7 @@ public class Shooter extends SubsystemBase {
   private Angle hoodReference = Rotations.zero();
   private AngularVelocity shooterReference = RotationsPerSecond.zero();
 
-  private boolean activeShooting = false;
+  private boolean active = false;
 
   private double lastSignificantDrop = 0;
 
@@ -84,7 +84,7 @@ public class Shooter extends SubsystemBase {
    */
   public Command shoot(Supplier<AimParams> paramsSupplier) {
     return this.run(() -> {
-      activeShooting = true;
+      active = true;
       AimParams params = paramsSupplier.get();
       // This runs each tick (no exceptions are possible), so we get to vary slot parameter here.
       shooterReference = projectileToShooterVelocity(params.output, params.control);
@@ -93,7 +93,7 @@ public class Shooter extends SubsystemBase {
       io.setAngle(hoodReference);
     })
     .finallyDo(() -> {
-      activeShooting = false;
+      active = false;
       shooterReference = RotationsPerSecond.zero();
       io.setVelocity(shooterReference);
     });
@@ -135,9 +135,7 @@ public class Shooter extends SubsystemBase {
     });
   }
 
-  public Trigger shooting() {
-    return new Trigger(() -> activeShooting);
-  }
+  public Trigger shooting = new Trigger(() -> active);
 
   public Trigger seenBall(double seconds) {
     return new Trigger(() -> {

@@ -11,9 +11,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Outpost"
+            "name": "Aim"
           }
         }
       ]

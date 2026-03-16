@@ -53,11 +53,17 @@
           "data": {
             "pathName": "Left Cleanup"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Aim"
+          }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }
