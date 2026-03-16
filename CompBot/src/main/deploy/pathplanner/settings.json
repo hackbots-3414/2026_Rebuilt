@@ -2,7 +2,14 @@
   "robotWidth": 0.86,
   "robotLength": 0.86,
   "holonomicMode": true,
-  "pathFolders": [],
+  "pathFolders": [
+    "IntakeX",
+    "Processor",
+    "StartX",
+    "Testing",
+    "XIntake",
+    "XWall"
+  ],
   "autoFolders": [],
   "defaultMaxVel": 2.0,
   "defaultMaxAccel": 5.0,
