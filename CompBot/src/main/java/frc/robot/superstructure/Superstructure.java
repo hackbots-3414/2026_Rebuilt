@@ -14,11 +14,9 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Robot;
 import frc.robot.commands.CommandBuilder;
 import frc.robot.generated.CompBotTunerConstants;
-import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberIOSim;
@@ -62,6 +60,8 @@ public class Superstructure {
   public final StateManager state;
 
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
+  
+  @SuppressWarnings("unused")
   private final Alert autonAlert =
       new Alert("Robot not in configured starting pose for auton", AlertType.kWarning);
 

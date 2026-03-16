@@ -1,9 +1,5 @@
 package frc.robot;
 
-import java.nio.channels.Pipe;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.binding.AutogenBindings;
 import frc.robot.binding.Binder;
 import frc.robot.binding.DriverXboxBindings;

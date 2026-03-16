@@ -10,10 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.intake.IntakeConstants.DeployConstants;
-import frc.robot.subsystems.intake.IntakeConstants.DeployConstants.DeployPosition;
 import frc.robot.util.StatusSignalUtil;
 
 public class IntakeIOHardware implements IntakeIO {

@@ -1,6 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -36,6 +35,7 @@ public class Constants {
         new Pose2d(2.5, 6.0, Rotation2d.kZero));
   }
 
+  @SuppressWarnings("unused")
   public static class AimConstants {
     private static final AimStrategy kPhysicsAim = new PhysicsAim(
         new AimConstraints(

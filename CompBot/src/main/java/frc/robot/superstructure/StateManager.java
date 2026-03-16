@@ -1,14 +1,11 @@
 package frc.robot.superstructure;
 
-import static edu.wpi.first.units.Units.Degrees;
-
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AimConstants;
 import frc.robot.aiming.AimParams;
@@ -29,6 +26,31 @@ public class StateManager {
     Scoring,
     Feeding,
     Donut; // "donut" shoot sounds like "do not" shoot...
+  }
+
+  private ShootMode wantedShootMode;
+
+  private AimParams params = new AimParams(AimStatus.Unchecked);
+  private AimParams predictedParams = new AimParams(AimStatus.Unchecked);
+
+  public final Trigger shootReady;
+
+  public StateManager(Subsystems subsystems) {
+    this.subsystems = subsystems;
+    shootReady = initShootReady();
+    OnboardLogger log = new OnboardLogger("Robot");
+    log.registerPose("Robot Pose", this::robotPose);
+    log.registerTransform2d("Robot Velocity", this::robotVelocity);
+    log.registerPose3d("Turret Position", this::turretPose);
+    log.registerBoolean("Shoot Ready", shootReady);
+    log.registerBoolean("Turret Tracked", subsystems.turret().tracked(this::aimParams));
+    log.registerBoolean("Shooter Tracked", subsystems.shooter().tracked(this::aimParams));
+    log.registerBoolean("In Alliance Zone", () -> FieldUtils.inAllianceZone(robotPose()));
+
+    OnboardLogger aimParamsLogger = new OnboardLogger("Robot/Aim Params");
+    AimParams.setupLogging(aimParamsLogger, () -> params);
+    OnboardLogger predictedAimParamsLogger = new OnboardLogger("Robot/Aim Params (Predicted)");
+    AimParams.setupLogging(predictedAimParamsLogger, () -> predictedParams);
   }
 
   private ShootMode calculateWantedShootMode() {
@@ -56,30 +78,6 @@ public class StateManager {
     return willBeActive ? ShootMode.Scoring : ShootMode.Donut;
   }
 
-  private ShootMode wantedShootMode;
-
-  private AimParams params = new AimParams(AimStatus.Unchecked);
-  private AimParams predictedParams = new AimParams(AimStatus.Unchecked);
-
-  public final Trigger shootReady;
-
-  public StateManager(Subsystems subsystems) {
-    this.subsystems = subsystems;
-    shootReady = initShootReady();
-    OnboardLogger log = new OnboardLogger("Robot");
-    log.registerPose("Robot Pose", this::robotPose);
-    log.registerTransform2d("Robot Velocity", this::robotVelocity);
-    log.registerPose3d("Turret Position", this::turretPose);
-    log.registerBoolean("Shoot Ready", shootReady);
-    log.registerBoolean("Turret Tracked", subsystems.turret().tracked(this::aimParams));
-    log.registerBoolean("Shooter Tracked", subsystems.shooter().tracked(this::aimParams));
-    log.registerBoolean("In Alliance Zone", () -> FieldUtils.inAllianceZone(robotPose()));
-
-    OnboardLogger aimParamsLogger = new OnboardLogger("Robot/Aim Params");
-    AimParams.setupLogging(aimParamsLogger, () -> params);
-    OnboardLogger predictedAimParamsLogger = new OnboardLogger("Robot/Aim Params (Predicted)");
-    AimParams.setupLogging(predictedAimParamsLogger, () -> predictedParams);
-  }
 
   /**
    * Returns the robot's position on the field.

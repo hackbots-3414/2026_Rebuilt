@@ -8,7 +8,6 @@ import frc.autogen.Autogen;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.commands.AimPrep;
 import frc.robot.commands.DriveToPoint;
-import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.RunClimb;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.ShootWhenReady;

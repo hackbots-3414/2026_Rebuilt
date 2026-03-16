@@ -200,8 +200,7 @@ public class SingleInputPoseEstimator implements Runnable {
     if (ambiguity >= config.trust().ambiguityThreshold()) {
       return false;
     }
-    // return !isOutsideField(pose);
-    return true;
+    return !isOutsideField(pose);
   }
 
   private boolean isOutsideField(Pose3d pose) {
