@@ -31,6 +31,7 @@ public class Led extends SubsystemBase  {
         new EndGameAlert(),
         new EndGameWarning(),
         // new ShootReady(),
+        new OurShiftIsEnding(),
         new HubActive(),
         new Default()
     );
