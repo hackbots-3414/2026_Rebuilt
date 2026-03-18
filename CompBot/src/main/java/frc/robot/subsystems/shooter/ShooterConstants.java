@@ -48,9 +48,9 @@ public final class ShooterConstants {
       .withKD(0);
 
   private static final SlotConfigs recoveryControl = regularControl.clone()
-      .withKP(25);
+      .withKP(50);
 
-  protected static final AngularVelocity kRecoveryErrorThreshold = RotationsPerSecond.of(4);
+  protected static final AngularVelocity kRecoveryErrorThreshold = RotationsPerSecond.of(2);
   protected static final AngularVelocity kShootingErrorDetectionThreshold = RotationsPerSecond.of(8);
 
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
@@ -64,6 +64,9 @@ public final class ShooterConstants {
       .withMotorOutput(new MotorOutputConfigs()
           .withNeutralMode(NeutralModeValue.Coast)
           .withInverted(InvertedValue.Clockwise_Positive))
+
+    .withTorqueCurrent(new TorqueCurrentConfigs()
+        .withPeakReverseTorqueCurrent(0.0))
 
       .withCurrentLimits(new CurrentLimitsConfigs()
           .withSupplyCurrentLimitEnable(true)
@@ -114,9 +117,6 @@ public final class ShooterConstants {
             .withNeutralMode(NeutralModeValue.Brake)
             .withInverted(InvertedValue.CounterClockwise_Positive))
 
-        .withTorqueCurrent(new TorqueCurrentConfigs()
-            .withPeakReverseTorqueCurrent(0.0))
-
         .withCurrentLimits(new CurrentLimitsConfigs()
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true)
@@ -144,7 +144,7 @@ public final class ShooterConstants {
       new AimMeasurement(Meters.of(4.26), Rotation2d.fromDegrees(60), 42, Seconds.of(1.20)),
       new AimMeasurement(Meters.of(4.78), Rotation2d.fromDegrees(58), 42, Seconds.of(1.18)),
       new AimMeasurement(Meters.of(5.23), Rotation2d.fromDegrees(55), 42, Seconds.of(1.20)),
-      new AimMeasurement(Meters.of(5.73), Rotation2d.fromDegrees(54), 46, Seconds.of(1.21)),
+      new AimMeasurement(Meters.of(5.73), Rotation2d.fromDegrees(54), 47, Seconds.of(1.21)),
       new AimMeasurement(Meters.of(6.252), Rotation2d.fromDegrees(54), 46, Seconds.of(1.21)),
       new AimMeasurement(Meters.of(6.696), Rotation2d.fromDegrees(54), 50, Seconds.of(1.25)),
       new AimMeasurement(Meters.of(7.185), Rotation2d.fromDegrees(52), 51, Seconds.of(1.31)),

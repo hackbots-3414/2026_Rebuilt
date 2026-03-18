@@ -34,6 +34,12 @@
           "data": {
             "pathName": "Left Cleanup"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Aim"
+          }
         }
       ]
     }

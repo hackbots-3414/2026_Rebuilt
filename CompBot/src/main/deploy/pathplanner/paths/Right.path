@@ -78,16 +78,10 @@
       "waypointRelativePos": 0.6739864864864873,
       "endWaypointRelativePos": 2.2652027027027057,
       "command": null
-    },
-    {
-      "name": "Aim",
-      "waypointRelativePos": 2.497208819569122,
-      "endWaypointRelativePos": 3.0,
-      "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
+    "maxVelocity": 4.0,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,

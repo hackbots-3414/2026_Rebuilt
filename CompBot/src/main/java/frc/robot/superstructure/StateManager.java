@@ -159,7 +159,7 @@ public class StateManager {
       }
     }
 
-    return predictedParams;
+    return aimParams();
   }
 
   public void update() {
@@ -182,6 +182,10 @@ public class StateManager {
 
   public Pose3d turretPose() {
     return subsystems.turret().turretPose(robotPose());
+  }
+
+  public Trigger intaking() {
+    return subsystems.intake().intaking();
   }
 
 }

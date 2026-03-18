@@ -5,6 +5,6 @@ import frc.robot.superstructure.Superstructure.Subsystems;
 
 public class AgitateIntake implements CommandBuilder {
     public Command build(Subsystems subsystems, StateManager state) {
-        return subsystems.intake().enableAgitation();
+        return subsystems.intake().agitate();
     }
 }

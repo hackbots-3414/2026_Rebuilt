@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.intake.IntakeConstants.DeployConstants;
 import frc.robot.subsystems.intake.IntakeConstants.DeployConstants.DeployPosition;
 import frc.robot.subsystems.intake.IntakeIO.IntakeIOInputs;
@@ -14,7 +15,7 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputs inputs;
 
-  private boolean agitating;
+  private boolean intaking = false;
 
   private DeployPosition reference = DeployPosition.Stow;
 
@@ -22,20 +23,11 @@ public class Intake extends SubsystemBase {
     super();
     this.io = io;
     inputs = new IntakeIOInputs();
-
-    setDefaultCommand(agitate());
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-  }
-
-  public Command intake() {
-    return startEnd(
-        () -> io.setIntakeVoltage(IntakeConstants.kIntakeVoltage),
-        () -> io.setIntakeVoltage(Volts.zero())
-    );
   }
 
   /**
@@ -49,16 +41,19 @@ public class Intake extends SubsystemBase {
 
   public Command intakeAt(DeployPosition state) {
     return Commands.sequence(
-      runOnce(() -> {
+        runOnce(() -> {
           reference = state;
           io.setDeployPosition(state.position);
-        }),
-        run(() -> {
           io.setIntakeVoltage(IntakeConstants.kIntakeVoltage);
-        }))
+        }),
+        this.idle())
         .finallyDo(() -> {
           io.setIntakeVoltage(Volts.zero());
         });
+  }
+
+  public void setIntaking(boolean v) {
+    intaking = v;
   }
 
   public Command go(DeployPosition state) {
@@ -67,30 +62,21 @@ public class Intake extends SubsystemBase {
           reference = state;
           io.setDeployPosition(state.position);
         }),
-        Commands.waitUntil(this::deployAtPosition)
-    );
+        Commands.waitUntil(this::deployAtPosition));
   }
 
   private boolean deployAtPosition() {
-    return Math.abs(inputs.deployPosition.minus(reference.position).baseUnitMagnitude()) <= DeployConstants.kTolerance.baseUnitMagnitude();
+    return Math.abs(inputs.deployPosition.minus(reference.position).baseUnitMagnitude()) <= DeployConstants.kTolerance
+        .baseUnitMagnitude();
   }
 
-  private Command agitate() {
+  public Command agitate() {
     return Commands.repeatingSequence(
-      intakeAt(DeployPosition.Deployed).withTimeout(0.5),
-      intakeAt(DeployPosition.Agitate).withTimeout(0.5)
-    )
-        .onlyWhile(() -> agitating)
-        .onlyIf(() -> agitating)
-        .withName("Intake Default");
+        intakeAt(DeployPosition.Deployed).withTimeout(0.5),
+        intakeAt(DeployPosition.Agitate).withTimeout(0.5));
   }
 
-  public Command enableAgitation() {
-    // This doesn't require this subsystem so that this doesn't interfere with the default command.
-    return Commands.sequence(
-      Commands.runOnce(() -> agitating = true),
-      Commands.idle()
-    )
-        .finallyDo(() -> agitating = false);
+  public Trigger intaking() {
+    return new Trigger(() -> intaking);
   }
 }

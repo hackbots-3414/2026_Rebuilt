@@ -31,6 +31,6 @@ public class LedConstants {
 
     // Animation Attributes
 
-    public static final double kStrobeRate = 2;
-    public static final double kFlashRate = 1.0;
+    public static final double kStrobeRate = 4;
+    public static final double kFlashRate = 2.0;
 }

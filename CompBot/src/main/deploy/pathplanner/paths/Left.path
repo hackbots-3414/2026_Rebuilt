@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6120827389443653,
-        "y": 5.257703281027104
+        "x": 3.430941512125534,
+        "y": 5.1168433734939756
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.734771084337349,
-        "y": 5.280759036144579
+        "x": 5.553629857518517,
+        "y": 5.13989912861145
       },
       "isLocked": false,
       "linkedName": "Left Start"
@@ -96,16 +96,10 @@
       "waypointRelativePos": 0.45914922349762477,
       "endWaypointRelativePos": 2.128218438538206,
       "command": null
-    },
-    {
-      "name": "Aim",
-      "waypointRelativePos": 2.703021179401993,
-      "endWaypointRelativePos": 3.0,
-      "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
+    "maxVelocity": 4.0,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
