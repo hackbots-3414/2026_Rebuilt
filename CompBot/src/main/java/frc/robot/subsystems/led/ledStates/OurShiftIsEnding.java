@@ -17,6 +17,6 @@ public class OurShiftIsEnding implements LedState {
     }
 
     public ControlRequest apply(LedIO io) {
-        return io.createAnimation(new RGBWColor(Color.kWhite), AnimationType.Strobe);
+        return io.createAnimation(new RGBWColor(Color.kWhite), AnimationType.Epilepsy);
     }
 }

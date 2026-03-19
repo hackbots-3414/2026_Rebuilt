@@ -28,7 +28,7 @@ public class StateManager {
     Donut; // "donut" shoot sounds like "do not" shoot...
   }
 
-  private ShootMode wantedShootMode;
+  private ShootMode wantedShootMode = ShootMode.Donut;
 
   private AimParams params = new AimParams(AimStatus.Unchecked);
   private AimParams predictedParams = new AimParams(AimStatus.Unchecked);

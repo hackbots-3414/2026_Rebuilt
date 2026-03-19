@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.8898409090909087,
+        "x": 2.7187228915662653,
         "y": 2.4168295454545454
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.8898409090909105,
+        "x": 3.718722891566267,
         "y": 2.4168295454545454
       },
       "isLocked": false,
@@ -68,12 +68,12 @@
         "y": 1.7056590909090916
       },
       "prevControl": {
-        "x": 6.495701911956287,
-        "y": 1.1583072904168246
+        "x": 6.4322223546865445,
+        "y": 1.1182109040523378
       },
       "nextControl": {
-        "x": 5.4150113636363635,
-        "y": 2.6745000000000005
+        "x": 5.308590361445783,
+        "y": 3.1389277108433733
       },
       "isLocked": false,
       "linkedName": null
@@ -131,32 +131,6 @@
         "nominalVoltage": 12.0,
         "unlimited": false
       }
-    },
-    {
-      "name": "BUMP",
-      "minWaypointRelativePos": 0.24317617866005425,
-      "maxWaypointRelativePos": 0.7890818858560951,
-      "constraints": {
-        "maxVelocity": 3.0,
-        "maxAcceleration": 5.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    },
-    {
-      "name": "BUMP 2",
-      "minWaypointRelativePos": 4.22332506203474,
-      "maxWaypointRelativePos": 4.580645161290311,
-      "constraints": {
-        "maxVelocity": 3.0,
-        "maxAcceleration": 5.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
     }
   ],
   "pointTowardsZones": [],
@@ -175,7 +149,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 2.0,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -190,7 +164,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -136.07170117171438
+    "rotation": -134.1877039731727
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

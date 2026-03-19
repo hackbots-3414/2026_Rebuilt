@@ -19,7 +19,7 @@ import frc.robot.util.StatusSignalUtil;
 public class LedIO extends SubsystemBase {
 
   public static enum AnimationType {
-    Twinkle, Strobe, Larson, Flash, Solid, Clear, Rainbow, Fade, Flow;
+    Twinkle, Strobe, Larson, Flash, Solid, Clear, Rainbow, Fade, Flow, Epilepsy;
   }
 
   CANdle ledController = new CANdle(LedConstants.kCANdleId, LedConstants.kCanbus);
@@ -50,6 +50,7 @@ public class LedIO extends SubsystemBase {
           case Solid -> new SolidColor(LedConstants.startIndex, LedConstants.endIndex).withColor(color);
           case Flash -> new StrobeAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot).withFrameRate(LedConstants.kFlashRate);
           case Clear -> new EmptyAnimation(slot);
+          case Epilepsy -> new StrobeAnimation(LedConstants.startIndex, LedConstants.endIndex).withSlot(slot).withColor(color).withFrameRate(10);
     };
   }
 }
