@@ -32,16 +32,16 @@
     },
     {
       "anchor": {
-        "x": 6.249863636363637,
-        "y": 5.550102272727272
+        "x": 6.281156626506024,
+        "y": 4.395614457831325
       },
       "prevControl": {
-        "x": 5.415011363636364,
-        "y": 5.611943181818182
+        "x": 5.446304353778752,
+        "y": 4.457455366922235
       },
       "nextControl": {
-        "x": 7.781418084256778,
-        "y": 5.436653795105555
+        "x": 7.812711074399165,
+        "y": 4.282165980209609
       },
       "isLocked": false,
       "linkedName": null
@@ -118,7 +118,47 @@
       "rotationDegrees": 138.87940441836363
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.7593052109181062,
+      "maxWaypointRelativePos": 2.8337468982630556,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "BUMP",
+      "minWaypointRelativePos": 0.24317617866005425,
+      "maxWaypointRelativePos": 0.7890818858560951,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "BUMP 2",
+      "minWaypointRelativePos": 4.22332506203474,
+      "maxWaypointRelativePos": 4.580645161290311,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -129,7 +169,7 @@
     },
     {
       "name": "Aim",
-      "waypointRelativePos": 4.429070354578099,
+      "waypointRelativePos": 4.481389578163778,
       "endWaypointRelativePos": 5.0,
       "command": null
     }
