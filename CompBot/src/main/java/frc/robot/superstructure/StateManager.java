@@ -54,10 +54,6 @@ public class StateManager {
   }
 
   private ShootMode calculateWantedShootMode() {
-    if (!subsystems.shooter().shooting.getAsBoolean()) {
-      return ShootMode.Donut;
-    }
-
     boolean inAllianceZone = FieldUtils.inAllianceZone(robotPose());
     boolean auto = DriverStation.isAutonomous();
 
@@ -130,36 +126,34 @@ public class StateManager {
       Translation2d velocity = robotVelocity().getTranslation();
       Pose3d turret = turretPose();
 
-      if (wantedShootMode == ShootMode.Scoring) {
-        // Scoring param logic
-        params = AimConstants.kAim.update(FieldUtils.hub(), turret, velocity);
-      } else {
-        // Feeding param logic (for now, it's the same)
-        params = AimConstants.kAim.update(FieldUtils.feedTarget(robotPose()), turret, velocity);
-      }
+      params = switch (wantedShootMode) {
+        case Donut -> AimParams.impossible();
+        case Scoring -> AimConstants.kAim.update(FieldUtils.hub(), turret, velocity);
+        case Feeding -> AimConstants.kAim.update(FieldUtils.feedTarget(robotPose()), turret, velocity);
+      };
     }
 
     return params;
   }
 
   public AimParams predictedAimParams() {
-    if (wantedShootMode == ShootMode.Donut) {
-      predictedParams = AimParams.impossible();
-    }
+    // if (wantedShootMode == ShootMode.Donut) {
+    //   predictedParams = AimParams.impossible();
+    // }
 
-    if (predictedParams.status == AimStatus.Unchecked) {
-      Pose2d predictedPose = subsystems.drivetrain().predictedRobotPose();
-      Translation2d predictedVelocity = subsystems.drivetrain().predictedRobotVelocity();
-      Pose3d predictedTurret = subsystems.turret().turretPose(predictedPose);
+    // if (predictedParams.status == AimStatus.Unchecked) {
+    //   Pose2d predictedPose = subsystems.drivetrain().predictedRobotPose();
+    //   Translation2d predictedVelocity = subsystems.drivetrain().predictedRobotVelocity();
+    //   Pose3d predictedTurret = subsystems.turret().turretPose(predictedPose);
 
-      if (wantedShootMode == ShootMode.Scoring) {
-        predictedParams = AimConstants.kAim.update(FieldUtils.hub(), predictedTurret, predictedVelocity);
-      } else {
-        predictedParams = AimConstants.kAim.update(FieldUtils.feedTarget(predictedPose), predictedTurret, predictedVelocity);
-      }
-    }
+    //   if (wantedShootMode == ShootMode.Scoring) {
+    //     predictedParams = AimConstants.kAim.update(FieldUtils.hub(), predictedTurret, predictedVelocity);
+    //   } else {
+    //     predictedParams = AimConstants.kAim.update(FieldUtils.feedTarget(predictedPose), predictedTurret, predictedVelocity);
+    //   }
+    // }
 
-    return aimParams();
+    return aimParams(); // For now, don't use predictions.
   }
 
   public void update() {

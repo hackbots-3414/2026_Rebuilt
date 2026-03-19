@@ -129,6 +129,10 @@ public class Shooter extends SubsystemBase {
 
   public Trigger tracked(Supplier<AimParams> params) {
     return new Trigger(() -> {
+      if (!active) {
+        return false;
+      }
+      
       AimParams realParams = params.get();
 
       return shooterAtSpeed(realParams) && hoodAtPosition(realParams);
