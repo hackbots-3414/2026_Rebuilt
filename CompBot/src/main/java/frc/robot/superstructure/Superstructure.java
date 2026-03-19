@@ -82,7 +82,7 @@ public class Superstructure {
     Shooter shooter = new Shooter(new ShooterIOHardware());
     Indexer indexer = new Indexer(new IndexerIOHardware());
     Intake intake = new Intake(new IntakeIOHardware());
-    Climber climber = new Climber(new ClimberIOHardware());
+    Climber climber = new Climber(new ClimberIOSim());
     Led led = new Led(new LedIO());
     return new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
   }

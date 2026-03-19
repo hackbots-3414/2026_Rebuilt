@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.553629857518517,
-        "y": 5.13989912861145
+        "x": 6.062602409638554,
+        "y": 5.094987951807229
       },
       "isLocked": false,
       "linkedName": "Left Start"
@@ -20,8 +20,8 @@
         "y": 5.555732009242958
       },
       "prevControl": {
-        "x": 7.98763241662439,
-        "y": 9.269127159028978
+        "x": 7.999469892594966,
+        "y": 9.552240125991947
       },
       "nextControl": {
         "x": 7.819217162650183,
@@ -67,7 +67,7 @@
     },
     {
       "waypointRelativePos": 1.4588918585526327,
-      "rotationDegrees": -139.18601810459967
+      "rotationDegrees": -98.62174053115231
     },
     {
       "waypointRelativePos": 1.9593360995850666,
@@ -87,13 +87,26 @@
         "nominalVoltage": 12.0,
         "unlimited": false
       }
+    },
+    {
+      "name": "BUMP",
+      "minWaypointRelativePos": 2.122889939230247,
+      "maxWaypointRelativePos": 2.9574611748817694,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
     }
   ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0.45914922349762477,
+      "waypointRelativePos": 0.6342431761786518,
       "endWaypointRelativePos": 2.128218438538206,
       "command": null
     }

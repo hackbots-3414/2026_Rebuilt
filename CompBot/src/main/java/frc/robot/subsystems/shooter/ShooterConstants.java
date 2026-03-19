@@ -51,7 +51,7 @@ public final class ShooterConstants {
       .withKP(50);
 
   protected static final AngularVelocity kRecoveryErrorThreshold = RotationsPerSecond.of(2);
-  protected static final AngularVelocity kShootingErrorDetectionThreshold = RotationsPerSecond.of(8);
+  protected static final AngularVelocity kShootingErrorDetectionThreshold = RotationsPerSecond.of(4);
 
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withSlot0(Slot0Configs.from(regularControl))
@@ -141,7 +141,7 @@ public final class ShooterConstants {
       new AimMeasurement(Meters.of(2.73), Rotation2d.fromDegrees(65), 36, Seconds.of(1.10)),
       new AimMeasurement(Meters.of(3.212), Rotation2d.fromDegrees(65), 37.5, Seconds.of(1.12)),
       new AimMeasurement(Meters.of(3.79), Rotation2d.fromDegrees(60), 38, Seconds.of(1.07)),
-      new AimMeasurement(Meters.of(4.26), Rotation2d.fromDegrees(60), 42, Seconds.of(1.20)),
+      new AimMeasurement(Meters.of(4.26), Rotation2d.fromDegrees(60), 41, Seconds.of(1.20)),
       new AimMeasurement(Meters.of(4.78), Rotation2d.fromDegrees(58), 42, Seconds.of(1.18)),
       new AimMeasurement(Meters.of(5.23), Rotation2d.fromDegrees(55), 42, Seconds.of(1.20)),
       new AimMeasurement(Meters.of(5.73), Rotation2d.fromDegrees(54), 47, Seconds.of(1.21)),
