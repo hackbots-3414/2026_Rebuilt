@@ -115,7 +115,8 @@ public class ActivityCalculator {
       return;
     }
 
-    double matchTime = end - Timer.getTimestamp();
+    // double matchTime = end - Timer.getTimestamp();
+    double matchTime = DriverStation.getMatchTime();
 
     boolean winnerActive = false;
     double timeRemaining;
