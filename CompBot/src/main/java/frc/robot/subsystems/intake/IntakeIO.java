@@ -55,6 +55,10 @@ public interface IntakeIO {
       log.registerMeasurement("Deploy Motor/Voltage", () -> deployVoltage, Volts);
       log.registerMeasurement("Deploy Motor/Temperature", () -> deployTemperature, Celsius);
       log.registerMeasurement("Deploy Motor/Position", () -> deployPosition, Rotations);
+
+      log.registerBoolean("CANcoder/Connected", () -> deployCANcoderConnected);
+      log.registerMeasurement("CANcoder/Position", () -> deployCANcoderPosition, Rotations);
+      log.registerMeasurement("CANcoder/Velocity", () -> deployCANcoderVelocity, RotationsPerSecond);
     }
   }
 

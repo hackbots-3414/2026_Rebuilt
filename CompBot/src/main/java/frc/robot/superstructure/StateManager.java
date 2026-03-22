@@ -67,7 +67,7 @@ public class StateManager {
       return ShootMode.Feeding;
     }
 
-    double SHOT_TIME = 4.0;
+    double SHOT_TIME = 2.0;
     boolean willBeActive = ActivityCalculator.is(ActivityCalculator.us())
         || ActivityCalculator.is(ActivityCalculator.other(), SHOT_TIME);
 

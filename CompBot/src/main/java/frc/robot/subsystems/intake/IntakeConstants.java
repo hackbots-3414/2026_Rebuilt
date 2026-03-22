@@ -66,7 +66,7 @@ public class IntakeConstants {
 
         .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(0.21)
+            .withForwardSoftLimitThreshold(0.225)
             .withReverseSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true))
 
@@ -81,17 +81,17 @@ public class IntakeConstants {
 
     protected static final CANcoderConfiguration kCANcoderConfig = new CANcoderConfiguration()
         .withMagnetSensor(new MagnetSensorConfigs()
-            .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
+            .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
             .withAbsoluteSensorDiscontinuityPoint(0.5)
-            .withMagnetOffset(-0.034423828125));
+            .withMagnetOffset(-0.025390625));
 
     protected static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(0.4);
     protected static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(4);
 
     public static enum DeployPosition {
       Stow(Rotations.zero()),
-      Agitate(Rotations.of(0.18)),
-      Deployed(Rotations.of(0.21));
+      Agitate(Rotations.of(0.15)),
+      Deployed(Rotations.of(0.224));
 
       protected final Angle position;
 

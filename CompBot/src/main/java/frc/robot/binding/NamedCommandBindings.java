@@ -3,10 +3,7 @@ package frc.robot.binding;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 
-import frc.robot.Constants.AutonConstants;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.AimPrep;
-import frc.robot.commands.DriveToPoint;
 import frc.robot.commands.RunIntake;
 import frc.robot.superstructure.Superstructure;
 
