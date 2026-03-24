@@ -18,8 +18,9 @@ public class FuelShotSim implements CommandBuilder {
     return Commands.sequence(
         Commands.runOnce(() -> sim.launch(state)),
         Commands.run(sim::tick))
-        .until(sim::atHub)
-        .withName("Fuel Shot (sim)");
+        .withTimeout(2.0) // just a guess, I don't really care.
+        .withName("Fuel Shot (sim)")
+        .ignoringDisable(true);
   }
 
   public Command build(Subsystems subsystems, StateManager state) {
@@ -33,7 +34,6 @@ public class FuelShotSim implements CommandBuilder {
 
     private Translation3d position;
     private Translation3d velocity;
-    private Translation3d target;
 
     private Translation3d gravity = new Translation3d(0, 0, -9.81);
 
@@ -55,7 +55,6 @@ public class FuelShotSim implements CommandBuilder {
               + Math.random() * error,
           params.pitch.getSin() * params.output + Math.random() * error);
       velocity = veloR.plus(new Translation3d(state.robotVelocity().getTranslation()));
-      target = state.aimTarget().getTranslation();
     }
 
     public void tick() {
@@ -69,10 +68,5 @@ public class FuelShotSim implements CommandBuilder {
       }
       FieldManager.getInstance().addFuel(new Pose3d(position, Rotation3d.kZero));
     }
-
-    public boolean atHub() {
-      return position.getZ() < target.getZ() && velocity.getZ() < 0;
-    }
-
   }
 }

@@ -1,7 +1,14 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import java.util.List;
+
+import com.therekrab.autopilot.APTarget;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -9,6 +16,8 @@ import edu.wpi.first.units.measure.Distance;
 import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimStrategy;
 import frc.robot.aiming.PhysicsAim;
+import frc.robot.aiming.ToFAim;
+import frc.robot.subsystems.shooter.ShooterConstants;
 
 public class Constants {
   // Checked the FIRST Game Manual and fixed the field dimensions.
@@ -18,19 +27,95 @@ public class Constants {
     /** The shorter side, corresponds to Y values */
     public static final Distance kFieldWidth = Meters.of(8.069);
     /** The length of the alliance zone, corresponds to X axis */
-    public static final Distance kAllianceZoneLength = Inches.of(182.11);
+    public static final Distance kAllianceZoneLength = Meters.of(3.8);
 
     public static final Pose3d kBlueHub = new Pose3d(4.632516, 4.011139, 1.83, Rotation3d.kZero);
-    public static final Pose3d kFeedTarget = new Pose3d(4.5, 2, 1.0, Rotation3d.kZero);
+    public static final List<Pose2d> kFeedTargets = List.of(
+        new Pose2d(2.5, 2, Rotation2d.kZero),
+        new Pose2d(2.5, 6.0, Rotation2d.kZero));
   }
 
+  @SuppressWarnings("unused")
   public static class AimConstants {
-    public static final AimStrategy kAim = new PhysicsAim(
+    private static final AimStrategy kPhysicsAim = new PhysicsAim(
         new AimConstraints(
             Rotation2d.fromDegrees(49.5), // Min pitch
             Rotation2d.fromDegrees(72.0), // Max pitch
-            18), // Max output (speed)
+            ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond)), // Max output (speed)
         2,
         10);
+
+    private static final AimStrategy kTofAim = new ToFAim(
+        ShooterConstants.measurements,
+        new AimConstraints(
+            Rotation2d.fromDegrees(49.5), // Min pitch
+            Rotation2d.fromDegrees(72.0), // Max pitch
+            ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond))); // Max output (speed));
+
+    private static final AimStrategy kSimulationAim = kTofAim;
+    private static final AimStrategy kRealAim = kTofAim;
+
+    public static final AimStrategy kAim = Robot.isReal() ? kRealAim : kSimulationAim;
+  }
+
+  public static class AutonConstants {
+    public static final Pose2d kLeftStart = new Pose2d(3.3, 5.7, Rotation2d.fromDegrees(-45));
+    public static final Pose2d kRightStart = new Pose2d(3.3, 2.3, Rotation2d.fromDegrees(45));
+
+    public static final APTarget kCrossLeft = new APTarget(new Pose2d(7.5, 6.7, Rotation2d.fromDegrees(-45)))
+        .withVelocity(2);
+    public static final APTarget kCrossRight = new APTarget(new Pose2d(7.5, 1.3, Rotation2d.fromDegrees(45)))
+        .withVelocity(2);
+
+    public static final APTarget kCrossRightCloser = new APTarget(new Pose2d(5.825,2.3,Rotation2d.fromDegrees(45)))
+        .withVelocity(0.5);
+    public static final APTarget kCrossRightAngle = new APTarget(new Pose2d(5.825, 3.7, Rotation2d.fromDegrees(45)))
+        .withEntryAngle(Rotation2d.k180deg)
+        .withVelocity(0.5);
+
+    public static final APTarget kCrossLeftCloser = new APTarget(new Pose2d(5.67,5.6,Rotation2d.fromDegrees(-45)))
+        .withVelocity(0.5);
+    public static final APTarget kCrossLeftAngle = new APTarget(new Pose2d(5.825, 3.7, Rotation2d.fromDegrees(-45)))
+        .withEntryAngle(Rotation2d.k180deg)
+        .withVelocity(0.5);
+    
+
+
+    public static final APTarget kReturnLeft = new APTarget(new Pose2d(2.5, 5.7, Rotation2d.fromDegrees(-45))).withEntryAngle(Rotation2d.k180deg)
+        .withVelocity(2);
+    public static final APTarget kReturnRight = new APTarget(new Pose2d(2.5, 2.3, Rotation2d.fromDegrees(45))).withEntryAngle(Rotation2d.k180deg)
+        .withVelocity(2);
+    
+    public static final APTarget kReturnRightAngle = new APTarget(new Pose2d(3.6, 2.3, Rotation2d.kCW_90deg))
+        .withEntryAngle(Rotation2d.k180deg)
+        .withVelocity(2);
+    public static final APTarget kReturnLeftAngle = new APTarget(new Pose2d(3.6, 5.7, Rotation2d.kCCW_90deg))
+        .withEntryAngle(Rotation2d.k180deg)
+        .withVelocity(2);
+    
+
+    public static final APTarget kSurfLeft = new APTarget(new Pose2d(7.5, 4.0, Rotation2d.kCW_90deg))
+        .withVelocity(0.5);
+    public static final APTarget kSurfRight = new APTarget(new Pose2d(7.5, 4.0, Rotation2d.kCCW_90deg))
+        .withVelocity(0.5);
+    public static final APTarget kSurfUpRight = new APTarget(new Pose2d(7.7,4.3,Rotation2d.kCW_90deg))
+        .withVelocity(0.5);
+    public static final APTarget kSurfUpLeft = new APTarget(new Pose2d(7.7,3.3,Rotation2d.kCCW_90deg))
+        .withVelocity(0.5);
+    
+
+    public static final APTarget kSurfLeftSecond = new APTarget(new Pose2d(7.7, 2.9, Rotation2d.fromDegrees(45)))
+        .withVelocity(0.75);
+    public static final APTarget kSurfRightSecond = new APTarget(new Pose2d(7.5, 2.5, Rotation2d.fromDegrees(-45)))
+        .withVelocity(0.75);
+
+    public static final APTarget kSurfRightClose = new APTarget(new Pose2d(5.8,5.4,Rotation2d.kCCW_90deg))
+        .withVelocity(0.75);
+    public static final APTarget kSurfLeftClose = new APTarget(new Pose2d(5.8,2.5,Rotation2d.kCW_90deg))
+        .withVelocity(0.75);
+
+    public static final APTarget kTower = new APTarget(new Pose2d(1.3,3.8,Rotation2d.k180deg)).withEntryAngle(Rotation2d.k180deg);
+    public static final APTarget kDepot = new APTarget(new Pose2d(0.55, 5.9, Rotation2d.k180deg)).withEntryAngle(Rotation2d.k180deg);
+    public static final APTarget kOutpost = new APTarget(new Pose2d(0.42,0.68,Rotation2d.k180deg));
   }
 }

@@ -1,7 +1,6 @@
 
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,6 +15,8 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputs inputs;
 
+  private boolean intaking = false;
+
   private DeployPosition reference = DeployPosition.Stow;
 
   public Intake(IntakeIO io) {
@@ -29,13 +30,6 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
   }
 
-  public Command intake() {
-    return startEnd(
-        () -> io.setIntakeVoltage(IntakeConstants.kIntakeVoltage),
-        () -> io.setIntakeVoltage(Volts.zero())
-    );
-  }
-
   /**
    * Returns a command, which, while running, will run the intake in reverse.
    */
@@ -45,31 +39,44 @@ public class Intake extends SubsystemBase {
         () -> io.setIntakeVoltage(Volts.zero()));
   }
 
+  public Command intakeAt(DeployPosition state) {
+    return Commands.sequence(
+        runOnce(() -> {
+          reference = state;
+          io.setDeployPosition(state.position);
+          io.setIntakeVoltage(IntakeConstants.kIntakeVoltage);
+        }),
+        this.idle())
+        .finallyDo(() -> {
+          io.setIntakeVoltage(Volts.zero());
+        });
+  }
+
+  public void setIntaking(boolean v) {
+    intaking = v;
+  }
+
   public Command go(DeployPosition state) {
     return Commands.sequence(
         runOnce(() -> {
           reference = state;
           io.setDeployPosition(state.position);
         }),
-        Commands.waitUntil(this::deployAtPosition)
-    );
+        Commands.waitUntil(this::deployAtPosition));
   }
 
   private boolean deployAtPosition() {
-    return Math.abs(inputs.deployPosition.minus(reference.position).baseUnitMagnitude()) <= DeployConstants.kTolerance.baseUnitMagnitude();
+    return Math.abs(inputs.deployPosition.minus(reference.position).baseUnitMagnitude()) <= DeployConstants.kTolerance
+        .baseUnitMagnitude();
   }
 
-  /**
-   * Returns whether a jam may be hypothetically occuring. This requies three things to both be
-   * true: Firstly, the intake motor must be drawing a lot of current. Secondly, there must be a
-   * gamepiece detected in the intake system. Thirdly, the intake motors must not be moving very
-   * quickly. If all these conditions are true, then a jam is possible.
-   */
-  public Trigger detectJam() {
-    return new Trigger(
-        () -> (inputs.intakeStatorCurrent.in(Amps) > IntakeConstants.kJamStatorThreshold.in(Amps))
-            && inputs.canrangeDetected
-            && inputs.intakeVelocity.baseUnitMagnitude() < IntakeConstants.kJamVelocityThreshold
-                .baseUnitMagnitude());
+  public Command agitate() {
+    return Commands.repeatingSequence(
+        intakeAt(DeployPosition.Deployed).withTimeout(0.5),
+        intakeAt(DeployPosition.Agitate).withTimeout(0.5));
+  }
+
+  public Trigger intaking() {
+    return new Trigger(() -> intaking);
   }
 }

@@ -2,15 +2,12 @@ package frc.robot.subsystems.climber;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.StatusSignalUtil;
 
 public class ClimberIOHardware implements ClimberIO {
@@ -18,10 +15,8 @@ public class ClimberIOHardware implements ClimberIO {
 
   private final DynamicMotionMagicTorqueCurrentFOC control = new DynamicMotionMagicTorqueCurrentFOC(0, ClimberConstants.kVelocity.in(RotationsPerSecond), ClimberConstants.kAcceleration.in(RotationsPerSecondPerSecond));
 
-  private Voltage lastVoltage = Volts.zero();
-
   public ClimberIOHardware() {
-    motor = new TalonFX(ClimberConstants.kMotorID);
+    motor = new TalonFX(ClimberConstants.kMotorId);
     motor.getConfigurator().apply(ClimberConstants.kMotorConfig);
 
     StatusSignalUtil.registerRioSignals(
@@ -50,13 +45,6 @@ public class ClimberIOHardware implements ClimberIO {
     inputs.temperature = motor.getDeviceTemp(false).getValue();
     inputs.position = motor.getPosition(false).getValue();
     inputs.velocity = motor.getVelocity(false).getValue();
-  }
-
-  public void setVoltage(Voltage voltage) {
-    if (!voltage.equals(lastVoltage)) {
-      motor.setControl(new VoltageOut(voltage));
-      lastVoltage = voltage;
-    }
   }
 
   public void setPosition(Angle position) {

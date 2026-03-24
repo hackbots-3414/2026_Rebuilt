@@ -32,7 +32,7 @@ Repo for the 2026 game season
 | Intake Roller | 5 |
 | Intake Deploy | 6 |
 | Spindexer | 7  |
-| Turret Spin | 51 |
+| Turret Spin | 48 |
 | Shoot 1 | 53 |
 | Shoot 2 | 54 |
 | Hood | 56 |

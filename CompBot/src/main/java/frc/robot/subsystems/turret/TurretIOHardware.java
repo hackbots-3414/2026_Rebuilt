@@ -1,9 +1,10 @@
 package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 import java.util.Optional;
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.Angle;
@@ -19,7 +20,7 @@ public class TurretIOHardware implements TurretIO {
   private final CANcoder gear1CANcoder;
   private final CANcoder gear2CANcoder;
 
-  private final DynamicMotionMagicTorqueCurrentFOC control;
+  private final DynamicMotionMagicVoltage control;
 
   private Angle reference = Radians.zero();
 
@@ -38,10 +39,10 @@ public class TurretIOHardware implements TurretIO {
     gear1CANcoder.getConfigurator().apply(TurretConstants.kEncoder1Config);
     gear2CANcoder.getConfigurator().apply(TurretConstants.kEncoder2Config);
 
-    control = new DynamicMotionMagicTorqueCurrentFOC(
+    control = new DynamicMotionMagicVoltage(
+        0,
         TurretConstants.kMaxSpeed,
-        TurretConstants.kMaxAcceleration,
-        TurretConstants.kMaxJerk);
+        TurretConstants.kMaxAcceleration).withEnableFOC(true);
 
     StatusSignalUtil.registerRioSignals(
         motor.getMotorVoltage(false),
@@ -56,7 +57,9 @@ public class TurretIOHardware implements TurretIO {
       // Note: we explicitly choose to refresh these signals on calibration.
         gear1CANcoder.getAbsolutePosition()::getValue,
         gear2CANcoder.getAbsolutePosition()::getValue)
-            .withEncoderRatios(TurretConstants.kEncoder1GearRatio, TurretConstants.kEncoder2GearRatio);
+            .withEncoderRatios(TurretConstants.kEncoder1GearRatio, TurretConstants.kEncoder2GearRatio)
+            .withMechanismRange(Rotations.of(-1), Rotations.of(1))
+            .withMatchTolerance(Rotations.of(0.02));
 
     crt = new EasyCRT(crtConfig);
   }
@@ -91,8 +94,8 @@ public class TurretIOHardware implements TurretIO {
     boolean isOk = totalPosition.isPresent();
     totalPosition.ifPresent(position -> motor.setPosition(position));
     if (!isOk) {
-      DriverStation.reportError("Received not-good turret CRT solve: " + crt.getLastStatus(), false);
+      DriverStation.reportError("Received not-good turret CRT solve: " + crt.getLastStatus() + ": error was " + crt.getLastErrorRotations(), false);
     }
-    calibrated |= isOk;
+    calibrated = isOk;
   }
 }

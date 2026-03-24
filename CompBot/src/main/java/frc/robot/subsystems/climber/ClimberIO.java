@@ -12,6 +12,7 @@ import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 
@@ -37,10 +38,10 @@ public interface ClimberIO {
       log.registerMeasurement("Voltage", () -> voltage, Volts);
       log.registerMeasurement("Temperature", () -> temperature, Celsius);
       log.registerMeasurement("Velocity", () -> velocity, RotationsPerSecond);
+      log.registerMeasurement("Position", () -> position, Rotations);
     }
   }
 
-  void setVoltage(Voltage voltage);
   void setPosition(Angle climbLevel);
 }
 

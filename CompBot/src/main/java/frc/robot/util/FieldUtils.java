@@ -1,6 +1,9 @@
 package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Meters;
+
+import com.therekrab.autopilot.APTarget;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,8 +17,11 @@ import frc.robot.Constants.FieldConstants;
  * something on the field
  */
 public class FieldUtils {
-  private static Pose3d allianceRelativeFlip(Pose3d pose) {
-    if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red)) {
+  private static boolean shouldFlip() {
+    return DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red);
+  }
+  public static Pose3d allianceRelativeFlip(Pose3d pose) {
+    if (shouldFlip()) {
       return new Pose3d(
           FieldConstants.kFieldLength.minus(pose.getMeasureX()),
           FieldConstants.kFieldWidth.minus(pose.getMeasureY()),
@@ -26,8 +32,15 @@ public class FieldUtils {
     }
   }
 
-  private static Pose2d allianceRelativeFlip(Pose2d pose) {
+  public static Pose2d allianceRelativeFlip(Pose2d pose) {
     return allianceRelativeFlip(new Pose3d(pose)).toPose2d();
+  }
+
+  public static Rotation2d allianceRelativeFlip(Rotation2d rotation) {
+    if (shouldFlip()) {
+      return Rotation2d.k180deg.plus(rotation);
+    }
+    return rotation;
   }
 
   /** Returns the position of the hub corresponding to the currently selected alliance */
@@ -40,7 +53,17 @@ public class FieldUtils {
     return local.getX() <= FieldConstants.kAllianceZoneLength.in(Meters);
   }
 
-  public static Pose3d feedTarget() {
-    return allianceRelativeFlip(FieldConstants.kFeedTarget);
+  public static Pose3d feedTarget(Pose2d robotPose) {
+    return new Pose3d(allianceRelativeFlip(allianceRelativeFlip(robotPose).nearest(FieldConstants.kFeedTargets)));
+  }
+
+  public static APTarget targetFlip(APTarget original) {
+    APTarget adjusted = original.withReference(allianceRelativeFlip(original.getReference()));
+    if (original.getEntryAngle().isEmpty()) {
+      return adjusted;
+    }
+    adjusted = adjusted.withEntryAngle(allianceRelativeFlip(original.getEntryAngle().get()));
+    System.out.println(adjusted.getEntryAngle().get().toString());
+    return adjusted;
   }
 }

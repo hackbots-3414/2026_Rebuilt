@@ -1,66 +1,49 @@
 package frc.robot.vision.localization;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Milliseconds;
-
-import java.util.Map;
 import java.util.Set;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
+import frc.robot.vision.CameraConfig;
+import frc.robot.vision.CameraTrustConfig;
 
 public class LocalizationConstants {
-  protected static final double kRotationCoefficient = Math.PI * 0.5;
-  protected static final double kTranslationCoefficient = 0.06;
-
-  protected static final Vector<N3> kBaseStdDevs =
-      VecBuilder.fill(kTranslationCoefficient, kTranslationCoefficient, kRotationCoefficient);
+  public static final CameraConfig kRegularBaseCameraConfig = new CameraConfig(
+      "", // Name
+      480, // Resolution height
+      640, // Resolution width
+      Degrees.of(92), // Diagonal FOV
+      Degrees.of(77.4), // Horizontal FOV
+      () -> Transform3d.kZero, // Pose supplier
+      new CameraTrustConfig(
+          VecBuilder.fill(0.3, 0.3, 0.3), // Base std devs
+          0.75, // Latency threshold
+          1.3, // Latency multiplier
+          2.5, // Field XY margin
+          1.5, // Field Z margin
+          0.8, // Noisy distance
+          70.0, // Distance multiplier
+          6.5, // Distance max
+          0.2, // Ambiguity threshold
+          5, // Ambiguity multiplier
+          0.2, // Ambiguity shifter
+          80, // Target divisor
+          0.1, // Difference threshold
+          20)); // Difference multiplier
 
   protected static final AprilTagFieldLayout kTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
   protected static final String kEstimationName = "estimation";
   protected static final String kRejectName = "rejected";
-
-  private static final double kCameraHeight = 0.190;
-  private static final double kHorizontalOffset = 0.25; // meters
-  private static final double kLowPitch = Units.degreesToRadians(-15);
-  private static final double kHighPitch = Units.degreesToRadians(-35);
-
-  private static final double yawOffset = 45;
-
-  public static Map<String, Transform3d> kCameras = Map.ofEntries(
-    Map.entry("cam1", new Transform3d(kHorizontalOffset, kHorizontalOffset, kCameraHeight, new Rotation3d(0, kLowPitch, Units.degreesToRadians(-90 + yawOffset)))),
-    Map.entry("cam2", new Transform3d(kHorizontalOffset, kHorizontalOffset, kCameraHeight, new Rotation3d(0, kHighPitch, Units.degreesToRadians(180-yawOffset)))),
-    Map.entry("cam3", new Transform3d(-kHorizontalOffset, kHorizontalOffset, kCameraHeight, new Rotation3d(0, kLowPitch, Units.degreesToRadians(yawOffset)))),
-    Map.entry("cam4", new Transform3d(-kHorizontalOffset, kHorizontalOffset, kCameraHeight, new Rotation3d(0, kHighPitch, Units.degreesToRadians(-180+yawOffset)))),
-    Map.entry("cam5", new Transform3d(-kHorizontalOffset, -kHorizontalOffset, kCameraHeight, new Rotation3d(0, kLowPitch, Units.degreesToRadians(180-yawOffset)))),
-    Map.entry("cam6", new Transform3d(-kHorizontalOffset, -kHorizontalOffset, kCameraHeight, new Rotation3d(0, kHighPitch, Units.degreesToRadians(-90+yawOffset)))),
-    Map.entry("cam7", new Transform3d(kHorizontalOffset, -kHorizontalOffset, kCameraHeight, new Rotation3d(0, kLowPitch, Units.degreesToRadians(-180+yawOffset)))),
-    Map.entry("cam8", new Transform3d(kHorizontalOffset, -kHorizontalOffset, kCameraHeight, new Rotation3d(0, kHighPitch, Units.degreesToRadians(yawOffset)))),
-    Map.entry("turretCam", new Transform3d(0, 0, 0.572, new Rotation3d(0, 0, 0))),
-    Map.entry("turretCamUp", new Transform3d(0, 0, 0.572, new Rotation3d(0, Units.degreesToRadians(-15), 0))),
-    Map.entry("turretCamHighUp", new Transform3d(0, 0, 0.572, new Rotation3d(0, Units.degreesToRadians(-30), 0))), // Best one to use for turret MIN
-    Map.entry("turretCamVeryHighUp", new Transform3d(0, 0, 0.572, new Rotation3d(0, Units.degreesToRadians(-45), 0))) // Best one to use for turret MAX
-    /* Map.entry("turretCam2", new Transform3d(0, 0, 0.65, new Rotation3d(0, 0, 0))),
-    Map.entry("turretCamUp2", new Transform3d(0, 0, 0.65, new Rotation3d(0, Units.degreesToRadians(-15), 0))),
-    Map.entry("turretCamHighUp2", new Transform3d(0, 0, 0.65, new Rotation3d(0, Units.degreesToRadians(-30), 0))),
-    Map.entry("turretCamVeryHighUp2", new Transform3d(0, 0, 0.65, new Rotation3d(0, Units.degreesToRadians(-45), 0))),
-    Map.entry("turretCam3", new Transform3d(0, 0, 0.762, new Rotation3d(0, 0, 0))),
-    Map.entry("turretCamUp3", new Transform3d(0, 0, 0.762, new Rotation3d(0, Units.degreesToRadians(-15), 0))),
-    Map.entry("turretCamHighUp3", new Transform3d(0, 0, 0.762, new Rotation3d(0, Units.degreesToRadians(-30), 0))),
-    Map.entry("turretCamVeryHighUp3", new Transform3d(0, 0, 0.762, new Rotation3d(0, Units.degreesToRadians(-45), 0))) */
-    );
-
 
   /** The tick time for each pose estimator to run */
   protected static final double kPeriodic = 0.02;
@@ -87,9 +70,7 @@ public class LocalizationConstants {
 
   // Stats about the camera for simulation
   protected static final int kResWidth = 640;
-  protected static final int kResHeight = 380;
-  protected static final Rotation2d kFOV = Rotation2d.fromDegrees(92.0);
-  protected static final Rotation2d kHorizontalFov = Rotation2d.fromDegrees(77.4);
+  protected static final int kResHeight = 480;
 
   // Simulated error:
   protected static final Time kAvgLatency = Milliseconds.of(18);
@@ -97,11 +78,15 @@ public class LocalizationConstants {
   protected static final double kAvgErr = 0.08;
   protected static final double kErrStdDevs = 0.02;
 
-  public static final boolean kEnableTagFilter = true;
+  public static final boolean kEnableTagFilter = false;
 
-  protected static final Set<Integer> kApprovedTagIds = Set.of(
-      6, 7, 8, 9, 10, 11, // red reef tags
-      17, 18, 19, 20, 21, 22, // blue reef tags
-      3, 16 // processor tags are okay as well.
-  );
+  protected static final Set<Integer> kApprovedTagIds = Set.of(2, 3, 4, 5, 8, 9, 10, 11);
+
+  public static final Transform3d kTurretAoRToTurretCameraOffset =
+      new Transform3d(0.064, -0.02, 0.038, new Rotation3d(0, Units.degreesToRadians(-30), 0));
+
+  /** Maximum time since last pose estimate for odometry to be considered valid */
+  public static final double kValidOdometryCutoff = 0.5;
+
+  public static final boolean kUsePnPDistanceTrigSolve = false;
 }
