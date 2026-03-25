@@ -27,6 +27,7 @@ public class Led extends SubsystemBase  {
         new BadController(),
         new TestRslEnabled(),
         new TestRsl(),
+        new AutonPose(),
         // new Climbed(),
         new EndGameAlert(),
         new EndGameWarning(),
