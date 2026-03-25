@@ -86,17 +86,47 @@
       "rotationDegrees": 110.0
     },
     {
-      "waypointRelativePos": 2.7540983606557403,
+      "waypointRelativePos": 2.592531120331954,
       "rotationDegrees": -128.4497002078994
+    },
+    {
+      "waypointRelativePos": 2.9775933609958374,
+      "rotationDegrees": -49.878019640318925
     }
   ],
   "constraintZones": [
     {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.9720320915619389,
+      "name": "Intake Balls",
+      "minWaypointRelativePos": 1.23473945409428,
       "maxWaypointRelativePos": 2.228371858168762,
       "constraints": {
-        "maxVelocity": 2.0,
+        "maxVelocity": 1.5,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Cross Nuetral",
+      "minWaypointRelativePos": 0.0,
+      "maxWaypointRelativePos": 0.2739454094292795,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Cross Alliance",
+      "minWaypointRelativePos": 2.9022332506203505,
+      "maxWaypointRelativePos": 3.6009925558312443,
+      "constraints": {
+        "maxVelocity": 3.0,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -130,7 +160,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": -41.30950981274551
+    "rotation": -41.30950981274552
   },
   "reversed": false,
   "folder": null,

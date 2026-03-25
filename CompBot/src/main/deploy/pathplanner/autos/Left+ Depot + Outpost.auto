@@ -7,13 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right"
+            "pathName": "Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot + Oupost"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Aim "
+            "name": "Aim"
           }
         }
       ]
