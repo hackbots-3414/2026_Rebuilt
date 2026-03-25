@@ -6,6 +6,6 @@ import frc.robot.superstructure.Superstructure.Subsystems;
 
 public class DrivetrainTrack implements CommandBuilder {
   public Command build(Subsystems subsystems, StateManager state) {
-    return subsystems.drivetrain().track(state::predictedAimParams);
+    return subsystems.drivetrain().track(state::aimParams);
   }
 }

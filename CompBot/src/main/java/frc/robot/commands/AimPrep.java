@@ -11,7 +11,7 @@ public class AimPrep implements CommandBuilder {
     return Commands.parallel(
       Commands.runOnce(() -> SmartDashboard.putBoolean("Robot/Aiming", true)),
       subsystems.turret().track(state),
-      subsystems.shooter().shoot(state::predictedAimParams))
+      subsystems.shooter().shoot(state::aimParams))
       .finallyDo(() -> SmartDashboard.putBoolean("Robot/Aiming", false));
   }
 }

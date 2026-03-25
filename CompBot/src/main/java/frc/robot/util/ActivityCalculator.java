@@ -1,17 +1,12 @@
 package frc.robot.util;
 
-import java.text.DecimalFormat;
-
 import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class ActivityCalculator {
-
-  private static final DecimalFormat df = new DecimalFormat("#.00");
 
   // We have to set default values
   private static HubActivity winner = HubActivity.Blue;
@@ -20,8 +15,6 @@ public class ActivityCalculator {
   private static boolean failed = true;
 
   private static HubActivity teamHub;
-
-  private static double end = Double.POSITIVE_INFINITY;
 
   private static final Alert noData = new Alert("FMS has not communicated the winner of auto", AlertType.kWarning);
 
@@ -47,10 +40,6 @@ public class ActivityCalculator {
         case Red -> "#823434";
       };
       return timeRemaining() <= 5 ? low : base;
-    }
-
-    public String timeText() {
-      return df.format(timeRemaining());
     }
   }
 
@@ -98,10 +87,6 @@ public class ActivityCalculator {
     return !failed;
   }
 
-  public static void startTimer() {
-    end = Timer.getTimestamp() + 140.0; // 140s in teleop
-  }
-
   public static void update() {
     if (DriverStation.isAutonomous()) {
       setStatus(HubActivity.Both, DriverStation.getMatchTime());
@@ -115,7 +100,6 @@ public class ActivityCalculator {
       return;
     }
 
-    // double matchTime = end - Timer.getTimestamp();
     double matchTime = DriverStation.getMatchTime();
 
     boolean winnerActive = false;
@@ -123,7 +107,7 @@ public class ActivityCalculator {
 
     if (matchTime > 130) {
       // Transition shift
-      setStatus(HubActivity.Both, matchTime - 130.0);
+      setStatus(HubActivity.Both, matchTime - 130);
       return;
     } else if (matchTime > 105) {
       // First alliance shift

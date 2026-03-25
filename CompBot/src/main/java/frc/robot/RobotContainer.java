@@ -32,6 +32,6 @@ public class RobotContainer {
     hidBinder.bind(superstructure);
     autogenBinder.bind(superstructure);
     aprilTagVisionHandler = superstructure.createAprilTagVisionHandler();
-    superstructure.createAutonChooser();
+    superstructure.state.initAutoChooser();
   }
 }
