@@ -16,8 +16,6 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.Slot1Configs;
-import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
@@ -38,35 +36,26 @@ public final class ShooterConstants {
   protected static final int kMotor1Id = 53;
   protected static final int kMotor2Id = 54;
 
-  private static final SlotConfigs regularControl = new SlotConfigs()
-      .withKA(0)
-      .withKS(4)
-      .withKV(0.07)
-
-      .withKP(9.0)
-      .withKI(0)
-      .withKD(0);
-
-  private static final SlotConfigs recoveryControl = regularControl.clone()
-      .withKP(50);
-
-  protected static final AngularVelocity kRecoveryErrorThreshold = RotationsPerSecond.of(2);
+  protected static final AngularVelocity kRecoveryErrorThreshold = RotationsPerSecond.of(8);
   protected static final AngularVelocity kShootingErrorDetectionThreshold = RotationsPerSecond.of(4);
 
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
-      .withSlot0(Slot0Configs.from(regularControl))
-
-      .withSlot1(Slot1Configs.from(recoveryControl))
+      .withSlot0(new Slot0Configs()
+        .withKP(3414) // a great number
+        .withKI(0)
+        .withKD(0))
 
       .withMotionMagic(new MotionMagicConfigs()
           .withMotionMagicAcceleration(10.0))
 
       .withMotorOutput(new MotorOutputConfigs()
+          .withPeakReverseDutyCycle(0)
           .withNeutralMode(NeutralModeValue.Coast)
           .withInverted(InvertedValue.Clockwise_Positive))
 
     .withTorqueCurrent(new TorqueCurrentConfigs()
-        .withPeakReverseTorqueCurrent(0.0))
+        .withPeakReverseTorqueCurrent(0.0)
+        .withPeakForwardTorqueCurrent(80.0))
 
       .withCurrentLimits(new CurrentLimitsConfigs()
           .withSupplyCurrentLimitEnable(true)

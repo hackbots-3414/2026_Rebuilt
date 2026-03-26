@@ -17,6 +17,7 @@ import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimStrategy;
 import frc.robot.aiming.PhysicsAim;
 import frc.robot.aiming.ToFAim;
+import frc.robot.aiming.TuneAim;
 import frc.robot.subsystems.shooter.ShooterConstants;
 
 public class Constants {
@@ -53,7 +54,7 @@ public class Constants {
             ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond))); // Max output (speed));
 
     private static final AimStrategy kSimulationAim = kTofAim;
-    private static final AimStrategy kRealAim = kTofAim;
+    private static final AimStrategy kRealAim = new TuneAim();
 
     public static final AimStrategy kAim = Robot.isReal() ? kRealAim : kSimulationAim;
   }

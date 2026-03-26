@@ -42,7 +42,7 @@ public class TurretIOHardware implements TurretIO {
     control = new DynamicMotionMagicVoltage(
         0,
         TurretConstants.kMaxSpeed,
-        TurretConstants.kMaxAcceleration).withEnableFOC(true);
+        TurretConstants.kMaxAcceleration);
 
     StatusSignalUtil.registerRioSignals(
         motor.getMotorVoltage(false),

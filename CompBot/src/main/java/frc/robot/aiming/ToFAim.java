@@ -53,7 +53,7 @@ public class ToFAim implements AimStrategy {
     AimStatus status = AimStatus.Impossible;
 
     double distance = start.minus(target).getNorm(); // This will be overriden immediately
-    // SmartDashboard.putNumber("Distance", distance);
+    SmartDashboard.putNumber("Distance", distance);
     double tof;
 
     for (int i = 0; i < ITERATIONS; i++) {

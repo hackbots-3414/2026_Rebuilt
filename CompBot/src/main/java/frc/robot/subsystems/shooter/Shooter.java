@@ -86,6 +86,10 @@ public class Shooter extends SubsystemBase {
     return this.run(() -> {
       active = true;
       AimParams params = paramsSupplier.get();
+      if (!params.isOk()) {
+        io.setVelocity(RotationsPerSecond.zero(), false);
+        return;
+      }
       // This runs each tick (no exceptions are possible), so we get to vary slot parameter here.
       shooterReference = projectileToShooterVelocity(params.output, params.control);
       hoodReference = pitchToHoodAngle(params.pitch);
