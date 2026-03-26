@@ -68,7 +68,7 @@ public class Turret extends SubsystemBase {
         this.run(() -> {
           tracking = true;
           Rotation2d robot = state.robotPose().getRotation();
-          AimParams params = state.predictedAimParams();
+          AimParams params = state.aimParams();
           if (!params.isOk()) {
             return;
           }

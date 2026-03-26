@@ -40,7 +40,7 @@ public class FuelShotSim implements CommandBuilder {
     public FuelSim() {}
 
     public void launch(StateManager state) {
-      AimParams params = state.predictedAimParams();
+      AimParams params = state.aimParams();
       if (params.control != SpeedControl.ProjectileVelocity) {
         throw new IllegalStateException(
             "Aim Params in fuel sim doesn't use SpeedControl.ProjectileVelocity speed control");
