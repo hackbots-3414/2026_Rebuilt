@@ -41,9 +41,9 @@ public final class ShooterConstants {
 
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withSlot0(new Slot0Configs()
-        .withKP(3414) // a great number
-        .withKI(0)
-        .withKD(0))
+          .withKP(3414) // a great number
+          .withKI(0)
+          .withKD(0))
 
       .withMotionMagic(new MotionMagicConfigs()
           .withMotionMagicAcceleration(10.0))
@@ -53,9 +53,9 @@ public final class ShooterConstants {
           .withNeutralMode(NeutralModeValue.Coast)
           .withInverted(InvertedValue.Clockwise_Positive))
 
-    .withTorqueCurrent(new TorqueCurrentConfigs()
-        .withPeakReverseTorqueCurrent(0.0)
-        .withPeakForwardTorqueCurrent(80.0))
+      .withTorqueCurrent(new TorqueCurrentConfigs()
+          .withPeakReverseTorqueCurrent(0.0)
+          .withPeakForwardTorqueCurrent(80.0))
 
       .withCurrentLimits(new CurrentLimitsConfigs()
           .withSupplyCurrentLimitEnable(true)
@@ -125,18 +125,13 @@ public final class ShooterConstants {
   }
 
   public static final List<AimMeasurement> measurements = List.of(
-      new AimMeasurement(Meters.of(1.70), Rotation2d.fromDegrees(72), 32, Seconds.of(0.95)),
-      new AimMeasurement(Meters.of(2.34), Rotation2d.fromDegrees(70), 34, Seconds.of(1.11)),
-      new AimMeasurement(Meters.of(2.73), Rotation2d.fromDegrees(65), 36, Seconds.of(1.10)),
-      new AimMeasurement(Meters.of(3.212), Rotation2d.fromDegrees(65), 37.5, Seconds.of(1.12)),
-      new AimMeasurement(Meters.of(3.79), Rotation2d.fromDegrees(60), 38, Seconds.of(1.07)),
-      new AimMeasurement(Meters.of(4.26), Rotation2d.fromDegrees(60), 41, Seconds.of(1.20)),
-      new AimMeasurement(Meters.of(4.78), Rotation2d.fromDegrees(58), 42, Seconds.of(1.18)),
-      new AimMeasurement(Meters.of(5.23), Rotation2d.fromDegrees(54), 45, Seconds.of(1.20)),
-      new AimMeasurement(Meters.of(5.73), Rotation2d.fromDegrees(54), 47, Seconds.of(1.21)),
-      new AimMeasurement(Meters.of(6.252), Rotation2d.fromDegrees(54), 46, Seconds.of(1.21)),
-      new AimMeasurement(Meters.of(6.696), Rotation2d.fromDegrees(54), 50, Seconds.of(1.25)),
-      new AimMeasurement(Meters.of(7.185), Rotation2d.fromDegrees(52), 51, Seconds.of(1.31)),
-      new AimMeasurement(Meters.of(10.0), Rotation2d.fromDegrees(50), 80, Seconds.of(1.71))
-  );
+      // valid TOF
+      new AimMeasurement(Meters.of(1.70), Rotation2d.fromDegrees(72), 32, Seconds.of(0.962)),
+      new AimMeasurement(Meters.of(2.41), Rotation2d.fromDegrees(70), 34, Seconds.of(1.006)),
+      new AimMeasurement(Meters.of(2.93), Rotation2d.fromDegrees(67), 36, Seconds.of(1.016)),
+      new AimMeasurement(Meters.of(3.33), Rotation2d.fromDegrees(65), 37, Seconds.of(1.014)),
+      new AimMeasurement(Meters.of(3.81), Rotation2d.fromDegrees(61), 39, Seconds.of(1.07)),
+      // valid params
+      new AimMeasurement(Meters.of(4.29), Rotation2d.fromDegrees(59), 41, Seconds.of(1.064)));
+
 }

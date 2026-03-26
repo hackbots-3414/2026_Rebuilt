@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooter;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
@@ -27,6 +28,7 @@ public class ShooterIOHardware implements ShooterIO {
 
   private final VelocityTorqueCurrentFOC shooterControl = new VelocityTorqueCurrentFOC(0);
   private final VelocityDutyCycle speedupControl = new VelocityDutyCycle(0);
+  private final CoastOut coastControl = new CoastOut();
 
   // Using zero for the acceleration and jerk tell the control request to just use the
   // device-configured MotionMagic configs found in the motor configuration. Position doesn't really
@@ -129,6 +131,10 @@ public class ShooterIOHardware implements ShooterIO {
   }
 
   public void setVelocity(AngularVelocity velocity, boolean useRecovery) {
+    if (velocity.baseUnitMagnitude() == 0) {
+      shooter1Motor.setControl(coastControl);
+      return;
+    }
     if (!velocity.equals(lastVelocity) || useRecovery != lastRecoveryEnabled) {
       if (!useRecovery) {
         shooter1Motor.setControl(shooterControl.withVelocity(velocity));
