@@ -132,8 +132,8 @@ public final class ShooterConstants {
       new AimMeasurement(Meters.of(3.33), Rotation2d.fromDegrees(65), 37, Seconds.of(1.014)),
       new AimMeasurement(Meters.of(3.81), Rotation2d.fromDegrees(61), 39, Seconds.of(1.07)),
       new AimMeasurement(Meters.of(4.29), Rotation2d.fromDegrees(59), 41, Seconds.of(1.064)),
-      // valid params
       new AimMeasurement(Meters.of(4.77), Rotation2d.fromDegrees(59), 42 , Seconds.of(0.924)),
+      // valid params
       // invalid everything
       new AimMeasurement(Meters.of(5.26), Rotation2d.fromDegrees(58), 45 , Seconds.of(2222)),
       new AimMeasurement(Meters.of(222), Rotation2d.fromDegrees(2), 22 , Seconds.of(2222)));

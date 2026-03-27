@@ -54,7 +54,7 @@ public class Constants {
             ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond))); // Max output (speed));
 
     private static final AimStrategy kSimulationAim = kTofAim;
-    private static final AimStrategy kRealAim = kTofAim;
+    private static final AimStrategy kRealAim = new TuneAim();
 
     public static final AimStrategy kAim = Robot.isReal() ? kRealAim : kSimulationAim;
   }
