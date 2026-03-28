@@ -40,27 +40,15 @@ public class Constants {
     public static final BoundingBox kNoFeedZone = new BoundingBox(new Pose2d(5.5, 3.5, Rotation2d.kZero), new Pose2d(6.5, 4.6, Rotation2d.kZero));
   }
 
-  @SuppressWarnings("unused")
   public static class AimConstants {
-    private static final AimStrategy kPhysicsAim = new PhysicsAim(
-        new AimConstraints(
+    private static final AimConstraints constraints = new AimConstraints(
             Rotation2d.fromDegrees(49.5), // Min pitch
             Rotation2d.fromDegrees(72.0), // Max pitch
-            ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond)), // Max output (speed)
-        2,
-        10);
+            ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond)); // max output
 
-    private static final AimStrategy kTofAim = new ToFAim(
-        ShooterConstants.measurements,
-        new AimConstraints(
-            Rotation2d.fromDegrees(49.5), // Min pitch
-            Rotation2d.fromDegrees(72.0), // Max pitch
-            ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond))); // Max output (speed));
+    public static final AimStrategy kScoringAim = new ToFAim(ShooterConstants.scoringMeasurements, constraints);
+    public static final AimStrategy kFeedingAim = new ToFAim(ShooterConstants.feedingMeasurements, constraints);
 
-    private static final AimStrategy kSimulationAim = kTofAim;
-    private static final AimStrategy kRealAim = new TuneAim();
-
-    public static final AimStrategy kAim = Robot.isReal() ? kRealAim : kSimulationAim;
   }
 
   public static class AutonConstants {

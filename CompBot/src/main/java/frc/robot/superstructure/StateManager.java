@@ -139,8 +139,8 @@ public class StateManager {
 
       params = switch (wantedShootMode) {
         case Donut -> AimParams.impossible();
-        case Scoring -> AimConstants.kAim.update(FieldUtils.hub(), turret, velocity);
-        case Feeding -> AimConstants.kAim.update(FieldUtils.feedTarget(robotPose()), turret, velocity);
+        case Scoring -> AimConstants.kScoringAim.update(FieldUtils.hub(), turret, velocity);
+        case Feeding -> AimConstants.kFeedingAim.update(FieldUtils.feedTarget(robotPose()), turret, velocity);
       };
     }
 

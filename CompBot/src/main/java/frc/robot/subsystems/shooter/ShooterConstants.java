@@ -124,7 +124,7 @@ public final class ShooterConstants {
     protected static final Angle kOffset = Degrees.of(18.0);
   }
 
-  public static final List<AimMeasurement> measurements = List.of(
+  public static final List<AimMeasurement> scoringMeasurements = List.of(
       // valid TOF
       new AimMeasurement(Meters.of(1.70), Rotation2d.fromDegrees(72), 32, Seconds.of(0.962)),
       new AimMeasurement(Meters.of(2.41), Rotation2d.fromDegrees(70), 34, Seconds.of(1.006)),
@@ -134,9 +134,9 @@ public final class ShooterConstants {
       new AimMeasurement(Meters.of(4.29), Rotation2d.fromDegrees(59), 41, Seconds.of(1.064)),
       new AimMeasurement(Meters.of(4.77), Rotation2d.fromDegrees(59), 42 , Seconds.of(0.924)),
       // valid params
+      new AimMeasurement(Meters.of(5.26), Rotation2d.fromDegrees(58), 45 , Seconds.of(0))
       // invalid everything
-      new AimMeasurement(Meters.of(5.26), Rotation2d.fromDegrees(58), 45 , Seconds.of(2222)),
-      new AimMeasurement(Meters.of(222), Rotation2d.fromDegrees(2), 22 , Seconds.of(2222)));
+      );
       
-
+  public static final List<AimMeasurement> feedingMeasurements = List.copyOf(scoringMeasurements);
 }
