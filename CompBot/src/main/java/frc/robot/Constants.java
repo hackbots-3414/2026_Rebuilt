@@ -47,6 +47,7 @@ public class Constants {
             ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond)); // max output
 
     public static final AimStrategy kScoringAim = new ToFAim(ShooterConstants.scoringMeasurements, constraints);
+    // public static final AimStrategy kScoringAim = new TuneAim();
     public static final AimStrategy kFeedingAim = new ToFAim(ShooterConstants.feedingMeasurements, constraints);
 
   }

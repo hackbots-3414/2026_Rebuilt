@@ -63,11 +63,11 @@ public class AprilTagVisionHandler implements AutoCloseable {
   }
 
   private void addEstimate(TimestampedPoseEstimate estimate) {
-    if (DriverStation.isDisabled()) {
-      if (!m_filter.verify(estimate.pose())) {
-        return;
-      }
-    }
+    // if (DriverStation.isDisabled()) {
+    //   if (!m_filter.verify(estimate.pose())) {
+    //     return;
+    //   }
+    // }
     superstructure.addPoseEstimate(estimate);
   }
 

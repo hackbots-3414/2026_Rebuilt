@@ -7,7 +7,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Far Left"
+            "pathName": "Left"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Aim"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              }
+            ]
           }
         },
         {
