@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AimConstants;
 import frc.robot.aiming.AimParams;
@@ -69,9 +68,15 @@ public class StateManager {
       return inAllianceZone ? ShootMode.Scoring : ShootMode.Donut;
     }
 
-    // If we're feeding, then all requirements have been met. We want to feed.
+    // If we're not in alliance zone, then all requirements for feeding have been met.
+    // We want to feed.
     if (!inAllianceZone) {
-      return ShootMode.Feeding;
+      return FieldUtils.inNoFeedZone(robotPose()) ? ShootMode.Donut : ShootMode.Feeding;
+    }
+    
+    // By now, we're in a scoring position.
+    if (FieldUtils.inTowerZone(robotPose())) {
+      return ShootMode.Donut;
     }
 
     double SHOT_TIME = 2.0;
@@ -80,7 +85,6 @@ public class StateManager {
 
     return willBeActive ? ShootMode.Scoring : ShootMode.Donut;
   }
-
 
   /**
    * Returns the robot's position on the field.
@@ -143,15 +147,6 @@ public class StateManager {
     return params;
   }
 
-  public void update() {
-    params = new AimParams(AimStatus.Unchecked);
-    predictedParams = new AimParams(AimStatus.Unchecked);
-
-    wantedShootMode = calculateWantedShootMode();
-
-    params = aimParams();
-  }
-
   public Trigger climbing() {
     return subsystems.climber().wants(ClimbPosition.Climbed);
   }
@@ -179,5 +174,16 @@ public class StateManager {
   public Trigger inAutonStartPose = new Trigger(() -> {
     return BetterAutoChooser.checkPose(getAuton().getName(), robotPose());
   });
+
+  public void update() {
+    params = new AimParams(AimStatus.Unchecked);
+    predictedParams = new AimParams(AimStatus.Unchecked);
+
+    wantedShootMode = calculateWantedShootMode();
+
+    params = aimParams();
+    SmartDashboard.putBoolean("In tower", FieldUtils.inTowerZone(robotPose()));
+    SmartDashboard.putString("Shoot Mode", wantedShootMode.toString());
+  }
 
 }

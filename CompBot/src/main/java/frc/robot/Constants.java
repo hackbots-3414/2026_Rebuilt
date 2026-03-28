@@ -19,6 +19,7 @@ import frc.robot.aiming.PhysicsAim;
 import frc.robot.aiming.ToFAim;
 import frc.robot.aiming.TuneAim;
 import frc.robot.subsystems.shooter.ShooterConstants;
+import frc.robot.util.BoundingBox;
 
 public class Constants {
   // Checked the FIRST Game Manual and fixed the field dimensions.
@@ -34,6 +35,9 @@ public class Constants {
     public static final List<Pose2d> kFeedTargets = List.of(
         new Pose2d(2.5, 2, Rotation2d.kZero),
         new Pose2d(2.5, 6.0, Rotation2d.kZero));
+
+    public static final BoundingBox kBlueTower = new BoundingBox(new Pose2d(0, 3.25, Rotation2d.kZero), new Pose2d(1, 4.15, Rotation2d.kZero));
+    public static final BoundingBox kNoFeedZone = new BoundingBox(new Pose2d(5.5, 3.5, Rotation2d.kZero), new Pose2d(6.5, 4.6, Rotation2d.kZero));
   }
 
   @SuppressWarnings("unused")
