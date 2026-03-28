@@ -182,8 +182,6 @@ public class StateManager {
     wantedShootMode = calculateWantedShootMode();
 
     params = aimParams();
-    SmartDashboard.putBoolean("In tower", FieldUtils.inTowerZone(robotPose()));
-    SmartDashboard.putString("Shoot Mode", wantedShootMode.toString());
   }
 
 }
