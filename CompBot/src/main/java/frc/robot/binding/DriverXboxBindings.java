@@ -7,14 +7,11 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.binding.BindingConstants.Driver;
 import frc.robot.commands.AimPrep;
-import frc.robot.commands.DrivetrainAim;
 import frc.robot.commands.ResetForwards;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.RunIntake;
 import frc.robot.subsystems.drivetrain.Drivetrain.TeleopDriveMode;
 import frc.robot.superstructure.Superstructure;
-import frc.robot.util.ActivityCalculator;
-import frc.robot.util.ActivityCalculator.HubActivity;
 import frc.robot.util.RumbleUtil;
 import frc.robot.util.RumbleUtil.RumbleStrength;
 
@@ -47,8 +44,6 @@ public class DriverXboxBindings implements Binder {
     resetPerspective.onTrue(superstructure.build(new ResetForwards()));
     retract.onTrue(superstructure.build(new RetractIntake()));
 
-    superstructure.state.intaking().whileTrue(RumbleUtil.rumble(controller, RumbleStrength.High));
-
-    // Rumble on shift change:    //RobotModeTriggers.teleop().and(ActivityCalculator.when(HubActivity.Both, 3.0)).whileTrue(RumbleUtil.alert(controller, RumbleStrength.High).withTimeout(3.0));
+    superstructure.state.intaking().and(RobotModeTriggers.teleop()).whileTrue(RumbleUtil.rumble(controller, RumbleStrength.High));
   }
 }

@@ -1,7 +1,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.List;
@@ -15,9 +14,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimStrategy;
-import frc.robot.aiming.PhysicsAim;
 import frc.robot.aiming.ToFAim;
-import frc.robot.aiming.TuneAim;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.util.BoundingBox;
 

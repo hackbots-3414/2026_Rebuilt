@@ -1,14 +1,13 @@
 package frc.robot.subsystems.led;
 
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANdleConfiguration;
 import com.ctre.phoenix6.configs.LEDConfigs;
 import com.ctre.phoenix6.signals.StripTypeValue;
 
 import frc.robot.util.RobotIdentifier;
-import frc.robot.util.StatusSignalUtil;
 import frc.robot.util.RobotIdentifier.RobotId;
+import frc.robot.util.StatusSignalUtil;
 
 public class LedConstants {
     // Offsets & numLEds & IDS

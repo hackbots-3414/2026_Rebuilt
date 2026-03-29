@@ -1,6 +1,5 @@
 package frc.robot.subsystems.led;
 
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.ColorFlowAnimation;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.EmptyAnimation;
@@ -14,7 +13,6 @@ import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.signals.RGBWColor;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.StatusSignalUtil;
 
 public class LedIO extends SubsystemBase {
 
