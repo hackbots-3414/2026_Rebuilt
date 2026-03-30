@@ -25,16 +25,17 @@ import frc.robot.util.OnboardLogger;
 public class StateManager {
   private final Subsystems subsystems;
 
+  /**
+   * The current desired shoot mode. Basically, this is what we would <i>like</i> to be doing right
+   * now.
+   */
   public enum ShootMode {
-    Scoring,
-    Feeding,
-    Donut; // "donut" shoot sounds like "do not" shoot...
+    Scoring, Feeding, Donut; // "donut" shoot sounds like "do not" shoot...
   }
 
   private ShootMode wantedShootMode = ShootMode.Donut;
 
   private AimParams params = new AimParams(AimStatus.Unchecked);
-  private AimParams predictedParams = new AimParams(AimStatus.Unchecked);
 
   public final Trigger shootReady;
 
@@ -54,8 +55,6 @@ public class StateManager {
 
     OnboardLogger aimParamsLogger = new OnboardLogger("Robot/Aim Params");
     AimParams.setupLogging(aimParamsLogger, () -> params);
-    OnboardLogger predictedAimParamsLogger = new OnboardLogger("Robot/Aim Params (Predicted)");
-    AimParams.setupLogging(predictedAimParamsLogger, () -> predictedParams);
   }
 
   private ShootMode calculateWantedShootMode() {
@@ -176,11 +175,8 @@ public class StateManager {
 
   public void update() {
     params = new AimParams(AimStatus.Unchecked);
-    predictedParams = new AimParams(AimStatus.Unchecked);
-
-    wantedShootMode = calculateWantedShootMode();
-
     params = aimParams();
+    wantedShootMode = calculateWantedShootMode();
   }
 
 }
