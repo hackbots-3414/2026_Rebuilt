@@ -38,17 +38,22 @@ public class LedIO extends SubsystemBase {
   }
 
   public ControlRequest createAnimation(RGBWColor color, AnimationType type) {
+    int s = LedConstants.startIndex;
+    int e = LedConstants.endIndex;
     return switch (type) {
-          case Twinkle -> new TwinkleAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-          case Strobe -> new StrobeAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot).withFrameRate(LedConstants.kStrobeRate);
-          case Fade -> new SingleFadeAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-          case Rainbow -> new RainbowAnimation(LedConstants.startIndex, LedConstants.endIndex).withSlot(slot);
-          case Larson -> new LarsonAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-          case Flow -> new ColorFlowAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot);
-          case Solid -> new SolidColor(LedConstants.startIndex, LedConstants.endIndex).withColor(color);
-          case Flash -> new StrobeAnimation(LedConstants.startIndex, LedConstants.endIndex).withColor(color).withSlot(slot).withFrameRate(LedConstants.kFlashRate);
-          case Clear -> new EmptyAnimation(slot);
-          case Epilepsy -> new StrobeAnimation(LedConstants.startIndex, LedConstants.endIndex).withSlot(slot).withColor(color).withFrameRate(10);
+      case Twinkle -> new TwinkleAnimation(s, e).withColor(color).withSlot(slot);
+      case Strobe -> new StrobeAnimation(s, e).withColor(color).withSlot(slot)
+          .withFrameRate(LedConstants.kStrobeRate);
+      case Fade -> new SingleFadeAnimation(s, e).withColor(color).withSlot(slot);
+      case Rainbow -> new RainbowAnimation(s, e).withSlot(slot);
+      case Larson -> new LarsonAnimation(s, e).withColor(color).withSlot(slot);
+      case Flow -> new ColorFlowAnimation(s, e).withColor(color).withSlot(slot);
+      case Solid -> new SolidColor(s, e).withColor(color);
+      case Flash -> new StrobeAnimation(s, e).withColor(color).withSlot(slot)
+          .withFrameRate(LedConstants.kFlashRate);
+      case Clear -> new EmptyAnimation(slot);
+      case Epilepsy -> new StrobeAnimation(s, e).withSlot(slot).withColor(color)
+          .withFrameRate(LedConstants.kEpilepsyRate);
     };
   }
 }
