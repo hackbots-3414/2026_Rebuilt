@@ -20,7 +20,7 @@ public class RobotIdentifier {
         SimBot;
     }
 
-    private static final Alert MODE_ALERT = new Alert("You are running a robot without known hardware", AlertType.kError);
+    private static final Alert MODE_ALERT = new Alert("You are running a robot without known hardware", AlertType.kInfo);
 
     private static Optional<RobotId> robotId = Optional.empty();
 

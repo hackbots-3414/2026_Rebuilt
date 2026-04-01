@@ -4,9 +4,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonPoseEstimator;
@@ -27,7 +25,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.FieldManager;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.vision.CameraConfig;
@@ -46,7 +43,6 @@ public class SingleInputPoseEstimator implements Runnable {
   private Pose2d lastPose;
 
   private final PhotonPoseEstimator estimator;
-  private final MultiInputFilter filter;
 
   private final Alert disconnectedAlert;
 
@@ -54,7 +50,6 @@ public class SingleInputPoseEstimator implements Runnable {
 
   public SingleInputPoseEstimator(
       Superstructure superstructure,
-      MultiInputFilter filter,
       CameraIO io,
       CameraConfig config,
       Consumer<TimestampedPoseEstimate> updateCallback) {
@@ -63,7 +58,6 @@ public class SingleInputPoseEstimator implements Runnable {
     this.config = config;
     inputs = new CameraIOInputs();
     reporter = updateCallback;
-    this.filter = filter;
     disconnectedAlert =
         new Alert("Vision/Camera Status", config.cameraName() + " disconnected", AlertType.kError);
     estimator = new PhotonPoseEstimator(LocalizationConstants.kTagLayout, robotToCamera());
@@ -75,12 +69,6 @@ public class SingleInputPoseEstimator implements Runnable {
     disconnectedAlert.set(!inputs.connected);
     if (!inputs.connected) {
       return;
-    }
-    for (PhotonPipelineResult result : inputs.unreadResults) {
-      Set<Integer> tags = result.getTargets().stream()
-          .map(target -> target.getFiducialId())
-          .collect(Collectors.toSet());
-      filter.addInput(config, tags);
     }
   }
 
@@ -228,7 +216,6 @@ public class SingleInputPoseEstimator implements Runnable {
   private Matrix<N3, N1> calculateStdDevs(PhotonPipelineResult result, Pose2d pose) {
     double latency = result.metadata.getLatencyMillis() * 1e-3;
     double multiplier = calculateStdDevMultiplier(result, latency, pose);
-    // SmartDashboard.putNumber(config.cameraName() + "std devs", multiplier);
     return config.trust().baseStdDevs().times(multiplier);
   }
 

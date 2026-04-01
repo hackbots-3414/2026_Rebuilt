@@ -1,14 +1,13 @@
 package frc.robot.subsystems.led;
 
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANdleConfiguration;
 import com.ctre.phoenix6.configs.LEDConfigs;
 import com.ctre.phoenix6.signals.StripTypeValue;
-
+import edu.wpi.first.units.measure.Frequency;
 import frc.robot.util.RobotIdentifier;
-import frc.robot.util.StatusSignalUtil;
 import frc.robot.util.RobotIdentifier.RobotId;
+import frc.robot.util.StatusSignalUtil;
 
 public class LedConstants {
     // Offsets & numLEds & IDS
@@ -32,5 +31,6 @@ public class LedConstants {
     // Animation Attributes
 
     public static final double kStrobeRate = 4;
-    public static final double kFlashRate = 2.0;
+    public static final double kFlashRate = 2;
+    public static final double kEpilepsyRate = 10; // max as per R101 :( no crazy fast modes...
 }

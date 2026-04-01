@@ -66,4 +66,12 @@ public class FieldUtils {
     System.out.println(adjusted.getEntryAngle().get().toString());
     return adjusted;
   }
+
+  public static boolean inTowerZone(Pose2d robot) {
+    return FieldConstants.kBlueTower.contains(allianceRelativeFlip(robot));
+  }
+
+  public static boolean inNoFeedZone(Pose2d robot) {
+    return FieldConstants.kNoFeedZone.contains(allianceRelativeFlip(robot));
+  }
 }

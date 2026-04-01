@@ -12,8 +12,6 @@ import frc.robot.commands.RetractIntake;
 import frc.robot.commands.RunIntake;
 import frc.robot.subsystems.drivetrain.Drivetrain.TeleopDriveMode;
 import frc.robot.superstructure.Superstructure;
-import frc.robot.util.ActivityCalculator;
-import frc.robot.util.ActivityCalculator.HubActivity;
 import frc.robot.util.RumbleUtil;
 import frc.robot.util.RumbleUtil.RumbleStrength;
 
@@ -46,8 +44,6 @@ public class DriverXboxBindings implements Binder {
     resetPerspective.onTrue(superstructure.build(new ResetForwards()));
     retract.onTrue(superstructure.build(new RetractIntake()));
 
-    superstructure.state.intaking().whileTrue(RumbleUtil.rumble(controller, RumbleStrength.High));
-
-    // Rumble on shift change:    //RobotModeTriggers.teleop().and(ActivityCalculator.when(HubActivity.Both, 3.0)).whileTrue(RumbleUtil.alert(controller, RumbleStrength.High).withTimeout(3.0));
+    superstructure.state.intaking().and(RobotModeTriggers.teleop()).whileTrue(RumbleUtil.rumble(controller, RumbleStrength.High));
   }
 }

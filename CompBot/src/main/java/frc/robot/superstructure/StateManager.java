@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AimConstants;
 import frc.robot.aiming.AimParams;
@@ -13,6 +15,7 @@ import frc.robot.aiming.AimParams.AimStatus;
 import frc.robot.subsystems.climber.ClimberConstants.ClimbPosition;
 import frc.robot.superstructure.Superstructure.Subsystems;
 import frc.robot.util.ActivityCalculator;
+import frc.robot.util.BetterAutoChooser;
 import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
 
@@ -22,18 +25,21 @@ import frc.robot.util.OnboardLogger;
 public class StateManager {
   private final Subsystems subsystems;
 
+  /**
+   * The current desired shoot mode. Basically, this is what we would <i>like</i> to be doing right
+   * now.
+   */
   public enum ShootMode {
-    Scoring,
-    Feeding,
-    Donut; // "donut" shoot sounds like "do not" shoot...
+    Scoring, Feeding, Donut; // "donut" shoot sounds like "do not" shoot...
   }
 
   private ShootMode wantedShootMode = ShootMode.Donut;
 
   private AimParams params = new AimParams(AimStatus.Unchecked);
-  private AimParams predictedParams = new AimParams(AimStatus.Unchecked);
 
   public final Trigger shootReady;
+
+  private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
@@ -49,8 +55,6 @@ public class StateManager {
 
     OnboardLogger aimParamsLogger = new OnboardLogger("Robot/Aim Params");
     AimParams.setupLogging(aimParamsLogger, () -> params);
-    OnboardLogger predictedAimParamsLogger = new OnboardLogger("Robot/Aim Params (Predicted)");
-    AimParams.setupLogging(predictedAimParamsLogger, () -> predictedParams);
   }
 
   private ShootMode calculateWantedShootMode() {
@@ -62,9 +66,15 @@ public class StateManager {
       return inAllianceZone ? ShootMode.Scoring : ShootMode.Donut;
     }
 
-    // If we're feeding, then all requirements have been met. We want to feed.
+    // If we're not in alliance zone, then all requirements for feeding have been met.
+    // We want to feed.
     if (!inAllianceZone) {
-      return ShootMode.Feeding;
+      return FieldUtils.inNoFeedZone(robotPose()) ? ShootMode.Donut : ShootMode.Feeding;
+    }
+    
+    // By now, we're in a scoring position.
+    if (FieldUtils.inTowerZone(robotPose())) {
+      return ShootMode.Donut;
     }
 
     double SHOT_TIME = 2.0;
@@ -73,7 +83,6 @@ public class StateManager {
 
     return willBeActive ? ShootMode.Scoring : ShootMode.Donut;
   }
-
 
   /**
    * Returns the robot's position on the field.
@@ -102,7 +111,7 @@ public class StateManager {
     final double TURRET_DEBOUNCE = 0.1;
     final boolean FORCE_ODOMETRY = false;
 
-    Trigger aimOk = new Trigger(() -> aimParams().isOk() && predictedAimParams().isOk());
+    Trigger aimOk = new Trigger(() -> aimParams().isOk());
     Trigger turretReady = subsystems.turret().tracked(this::aimParams).debounce(TURRET_DEBOUNCE, DebounceType.kFalling);
     Trigger shooterReady = subsystems.shooter().tracked(this::aimParams).debounce(SHOOTER_DEBOUNCE,
         DebounceType.kFalling);
@@ -128,42 +137,12 @@ public class StateManager {
 
       params = switch (wantedShootMode) {
         case Donut -> AimParams.impossible();
-        case Scoring -> AimConstants.kAim.update(FieldUtils.hub(), turret, velocity);
-        case Feeding -> AimConstants.kAim.update(FieldUtils.feedTarget(robotPose()), turret, velocity);
+        case Scoring -> AimConstants.kScoringAim.update(FieldUtils.hub(), turret, velocity);
+        case Feeding -> AimConstants.kFeedingAim.update(FieldUtils.feedTarget(robotPose()), turret, velocity);
       };
     }
 
     return params;
-  }
-
-  public AimParams predictedAimParams() {
-    // if (wantedShootMode == ShootMode.Donut) {
-    //   predictedParams = AimParams.impossible();
-    // }
-
-    // if (predictedParams.status == AimStatus.Unchecked) {
-    //   Pose2d predictedPose = subsystems.drivetrain().predictedRobotPose();
-    //   Translation2d predictedVelocity = subsystems.drivetrain().predictedRobotVelocity();
-    //   Pose3d predictedTurret = subsystems.turret().turretPose(predictedPose);
-
-    //   if (wantedShootMode == ShootMode.Scoring) {
-    //     predictedParams = AimConstants.kAim.update(FieldUtils.hub(), predictedTurret, predictedVelocity);
-    //   } else {
-    //     predictedParams = AimConstants.kAim.update(FieldUtils.feedTarget(predictedPose), predictedTurret, predictedVelocity);
-    //   }
-    // }
-
-    return aimParams(); // For now, don't use predictions.
-  }
-
-  public void update() {
-    params = new AimParams(AimStatus.Unchecked);
-    predictedParams = new AimParams(AimStatus.Unchecked);
-
-    wantedShootMode = calculateWantedShootMode();
-
-    params = aimParams();
-    predictedParams = predictedAimParams();
   }
 
   public Trigger climbing() {
@@ -180,6 +159,24 @@ public class StateManager {
 
   public Trigger intaking() {
     return subsystems.intake().intaking();
+  }
+
+  public void initAutoChooser() {
+    autoChooser = BetterAutoChooser.buildAutoChooser();
+  }
+
+  public Command getAuton() {
+    return autoChooser.getSelected();
+  }
+
+  public Trigger inAutonStartPose = new Trigger(() -> {
+    return BetterAutoChooser.checkPose(getAuton().getName(), robotPose());
+  });
+
+  public void update() {
+    params = new AimParams(AimStatus.Unchecked);
+    params = aimParams();
+    wantedShootMode = calculateWantedShootMode();
   }
 
 }

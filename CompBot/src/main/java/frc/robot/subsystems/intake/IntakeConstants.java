@@ -83,14 +83,14 @@ public class IntakeConstants {
         .withMagnetSensor(new MagnetSensorConfigs()
             .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
             .withAbsoluteSensorDiscontinuityPoint(0.5)
-            .withMagnetOffset(-0.025390625));
+            .withMagnetOffset(-0.036376953125));
 
     protected static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(0.4);
     protected static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(4);
 
     public static enum DeployPosition {
       Stow(Rotations.zero()),
-      Agitate(Rotations.of(0.15)),
+      Agitate(Rotations.of(0.17)),
       Deployed(Rotations.of(0.224));
 
       protected final Angle position;

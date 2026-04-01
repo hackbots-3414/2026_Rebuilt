@@ -16,8 +16,6 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.Slot1Configs;
-import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
@@ -38,35 +36,26 @@ public final class ShooterConstants {
   protected static final int kMotor1Id = 53;
   protected static final int kMotor2Id = 54;
 
-  private static final SlotConfigs regularControl = new SlotConfigs()
-      .withKA(0)
-      .withKS(4)
-      .withKV(0.07)
-
-      .withKP(9.0)
-      .withKI(0)
-      .withKD(0);
-
-  private static final SlotConfigs recoveryControl = regularControl.clone()
-      .withKP(50);
-
-  protected static final AngularVelocity kRecoveryErrorThreshold = RotationsPerSecond.of(2);
+  protected static final AngularVelocity kRecoveryErrorThreshold = RotationsPerSecond.of(8);
   protected static final AngularVelocity kShootingErrorDetectionThreshold = RotationsPerSecond.of(4);
 
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
-      .withSlot0(Slot0Configs.from(regularControl))
-
-      .withSlot1(Slot1Configs.from(recoveryControl))
+      .withSlot0(new Slot0Configs()
+          .withKP(3414) // a great number
+          .withKI(0)
+          .withKD(0))
 
       .withMotionMagic(new MotionMagicConfigs()
           .withMotionMagicAcceleration(10.0))
 
       .withMotorOutput(new MotorOutputConfigs()
+          .withPeakReverseDutyCycle(0)
           .withNeutralMode(NeutralModeValue.Coast)
           .withInverted(InvertedValue.Clockwise_Positive))
 
-    .withTorqueCurrent(new TorqueCurrentConfigs()
-        .withPeakReverseTorqueCurrent(0.0))
+      .withTorqueCurrent(new TorqueCurrentConfigs()
+          .withPeakReverseTorqueCurrent(0.0)
+          .withPeakForwardTorqueCurrent(80.0))
 
       .withCurrentLimits(new CurrentLimitsConfigs()
           .withSupplyCurrentLimitEnable(true)
@@ -135,19 +124,30 @@ public final class ShooterConstants {
     protected static final Angle kOffset = Degrees.of(18.0);
   }
 
-  public static final List<AimMeasurement> measurements = List.of(
-      new AimMeasurement(Meters.of(1.70), Rotation2d.fromDegrees(72), 32, Seconds.of(0.95)),
-      new AimMeasurement(Meters.of(2.34), Rotation2d.fromDegrees(70), 34, Seconds.of(1.11)),
-      new AimMeasurement(Meters.of(2.73), Rotation2d.fromDegrees(65), 36, Seconds.of(1.10)),
-      new AimMeasurement(Meters.of(3.212), Rotation2d.fromDegrees(65), 37.5, Seconds.of(1.12)),
-      new AimMeasurement(Meters.of(3.79), Rotation2d.fromDegrees(60), 38, Seconds.of(1.07)),
-      new AimMeasurement(Meters.of(4.26), Rotation2d.fromDegrees(60), 41, Seconds.of(1.20)),
-      new AimMeasurement(Meters.of(4.78), Rotation2d.fromDegrees(58), 42, Seconds.of(1.18)),
-      new AimMeasurement(Meters.of(5.23), Rotation2d.fromDegrees(54), 45, Seconds.of(1.20)),
-      new AimMeasurement(Meters.of(5.73), Rotation2d.fromDegrees(54), 47, Seconds.of(1.21)),
-      new AimMeasurement(Meters.of(6.252), Rotation2d.fromDegrees(54), 46, Seconds.of(1.21)),
-      new AimMeasurement(Meters.of(6.696), Rotation2d.fromDegrees(54), 50, Seconds.of(1.25)),
-      new AimMeasurement(Meters.of(7.185), Rotation2d.fromDegrees(52), 51, Seconds.of(1.31)),
-      new AimMeasurement(Meters.of(10.0), Rotation2d.fromDegrees(50), 80, Seconds.of(1.71))
-  );
+  public static final List<AimMeasurement> scoringMeasurements = List.of(
+      new AimMeasurement(Meters.of(1.70), Rotation2d.fromDegrees(72), 31, Seconds.of(0.962)),
+      new AimMeasurement(Meters.of(2.41), Rotation2d.fromDegrees(70), 34, Seconds.of(1.006)),
+      new AimMeasurement(Meters.of(2.93), Rotation2d.fromDegrees(67), 35, Seconds.of(1.016)),
+      new AimMeasurement(Meters.of(3.33), Rotation2d.fromDegrees(65), 37, Seconds.of(1.014)),
+      new AimMeasurement(Meters.of(3.81), Rotation2d.fromDegrees(61), 39, Seconds.of(1.07)),
+      new AimMeasurement(Meters.of(4.29), Rotation2d.fromDegrees(59), 39, Seconds.of(1.018)),
+      new AimMeasurement(Meters.of(4.77), Rotation2d.fromDegrees(59), 41.5 , Seconds.of(0.924)),
+      new AimMeasurement(Meters.of(5.26), Rotation2d.fromDegrees(58), 43.5 , Seconds.of(1.136)),
+      new AimMeasurement(Meters.of(5.73), Rotation2d.fromDegrees(55), 44.75, Seconds.of(1.15)),
+      new AimMeasurement(Meters.of(6.22), Rotation2d.fromDegrees(52), 47, Seconds.of(1.126)),
+      new AimMeasurement(Meters.of(6.84), Rotation2d.fromDegrees(50), 50, Seconds.of(1.134)));
+      
+  public static final List<AimMeasurement> feedingMeasurements = List.of(
+      new AimMeasurement(Meters.of(1.70), Rotation2d.fromDegrees(72), 31, Seconds.of(0.962)),
+      new AimMeasurement(Meters.of(2.41), Rotation2d.fromDegrees(70), 34, Seconds.of(1.006)),
+      new AimMeasurement(Meters.of(2.93), Rotation2d.fromDegrees(67), 35, Seconds.of(1.016)),
+      new AimMeasurement(Meters.of(3.33), Rotation2d.fromDegrees(65), 37, Seconds.of(1.014)),
+      new AimMeasurement(Meters.of(3.81), Rotation2d.fromDegrees(61), 39, Seconds.of(1.07)),
+      new AimMeasurement(Meters.of(4.29), Rotation2d.fromDegrees(59), 39, Seconds.of(1.018)),
+      new AimMeasurement(Meters.of(4.77), Rotation2d.fromDegrees(59), 41.5 , Seconds.of(0.924)),
+      new AimMeasurement(Meters.of(5.26), Rotation2d.fromDegrees(58), 43.5 , Seconds.of(1.136)),
+      new AimMeasurement(Meters.of(5.73), Rotation2d.fromDegrees(55), 44.75, Seconds.of(1.15)),
+      new AimMeasurement(Meters.of(6.22), Rotation2d.fromDegrees(52), 47, Seconds.of(1.126)),
+      new AimMeasurement(Meters.of(6.84), Rotation2d.fromDegrees(50), 50, Seconds.of(1.134)),
+      new AimMeasurement(Meters.of(15), Rotation2d.fromDegrees(50), 80, Seconds.of(2)));
 }

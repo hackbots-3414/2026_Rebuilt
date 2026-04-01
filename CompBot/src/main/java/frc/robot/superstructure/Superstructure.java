@@ -4,21 +4,14 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.CommandBuilder;
 import frc.robot.generated.CompBotTunerConstants;
 import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.drivetrain.Drivetrain.TeleopDriveMode;
@@ -59,12 +52,6 @@ public class Superstructure {
 
   private final Subsystems subsystems;
   public final StateManager state;
-
-  private SendableChooser<Command> autoChooser = new SendableChooser<>();
-  
-  @SuppressWarnings("unused")
-  private final Alert autonAlert =
-      new Alert("Robot not in configured starting pose for auton", AlertType.kWarning);
 
   public Superstructure() {
     subsystems = switch(RobotIdentifier.id()) {
@@ -165,15 +152,5 @@ public class Superstructure {
   public void periodic() {
     state.update();
     subsystems.led().update(state);
-    // autonAlert.set(!AutonWarn.checkPose(getAutonomousCommand().getName(), state.robotPose()));
-  }
-
-  public void createAutonChooser() {
-    autoChooser = AutoBuilder.buildAutoChooser(); // or use Autogen.autoChooser() for autogen.
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-  }
-
-  public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
   }
 }

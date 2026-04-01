@@ -13,7 +13,7 @@ public class IndexerIOHardware implements IndexerIO {
   private final TalonFX spindexer;
 
   private final VoltageOut feederControl = new VoltageOut(0.0);
-  private final VoltageOut spindexerControl = new VoltageOut(0.0).withEnableFOC(false);
+  private final VoltageOut spindexerControl = new VoltageOut(0.0);
 
   public IndexerIOHardware() {
     feeder = new TalonFX(FeederConstants.kMotorId);

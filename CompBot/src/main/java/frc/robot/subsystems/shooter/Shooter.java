@@ -1,4 +1,3 @@
-
 package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -52,7 +51,8 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
 
-    double error = shooterReference.baseUnitMagnitude() - inputs.shooter1Velocity.baseUnitMagnitude();
+    double error =
+        shooterReference.baseUnitMagnitude() - inputs.shooter1Velocity.baseUnitMagnitude();
     if (error > ShooterConstants.kShootingErrorDetectionThreshold.baseUnitMagnitude()) {
       lastSignificantDrop = Timer.getTimestamp();
     }
@@ -60,7 +60,7 @@ public class Shooter extends SubsystemBase {
 
   private AngularVelocity projectileToShooterVelocity(double output, SpeedControl control) {
     switch (control) {
-      case ProjectileVelocity:  
+      case ProjectileVelocity:
         // Assume linear relationship between shooter rotational speed and projectile linear speed.
         return ShooterConstants.kMaxRotationalSpeed
             .times(output / ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond));
@@ -74,7 +74,8 @@ public class Shooter extends SubsystemBase {
   private Angle pitchToHoodAngle(Rotation2d pitch) {
     // The hood's angle is normal to the angle of the ball, i.e. the hood angle is 90 degrees
     // minus the pitch. Then we subtract the offset to get the mechanism position.
-    Angle mechanismAngle = Rotation2d.kCCW_90deg.minus(pitch).getMeasure().minus(HoodConstants.kOffset);
+    Angle mechanismAngle =
+        Rotation2d.kCCW_90deg.minus(pitch).getMeasure().minus(HoodConstants.kOffset);
     return mechanismAngle;
   }
 
@@ -86,17 +87,21 @@ public class Shooter extends SubsystemBase {
     return this.run(() -> {
       active = true;
       AimParams params = paramsSupplier.get();
+      if (!params.isOk()) {
+        io.setVelocity(RotationsPerSecond.zero(), false);
+        return;
+      }
       // This runs each tick (no exceptions are possible), so we get to vary slot parameter here.
       shooterReference = projectileToShooterVelocity(params.output, params.control);
       hoodReference = pitchToHoodAngle(params.pitch);
       io.setVelocity(shooterReference, shouldEnableRecovery(shooterReference));
       io.setAngle(hoodReference);
     })
-    .finallyDo(() -> {
-      active = false;
-      shooterReference = RotationsPerSecond.zero();
-      io.setVelocity(shooterReference);
-    });
+        .finallyDo(() -> {
+          active = false;
+          shooterReference = RotationsPerSecond.zero();
+          io.setVelocity(shooterReference);
+        });
   }
 
   /** Runs the shooter in reverse, to potentially remove any jams. */
@@ -106,12 +111,12 @@ public class Shooter extends SubsystemBase {
         () -> io.setVelocity(RadiansPerSecond.zero()));
   }
 
+  /** Note: this means that if velocity > reference we say it's okay */
   private boolean shooterAtSpeed(AimParams params) {
-    double velocityError = inputs.shooter1Velocity
-          .minus(projectileToShooterVelocity(params.output, params.control)).baseUnitMagnitude();
-      boolean velocityOk =
-          Math.abs(velocityError) <= params.deltaOutput;
-      return velocityOk;
+    double velocityError = projectileToShooterVelocity(params.output, params.control)
+        .minus(inputs.shooter1Velocity).baseUnitMagnitude();
+    boolean velocityOk = velocityError <= params.deltaOutput;
+    return velocityOk;
   }
 
   private boolean shouldEnableRecovery(AngularVelocity reference) {
@@ -121,10 +126,10 @@ public class Shooter extends SubsystemBase {
 
   private boolean hoodAtPosition(AimParams params) {
     double hoodError =
-          inputs.hoodPosition.minus(pitchToHoodAngle(params.pitch)).baseUnitMagnitude();
-      boolean hoodOk =
-          Math.abs(hoodError) <= params.deltaPitch.getMeasure().baseUnitMagnitude();
-      return hoodOk;
+        inputs.hoodPosition.minus(pitchToHoodAngle(params.pitch)).baseUnitMagnitude();
+    boolean hoodOk =
+        Math.abs(hoodError) <= params.deltaPitch.getMeasure().baseUnitMagnitude();
+    return hoodOk;
   }
 
   public Trigger tracked(Supplier<AimParams> params) {
@@ -132,7 +137,7 @@ public class Shooter extends SubsystemBase {
       if (!active) {
         return false;
       }
-      
+
       AimParams realParams = params.get();
 
       return shooterAtSpeed(realParams) && hoodAtPosition(realParams);
