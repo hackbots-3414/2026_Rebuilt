@@ -125,33 +125,29 @@ public final class ShooterConstants {
   }
 
   public static final List<AimMeasurement> scoringMeasurements = List.of(
-      // valid TOF
-      new AimMeasurement(Meters.of(1.70), Rotation2d.fromDegrees(72), 32, Seconds.of(0.962)),
+      new AimMeasurement(Meters.of(1.70), Rotation2d.fromDegrees(72), 31, Seconds.of(0.962)),
       new AimMeasurement(Meters.of(2.41), Rotation2d.fromDegrees(70), 34, Seconds.of(1.006)),
-      new AimMeasurement(Meters.of(2.93), Rotation2d.fromDegrees(67), 36, Seconds.of(1.016)),
+      new AimMeasurement(Meters.of(2.93), Rotation2d.fromDegrees(67), 35, Seconds.of(1.016)),
       new AimMeasurement(Meters.of(3.33), Rotation2d.fromDegrees(65), 37, Seconds.of(1.014)),
       new AimMeasurement(Meters.of(3.81), Rotation2d.fromDegrees(61), 39, Seconds.of(1.07)),
-      new AimMeasurement(Meters.of(4.29), Rotation2d.fromDegrees(59), 40, Seconds.of(1.018)),
-      new AimMeasurement(Meters.of(4.77), Rotation2d.fromDegrees(59), 42 , Seconds.of(0.924)),
-      new AimMeasurement(Meters.of(5.26), Rotation2d.fromDegrees(58), 45 , Seconds.of(1.136)),
-      // valid params
-      new AimMeasurement(Meters.of(5.73), Rotation2d.fromDegrees(55), 47.5, Seconds.of(1.15)),
-      new AimMeasurement(Meters.of(6.22), Rotation2d.fromDegrees(52), 48, Seconds.of(1.126)),
-      new AimMeasurement(Meters.of(6.84), Rotation2d.fromDegrees(50), 51, Seconds.of(1.134)));
+      new AimMeasurement(Meters.of(4.29), Rotation2d.fromDegrees(59), 39, Seconds.of(1.018)),
+      new AimMeasurement(Meters.of(4.77), Rotation2d.fromDegrees(59), 41.5 , Seconds.of(0.924)),
+      new AimMeasurement(Meters.of(5.26), Rotation2d.fromDegrees(58), 43.5 , Seconds.of(1.136)),
+      new AimMeasurement(Meters.of(5.73), Rotation2d.fromDegrees(55), 44.75, Seconds.of(1.15)),
+      new AimMeasurement(Meters.of(6.22), Rotation2d.fromDegrees(52), 47, Seconds.of(1.126)),
+      new AimMeasurement(Meters.of(6.84), Rotation2d.fromDegrees(50), 50, Seconds.of(1.134)));
       
   public static final List<AimMeasurement> feedingMeasurements = List.of(
-      // valid TOF
-      new AimMeasurement(Meters.of(1.70), Rotation2d.fromDegrees(72), 32, Seconds.of(0.962)),
+      new AimMeasurement(Meters.of(1.70), Rotation2d.fromDegrees(72), 31, Seconds.of(0.962)),
       new AimMeasurement(Meters.of(2.41), Rotation2d.fromDegrees(70), 34, Seconds.of(1.006)),
-      new AimMeasurement(Meters.of(2.93), Rotation2d.fromDegrees(67), 36, Seconds.of(1.016)),
+      new AimMeasurement(Meters.of(2.93), Rotation2d.fromDegrees(67), 35, Seconds.of(1.016)),
       new AimMeasurement(Meters.of(3.33), Rotation2d.fromDegrees(65), 37, Seconds.of(1.014)),
       new AimMeasurement(Meters.of(3.81), Rotation2d.fromDegrees(61), 39, Seconds.of(1.07)),
-      new AimMeasurement(Meters.of(4.29), Rotation2d.fromDegrees(59), 40, Seconds.of(1.018)),
-      new AimMeasurement(Meters.of(4.77), Rotation2d.fromDegrees(59), 42 , Seconds.of(0.924)),
-      new AimMeasurement(Meters.of(5.26), Rotation2d.fromDegrees(58), 45 , Seconds.of(1.136)),
-      // valid params
-      new AimMeasurement(Meters.of(5.73), Rotation2d.fromDegrees(55), 47.5, Seconds.of(1.15)),
-      new AimMeasurement(Meters.of(6.22), Rotation2d.fromDegrees(52), 48, Seconds.of(1.126)),
-      new AimMeasurement(Meters.of(6.84), Rotation2d.fromDegrees(50), 51, Seconds.of(1.134)),
+      new AimMeasurement(Meters.of(4.29), Rotation2d.fromDegrees(59), 39, Seconds.of(1.018)),
+      new AimMeasurement(Meters.of(4.77), Rotation2d.fromDegrees(59), 41.5 , Seconds.of(0.924)),
+      new AimMeasurement(Meters.of(5.26), Rotation2d.fromDegrees(58), 43.5 , Seconds.of(1.136)),
+      new AimMeasurement(Meters.of(5.73), Rotation2d.fromDegrees(55), 44.75, Seconds.of(1.15)),
+      new AimMeasurement(Meters.of(6.22), Rotation2d.fromDegrees(52), 47, Seconds.of(1.126)),
+      new AimMeasurement(Meters.of(6.84), Rotation2d.fromDegrees(50), 50, Seconds.of(1.134)),
       new AimMeasurement(Meters.of(15), Rotation2d.fromDegrees(50), 80, Seconds.of(2)));
 }
