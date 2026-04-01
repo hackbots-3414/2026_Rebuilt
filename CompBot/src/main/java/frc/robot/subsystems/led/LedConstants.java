@@ -32,5 +32,5 @@ public class LedConstants {
 
     public static final double kStrobeRate = 4;
     public static final double kFlashRate = 2;
-    public static final double kEpilepsyRate = 5; // max as per R101 :( no crazy fast modes...
+    public static final double kEpilepsyRate = 10; // max as per R101 :( no crazy fast modes...
 }
