@@ -1,6 +1,9 @@
 package frc.robot.subsystems.drivetrain;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -10,7 +13,10 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -34,6 +40,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -200,8 +207,26 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     state = getState();
     OnboardLogger ologger = new OnboardLogger("Drivetrain");
     ologger.registerBoolean("Valid Odometry", validOdemetry());
-    ologger.registerPose("Robot Pose", this::robotPose);
     ologger.registerDouble("Time since last estimate", () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
+    // SwerveModule<TalonFX, TalonFX, CANcoder>[] actualModules = getModules();
+    // TalonFX drive, steer;
+    // for (int i = 0;i < actualModules.length; i ++) {
+    //   SwerveModule<TalonFX, TalonFX, CANcoder> module = actualModules[i];
+    //   drive = module.getDriveMotor();
+    //   steer = module.getSteerMotor();
+
+    //   ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Supply Current", () -: drive.getSupplyCurrent().getValue(), Amps);
+    //   ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Stator Current", drive.getStatorCurrent()::getValue, Amps);
+    //   ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Voltage", drive.getMotorVoltage()::getValue, Volts);
+    //   ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Temperature", drive.getDeviceTemp()::getValue, Celsius);
+    //   ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Velocity", drive.getVelocity()::getValue, RotationsPerSecond);
+
+    //   ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Supply Current", steer.getSupplyCurrent()::getValue, Amps);
+    //   ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Stator Current", steer.getStatorCurrent()::getValue, Amps);
+    //   ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Voltage", steer.getMotorVoltage()::getValue, Volts);
+    //   ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Temperature", steer.getDeviceTemp()::getValue, Celsius);
+    //   ologger.registerMeasurement("Steer " + drive.getDeviceID() + " Velocity", steer.getVelocity()::getValue, RotationsPerSecond);
+    // }
     sysIDCommands();
     // SmartDashboard.putData("Drivetrain/Reset Pose (Our Hub)", resetOdometry(new
     // Pose2d(4, 4, Rotation2d.kZero), true));
