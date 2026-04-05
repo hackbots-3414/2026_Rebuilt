@@ -30,5 +30,10 @@ Each `Binder` implementation owns one logical group of bindings (e.g., driver co
 
 | Class | Responsibility |
 |---|---|
-| `DriverBindings` | PS5 controller — drive, aim, intake, and climb buttons |
-| `RobotBindings` | Autonomous robot behavior — auto-fire on aim lock, teleop re-home after climb |
+| `DriverXboxBindings` | Xbox driver controller — drive, aim, intake, reset |
+| `OperatorPS5Bindings` | PS5 operator controller — index, eject, agitate, utility |
+| `RobotBindings` | Robot automation — auto-fire, agitate, teleop re-home |
+| `MultiBindings` | Delegates to multiple binders (used on real hardware) |
+| `KeyboardBindings` | Simulation keyboard input |
+| `AutogenBindings` | PathPlanner named command registration |
+| `NamedCommandBindings` | Named commands for autonomous routines |

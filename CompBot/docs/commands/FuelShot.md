@@ -1,39 +1,42 @@
-# FuelShot
+# FuelShot / RunIndex
 
 ## Overview
 
-`FuelShot` is the complete shooting command. It runs the full aim preparation concurrently with the indexer feeding a game piece into the shooter. Implements `CommandBuilder`.
+The auto-fire shot is handled by **`RunIndex`**, which runs the indexer motor once to feed a game piece into the shooter. It is scheduled automatically by `RobotBindings` whenever `shootReady` is true. There is no separate `FuelShot.java` class in the current codebase — the full shoot sequence is decomposed across `AimPrep` (for aiming), `RobotBindings` (for the `shootReady` trigger), and `RunIndex` (for releasing the game piece).
 
 ---
 
-## `build(Subsystems, StateManager)` → `Command`
+## `RunIndex` — `build(Subsystems, StateManager)` → `Command`
 
-Constructs an `AimPrep` internally and returns a `Commands.parallel(...)` of two commands:
+Simply delegates to `subsystems.indexer().index()`:
 
-| Command | Subsystem | Behavior |
-|---|---|---|
-| `AimPrep.build(...)` | Turret + Shooter | Tracks target yaw and spins flywheels/hood to aim parameters |
-| `indexer.index()` | Indexer | Runs the indexer motor at `kIndexVoltage` (+0.2 V) to feed game piece |
-
-All three subsystems run simultaneously for the duration of the command.
-
-**Subsystems used:** `turret`, `shooter`, `indexer`
-
----
-
-## Command Flow
-
-```
-FuelShot
-  ├─ AimPrep
-  │    ├─ turret.track(state)         ← rotate turret toward target
-  │    └─ shooter.shoot(predicted)    ← spin flywheels + set hood angle
-  └─ indexer.index()                  ← feed game piece into shooter
+```java
+return subsystems.indexer().index();
 ```
 
+Runs the indexer motor at `kIndexVoltage` (+0.2 V) for the duration of the command, stopping on end.
+
+**Subsystems used:** `indexer`
+
 ---
 
-## Notes
+## Full Shot Sequence (Distributed)
 
-- The indexer feeds immediately when `FuelShot` starts — there is no wait for the shooter to reach speed. If feed-gating on `tracked()` is needed, that logic should be added here or in the calling context.
-- When `FuelShot` ends, the indexer stops (via its `finallyDo` handler) but the **shooter keeps spinning** (by design — `Shooter.shoot()` does not stop flywheels on end).
+The complete shot is assembled across several classes:
+
+```
+AimPrep (driver toggles on R1)
+  ├─ turret.track(state)       ← rotates turret toward target
+  └─ shooter.shoot(aimParams)  ← spins flywheels + sets hood angle
+
+RobotBindings (automatic)
+  └─ shootReady.whileTrue(RunIndex.repeatedly())  ← feeds game piece once on target
+```
+
+`AimPrep` runs continuously while the driver holds the aim button. Once `shootReady` goes true (turret, shooter, and odometry all confirmed), `RobotBindings` triggers `RunIndex` repeatedly to fire.
+
+---
+
+## ShootWhenReady
+
+`ShootWhenReady.java` is also available as an alternative: it waits for `state.shootReady` internally before running `indexer.index()`, plus plays the `FuelShotSim` animation in simulation. It is not currently wired to a controller button by default but can be used in autonomous routines.

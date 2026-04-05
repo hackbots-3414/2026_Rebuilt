@@ -1,14 +1,14 @@
-# DriverBindings
+# DriverXboxBindings
 
 ## Overview
 
-`DriverBindings` wires a PS5 controller to all driver-facing robot actions — driving, aiming, intaking, and climbing. Implements `Binder`.
+`DriverXboxBindings` wires an Xbox controller to all driver-facing robot actions — driving, aiming, intaking, and field reset. Implements `Binder`.
 
 ---
 
 ## Controller
 
-- Type: `CommandPS5Controller`
+- Type: `CommandXboxController`
 - Port: `BindingConstants.Driver.kDriveControllerPort` (port 0)
 
 ---
@@ -17,11 +17,11 @@
 
 | Axis | Index | Flipped | Purpose |
 |---|---|---|---|
-| vx (forward/back) | 1 | No | Translational X speed |
+| vx (forward/back) | 1 | Yes | Translational X speed |
 | vy (left/right) | 0 | Yes | Translational Y speed |
-| vrot (rotation) | 3 | No | Rotational rate |
+| vrot (rotation) | 4 | Yes | Rotational rate |
 
-Each axis supplier applies a flip factor (`× −1` or `× 1`) based on the `kFlip*` constants in `BindingConstants.Driver`.
+All three axes are inverted (`kFlipX`, `kFlipY`, `kFlipRot` all `true`).
 
 ---
 
@@ -29,22 +29,35 @@ Each axis supplier applies a flip factor (`× −1` or `× 1`) based on the `kFl
 
 | Button | Binding Type | Command | Behavior |
 |---|---|---|---|
-| **R1** | `toggleOnTrue` | `AimPrep` | Toggles turret tracking + shooter spin-up on/off |
-| **R2** | `whileTrue` | `RunIntake` | Deploys intake and runs rollers while held; retracts on release |
-| **Cross (×)** | `onTrue` | `RunClimb(Home)` | Sends climber to home position (0.0 rot) |
-| **Triangle (△)** | `onTrue` | `RunClimb(Ready)` | Extends climber to ready position (0.6 rot) |
-| **Circle (○)** | `onTrue` | `RunClimb(Climbed)` | Pulls climber to climbed position (0.5 rot) |
+| **Right Bumper** | `toggleOnTrue` | `AimPrep` | Toggles turret tracking + shooter spin-up on/off |
+| **Right Trigger** | `toggleOnTrue` | `RunIntake` | Toggles deploy arm + intake rollers on/off |
+| **Left Bumper** | `onTrue` | `ResetForwards` | Resets the field-relative forward direction to the current robot heading |
+| **X button** | `onTrue` | `RetractIntake` | Stows the intake arm |
+
+Left trigger is not bound to a command — instead it switches drive mode to robot-relative while held (see Drive Binding below).
 
 ---
 
 ## Drive Binding
 
-`superstructure.bindDrive(vx, vy, vrot)` sets the drivetrain's default command to `teleopDrive(...)` using the three axis suppliers above. Field-centric perspective is automatically corrected for alliance color.
+`superstructure.bindDrive(vx, vy, vrot, mode)` sets the drivetrain's default command.
+
+- **Default mode:** `TeleopDriveMode.FieldRelativeSpin` (normal field-centric drive)
+- **Left trigger held:** `TeleopDriveMode.RobotRelative`
+- **Scoring shot active:** Superstructure overrides to `SlowFieldRelativeSpin` automatically regardless of driver input
+
+Field-centric perspective is automatically corrected for alliance color.
+
+---
+
+## Rumble
+
+While `state.intaking()` is `true` in teleop, the controller rumbles at `RumbleStrength.High`. This gives the driver tactile feedback that the intake is actively running.
 
 ---
 
 ## Notes
 
-- `AimPrep` uses `toggleOnTrue` — press R1 once to start tracking, press again to stop. This allows the driver to pre-aim before committing to a shot.
-- `RunIntake` uses `whileTrue` — the intake only runs while R2 is physically held, and retracts immediately on release.
-- All three climb buttons use `onTrue` — each triggers a single position move and completes when the climber arrives; they do not require the button to be held.
+- `AimPrep` uses `toggleOnTrue` — press Right Bumper once to start tracking, press again to stop. This allows the driver to pre-aim before committing to a shot.
+- `RunIntake` also uses `toggleOnTrue` — press Right Trigger to deploy and start rollers; press again to retract. This frees the driver's hand compared to a hold-to-run binding.
+- Left trigger modifies drive mode only while physically held; releasing it returns to field-relative drive.

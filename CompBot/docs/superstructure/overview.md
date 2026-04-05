@@ -28,28 +28,29 @@ Robot.java
             │     ├─ Shooter
             │     ├─ Indexer
             │     ├─ Intake
-            │     └─ Climber
+            │     ├─ Climber
+            │     └─ Led
             │
             └─► StateManager  (public)
-                  ├─ aimParams()           ← lazy-cached current aim solution
-                  ├─ predictedAimParams()  ← lazy-cached predicted aim solution
-                  ├─ aimTarget()           ← hub or feed target (alliance-aware)
+                  ├─ aimParams()           ← lazy-cached aim solution (mode-aware)
                   ├─ robotPose()           ← current estimated pose
                   ├─ robotVelocity()       ← field-relative velocity
                   ├─ turretPose()          ← turret 3D field pose
-                  ├─ shootReady()  ─Trigger─► RobotBindings auto-fire
-                  └─ climbed()    ─Trigger─► RobotBindings teleop re-home
+                  ├─ shootReady    ─Trigger─► RobotBindings auto-fire
+                  ├─ climbing()   ─Trigger─► RobotBindings teleop re-home
+                  └─ intaking()   ─Trigger─► RobotBindings agitate gate
 ```
 
 ---
 
 ## Subsystem Construction & IO Selection
 
-The `Superstructure` constructor is the **only place** where hardware vs. sim IO is selected. `Robot.isReal()` is evaluated once per subsystem at startup:
+The `Superstructure` constructor is the **only place** where hardware vs. sim IO is selected. `RobotIdentifier.id()` is evaluated once at startup and returns one of three robot variants:
 
 ```
-Robot.isReal() == true   →   *IOHardware (real TalonFX, CANcoder, CANrange, etc.)
-Robot.isReal() == false  →   *IOSim      (DCMotorSim, state stores, lag models)
+CompBot  →   Hardware IOs (real TalonFX, CANcoder, CANrange, etc.)
+SimBot   →   Sim IOs      (DCMotorSim, state stores, lag models)
+TestBot  →   Sim IOs for all non-drivetrain subsystems; real TestBot drivetrain
 ```
 
 All subsystem code above the IO layer never knows which implementation it is running against.
@@ -61,10 +62,10 @@ All subsystem code above the IO layer never knows which implementation it is run
 All commands are built through `Superstructure.build(CommandBuilder)`:
 
 ```
-superstructure.build(new FuelShot())
+superstructure.build(new RunIndex())
        │
        ├─ builder.build(subsystems, state)   ← constructs the command
-       ├─ .withName("FuelShot")              ← names it for SmartDashboard
+       ├─ .withName("RunIndex")              ← names it for SmartDashboard
        └─ .asProxy()                         ← isolates subsystem requirements
 ```
 
@@ -76,65 +77,56 @@ The `.asProxy()` wrapper is critical for autonomous — it prevents subsystem re
 
 ## Aim Parameter Lifecycle
 
-`StateManager` uses a **lazy-evaluation cache** so the `AimStrategy` solver runs at most once per loop cycle regardless of how many consumers read aim parameters:
+`StateManager` uses a **lazy-evaluation cache** and **shoot mode selection** to determine aim parameters each cycle:
 
 ```
 Loop start
     │
-    └─► StateManager.periodic()
+    └─► StateManager.update()
               params = Unchecked
-              predictedParams = Unchecked
+              call aimParams() → solve based on wantedShootMode → cache
+              recalculate wantedShootMode for next cycle
 
-Any consumer calls aimParams():
-    First call  → solve → cache
-    Later calls → return cached value
-
-Any consumer calls predictedAimParams():
-    First call  → solve (using predicted pose + velocity) → cache
-    Later calls → return cached value
-
-Loop end → cycle repeats
+Any consumer calls aimParams() this cycle:
+    params.status != Unchecked → return cached value (no re-solve)
 ```
 
-**Active strategy:** `PhysicsAim` with the following constraints (from `AimConstants`):
+**Active strategy depends on `ShootMode`:**
 
-| Parameter | Value |
-|---|---|
-| Min pitch | 49.5° |
-| Max pitch | 72.0° |
-| Max output | 18 m/s |
-| Min descent velocity | 2 m/s |
-| Max descent velocity | 10 m/s |
-
----
-
-## Target Selection
-
-`StateManager.aimTarget()` automatically selects the scoring target based on field position:
-
-```
-Robot pose
-    │
-    ├─ inAllianceZone (x ≤ 182.11" from own wall)
-    │       └─► hub()         (4.63, 4.01, 1.83 m — Blue, mirrored for Red)
-    │
-    └─ outside alliance zone
-            └─► feedTarget()  (4.5, 2.0, 1.0 m — Blue, mirrored for Red)
-```
-
-Both targets are flipped automatically for Red alliance via `FieldUtils.allianceRelativeFlip()`.
+| Mode | Target | Strategy |
+|---|---|---|
+| `Scoring` | `FieldUtils.hub()` | `AimConstants.kScoringAim` (`ToFAim` with `scoringMeasurements`) |
+| `Feeding` | `FieldUtils.feedTarget(pose)` | `AimConstants.kFeedingAim` (`ToFAim` with `feedingMeasurements`) |
+| `Donut` | — | Returns `AimParams.impossible()` immediately |
 
 ---
 
 ## `shootReady` Trigger
 
-The primary gate for releasing a game piece. All three conditions must be true simultaneously:
+The primary gate for releasing a game piece. All four conditions must be true simultaneously:
 
 ```
-shootReady()
-    ├─ turret.tracked(aimParams)     ← |yaw error| ≤ ±2°
-    ├─ shooter.tracked(aimParams)    ← |velocity error| ≤ ±0.35 AND |pitch error| ≤ ±4°
-    └─ params.isOk()                 ← AimStatus == Possible
+shootReady
+    ├─ params.isOk()                               ← AimStatus == Possible
+    ├─ turret.tracked(aimParams)  (0.1s fall debounce)
+    ├─ shooter.tracked(aimParams) (1.5s fall debounce)
+    └─ validOdometry.or(!FORCE_ODOMETRY)
 ```
 
-In `RobotBindings`, this trigger has a 250 ms falling-edge debounce applied before gating the auto-fire command, preventing rapid stop/start on transient misalignments.
+The 1.5 s falling debounce on the shooter prevents auto-fire from cycling on/off during momentary speed dips from drivetrain vibration.
+
+---
+
+## `shootReady` Trigger
+
+`shootReady` is a public `Trigger` field on `StateManager` (not a method). All four conditions must be true simultaneously:
+
+```
+shootReady
+    ├─ params.isOk()                               ← AimStatus == Possible
+    ├─ turret.tracked(aimParams)  (0.1s fall)      ← |yaw error| ≤ deltaYaw
+    ├─ shooter.tracked(aimParams) (1.5s fall)      ← |velocity error| ≤ deltaOutput AND |pitch error| ≤ deltaPitch
+    └─ validOdometry.or(!FORCE_ODOMETRY)           ← drivetrain has recent vision update
+```
+
+The debounce is built into `StateManager.initShootReady()` — `RobotBindings` uses `shootReady` directly without adding additional debounce.

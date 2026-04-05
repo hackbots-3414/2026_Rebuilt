@@ -2,20 +2,24 @@
 
 ## Overview
 
-`RunIntake` deploys the intake arm and runs the intake rollers simultaneously. Implements `CommandBuilder`.
+`RunIntake` sets the intaking flag, then deploys the intake arm and runs the intake rollers simultaneously. Implements `CommandBuilder`.
 
 ---
 
 ## `build(Subsystems, StateManager)` → `Command`
 
-Returns a `Commands.parallel(...)` of two commands:
+Returns a sequence:
 
-| Command | Subsystem | Behavior |
-|---|---|---|
-| `intake.go(DeployPosition.Deployed)` | Intake (deploy motor) | Rotates arm to the `Deployed` position (1.0 rotations); waits until within tolerance |
-| `intake.intake()` | Intake (roller motor) | Spins rollers at `kIntakeVoltage` (+5 V) to ingest a game piece |
+```java
+Commands.sequence(
+    Commands.runOnce(() -> subsystems.intake().setIntaking(true)),
+    subsystems.intake().intakeAt(DeployPosition.Deployed)
+).finallyDo(() -> subsystems.intake().setIntaking(false));
+```
 
-Both run concurrently — the rollers spin while the arm is still deploying.
+1. **`setIntaking(true)`** — immediately sets the intaking flag so `StateManager.intaking()` goes true
+2. **`intakeAt(Deployed)`** — deploys the arm to `0.224 rotations` and runs rollers at `kIntakeVoltage` (+12 V); holds until interrupted
+3. **`setIntaking(false)`** — clears the intaking flag when the command ends or is interrupted
 
 **Subsystems used:** `intake`
 
@@ -25,13 +29,15 @@ Both run concurrently — the rollers spin while the arm is still deploying.
 
 ```
 RunIntake
-  ├─ intake.go(Deployed)    ← deploy arm to 1.0 rotations
-  └─ intake.intake()        ← spin rollers at +5 V
+  ├─ setIntaking(true)
+  ├─ intakeAt(Deployed)   ← deploy arm + spin rollers at +12 V
+  └─ finallyDo: setIntaking(false)
 ```
 
 ---
 
 ## Notes
 
-- The command ends when the parent ends or is interrupted. On end, `intake.intake()` stops the rollers (via its `startEnd` handler), but the arm stays at the deployed position — retraction requires a separate `intake.go(Stow)` call.
-- No jam detection is handled here; the `detectJam()` trigger on the `Intake` subsystem must be composed externally if unjam behavior is needed.
+- `intakeAt()` does not complete on its own — it holds the intake deployed and spinning until the command is interrupted (e.g., by the toggle binding pressing again, or a `RetractIntake` command).
+- The `intaking` flag gates both the `AgitateIntake` automation in `RobotBindings` and the controller rumble in `DriverXboxBindings`.
+- On end, the rollers stop (via `intakeAt`'s `finallyDo`) but the arm remains at the deployed position. Use `RetractIntake` to stow.

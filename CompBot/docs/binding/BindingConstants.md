@@ -10,17 +10,15 @@
 
 | Constant | Value | Description |
 |---|---|---|
-| `kDriveControllerPort` | `0` | USB port of the driver's PS5 controller |
+| `kDriveControllerPort` | `0` | USB port of the driver's Xbox controller |
 | `kXAxis` | `1` | Raw axis index for forward/backward translation |
 | `kYAxis` | `0` | Raw axis index for left/right translation |
-| `kRotAxis` | `3` | Raw axis index for rotation |
-| `kFlipX` | `false` | Whether to invert the X axis |
-| `kFlipY` | `true` | Whether to invert the Y axis |
-| `kFlipRot` | `false` | Whether to invert the rotation axis |
+| `kRotAxis` | `4` | Raw axis index for rotation (right stick X on Xbox) |
+| `kFlipX` | `true` | Invert the X axis |
+| `kFlipY` | `true` | Invert the Y axis |
+| `kFlipRot` | `true` | Invert the rotation axis |
 
-> Note: The comment in the source warns that axis indices may not be correct and should be verified with the chosen controller.
-
-The Y axis is flipped (`kFlipY = true`) to reconcile the joystick's convention (forward = negative) with WPILib's field coordinate system (forward = positive).
+All three axes are inverted. This reconciles the Xbox joystick convention (forward/right = negative) with WPILib's field coordinate system (forward/right = positive).
 
 ---
 
@@ -28,6 +26,6 @@ The Y axis is flipped (`kFlipY = true`) to reconcile the joystick's convention (
 
 | Constant | Value | Description |
 |---|---|---|
-| `kOperatorControllerPort` | `2` | USB port of the operator's controller |
+| `kOperatorControllerPort` | `2` | USB port of the operator's PS5 controller |
 
-No axis or button mappings are currently defined for the operator controller.
+No axis mappings are defined for the operator — all operator actions are button-based. See `OperatorPS5Bindings.md` for the full button map.

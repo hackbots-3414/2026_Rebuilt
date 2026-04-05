@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Intake subsystem controls two independent mechanisms: a **roller motor** that spins to ingest or eject game pieces, and a **deploy motor** that rotates the intake arm between stowed and deployed positions. A **CANrange** proximity sensor detects whether a game piece is present. The subsystem also provides jam detection based on current draw, velocity, and sensor state.
+The Intake subsystem controls two independent mechanisms: a **roller motor** that spins to ingest or eject game pieces, and a **deploy motor** that rotates the intake arm between stowed, agitate, and deployed positions. A **CANrange** proximity sensor detects whether a game piece is present. The subsystem also exposes an `intaking()` trigger that reflects whether the intake is actively running.
 
 ---
 
@@ -31,8 +31,8 @@ The Intake subsystem controls two independent mechanisms: a **roller motor** tha
 
 | Name | Value | Purpose |
 |---|---|---|
-| `kIntakeVoltage` | +5.0 V | Spin rollers inward to ingest |
-| `kEjectVoltage` | −5.0 V | Spin rollers outward to eject |
+| `kIntakeVoltage` | +12.0 V | Spin rollers inward to ingest |
+| `kEjectVoltage` | −8.0 V | Spin rollers outward to eject |
 
 **CANrange Sensor**
 - CAN ID: `25`
@@ -50,21 +50,24 @@ The Intake subsystem controls two independent mechanisms: a **roller motor** tha
 
 **Deploy Motor (`DeployConstants`)**
 - CAN ID: `6`
+- CANcoder CAN ID: `29`
 - Neutral mode: Brake
 - Inversion: Clockwise Positive
-- Supply current limit: 80 A
-- Stator current limit: 120 A
-- PID gains (Slot 0): all zeroed (kP, kI, kD, kS, kV, kA = 0)
+- Feedback source: Remote CANcoder (ID 29)
+- Supply current limit: 40 A
+- Stator current limit: 40 A
+- PID gains (Slot 0): kP=50, kI=0, kD=1, kS=0, kV=0, kA=0, kG=−0.5
 - Max velocity: 0.4 rot/s
 - Max acceleration: 4 rot/s²
-- At-position tolerance: 0.02 rotations
+- At-position tolerance: 0.5 rotations
 
 **Deploy Position Presets (`DeployPosition` enum)**
 
 | Name | Value |
 |---|---|
 | `Stow` | 0.0 rotations |
-| `Deployed` | 1.0 rotations |
+| `Agitate` | 0.17 rotations |
+| `Deployed` | 0.224 rotations |
 
 ---
 
@@ -122,7 +125,7 @@ Real-robot implementation using two CTRE TalonFX motors and a CANrange sensor.
 - Uses `VoltageOut` with FOC enabled and change detection — only sends a new command when voltage differs from last applied.
 
 **Deploy Motor**
-- Uses `DynamicMotionMagicTorqueCurrentFOC` for profiled position control, with max velocity and acceleration from `DeployConstants`.
+- Uses `DynamicMotionMagicTorqueCurrentFOC` for profiled position control, with max velocity and acceleration from `DeployConstants`. Uses the remote CANcoder (ID 29) as feedback.
 
 **Signal Registration**
 - All signals for both motors and the CANrange are registered with `StatusSignalUtil` for synchronized Rio-side updates.
@@ -143,7 +146,7 @@ Minimal simulation — no physics model.
 
 **Constructor**
 - Accepts an `IntakeIO` instance (injected).
-- Tracks `reference` (the last commanded `DeployPosition`, initialized to `Stow`).
+- Tracks `reference` (the last commanded `DeployPosition`, initialized to `Stow`) and `intaking` flag (whether the intake is actively running).
 
 **`periodic()`**
 - Calls `io.updateInputs(inputs)` each loop cycle.
@@ -152,19 +155,17 @@ Minimal simulation — no physics model.
 
 | Method | Behavior |
 |---|---|
-| `intake()` | Applies `kIntakeVoltage` (+5 V) while active; sets voltage to 0 on end |
-| `reverse()` | Applies `kEjectVoltage` (−5 V) while active; sets voltage to 0 on end |
-| `go(DeployPosition)` | Sets deploy position setpoint, waits until within tolerance (0.02 rot) |
+| `intakeAt(DeployPosition state)` | Sets deploy position AND runs rollers at `kIntakeVoltage`; stops rollers on end but leaves arm at position |
+| `go(DeployPosition state)` | Sets deploy position only, waits until within tolerance (0.5 rot) |
+| `reverse()` | Applies `kEjectVoltage` (−8 V) while active; sets voltage to 0 on end |
+| `agitate()` | Repeating sequence: `intakeAt(Deployed)` for 0.5 s, then `intakeAt(Agitate)` for 0.5 s |
 
-Both `intake()` and `reverse()` use `startEnd(...)` — they hold voltage for the duration of the command and stop when the command ends or is interrupted.
+`intakeAt()` is the primary intake command — it simultaneously deploys the arm and runs the rollers. It uses `this.idle()` to hold the rollers while running (does not complete on its own), and stops the rollers via `finallyDo` when interrupted or the parent command ends.
 
-`go()` uses a `runOnce → waitUntil` sequence and updates the internal `reference` field so `deployAtPosition()` compares against the correct target.
+**State Management**
+
+`setIntaking(boolean v)` sets the `intaking` flag. `RunIntake` sets it to `true` on start and `false` on end. This flag gates the `intaking()` trigger.
 
 **Triggers**
 
-`detectJam()` — returns `true` when **all three** of the following are simultaneously true:
-1. Intake stator current > 70 A
-2. CANrange detects a game piece (`canrangeDetected == true`)
-3. Intake velocity < 0.3 rot/s
-
-This can be composed externally to trigger an unjam routine or alert.
+`intaking()` — returns `true` when the `intaking` flag is set. Used by `StateManager` and `RobotBindings` to gate agitation and rumble behavior.

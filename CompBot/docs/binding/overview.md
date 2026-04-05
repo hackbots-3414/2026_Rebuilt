@@ -11,14 +11,17 @@ The binding system connects controller inputs and robot-level automation to robo
 ```
 RobotContainer
      │
-     ├─ new DriverBindings().bind(superstructure)   ← driver controller
-     └─ new RobotBindings().bind(superstructure)    ← autonomous robot behavior
+     ├─ hidBinder       ← real: MultiBindings(DriverXboxBindings, OperatorPS5Bindings)
+     │                     sim:  KeyboardBindings
+     ├─ robotBinder     ← RobotBindings (auto-fire, agitate, teleop re-home)
+     ├─ autogenBinder   ← AutogenBindings (PathPlanner auto commands)
+     └─ namedCommandsBinder ← NamedCommandBindings
                 │
                 ▼
           Superstructure
-          ├─ .bindDrive(vx, vy, vrot)      ← sets drivetrain default command
-          ├─ .build(CommandBuilder)         ← constructs + returns a command
-          └─ .state                         ← StateManager (triggers, pose, aim)
+          ├─ .bindDrive(vx, vy, vrot, mode)  ← sets drivetrain default command
+          ├─ .build(CommandBuilder)           ← constructs + returns a command
+          └─ .state                           ← StateManager (triggers, pose, aim)
 ```
 
 ---
@@ -29,32 +32,50 @@ RobotContainer
 |---|---|---|
 | `Binder.java` | Interface | Contract for all binding classes |
 | `BindingConstants.java` | Constants | Controller ports and axis indices |
-| `DriverBindings.java` | Implementation | PS5 driver controller — drive, aim, intake, climb |
-| `RobotBindings.java` | Implementation | Robot automation — auto-fire, teleop re-home |
+| `DriverXboxBindings.java` | Implementation | Xbox driver controller — drive, aim, intake, reset |
+| `OperatorPS5Bindings.java` | Implementation | PS5 operator controller — index, eject, agitate, utility |
+| `RobotBindings.java` | Implementation | Robot automation — auto-fire, agitate, teleop re-home |
+| `MultiBindings.java` | Utility | Delegates `bind()` to multiple binders |
+| `KeyboardBindings.java` | Implementation | Simulation keyboard input |
+| `AutogenBindings.java` | Implementation | PathPlanner named command registration |
+| `NamedCommandBindings.java` | Implementation | Named commands for autonomous |
 
 ---
 
 ## Complete Button Map
 
-### Driver (PS5 Controller — Port 0)
+### Driver (Xbox Controller — Port 0)
 
 | Input | Type | Action |
 |---|---|---|
-| Left stick Y (axis 0) | Continuous | Field-centric drive — lateral (Y flipped) |
-| Left stick X (axis 1) | Continuous | Field-centric drive — forward/backward |
-| Right stick X (axis 3) | Continuous | Field-centric drive — rotation |
-| **R1** | Toggle | `AimPrep` — turret tracking + shooter spin-up |
-| **R2** | While held | `RunIntake` — deploy arm + run rollers |
-| **Cross (×)** | On press | `RunClimb(Home)` — climber to 0.0 rot |
-| **Triangle (△)** | On press | `RunClimb(Ready)` — climber to 0.6 rot |
-| **Circle (○)** | On press | `RunClimb(Climbed)` — climber to 0.5 rot |
+| Left stick Y (axis 1) | Continuous | Field-centric drive — forward/backward (inverted) |
+| Left stick X (axis 0) | Continuous | Field-centric drive — lateral (inverted) |
+| Right stick X (axis 4) | Continuous | Field-centric drive — rotation (inverted) |
+| **Right Bumper** | Toggle | `AimPrep` — turret tracking + shooter spin-up |
+| **Right Trigger** | Toggle | `RunIntake` — deploy arm + run rollers |
+| **Left Bumper** | On press | `ResetForwards` — resets field-relative forward direction |
+| **Left Trigger** | While held | Robot-relative drive mode |
+| **X button** | On press | `RetractIntake` — stows intake arm |
+
+While `state.intaking()` is true in teleop, the controller rumbles at high strength.
+
+### Operator (PS5 Controller — Port 2)
+
+| Input | Type | Action |
+|---|---|---|
+| **R1** | While held | `RunIndex` — feeds game piece into shooter |
+| **Cross (×)** | While held | `DumpFuel` — ejects game pieces |
+| **Square (□)** | While held | `AgitateIntake` — oscillates intake to shake loose jammed pieces |
+| **Triangle (△)** | On press | `RetractIntake` — stows intake arm |
+| **L2** | On press | `EmptyHopper` — shoots until hopper is empty |
 
 ### Robot Automation (no controller input)
 
 | Trigger | Condition | Action |
 |---|---|---|
-| `shootReady()` (debounced 250 ms falling) | Turret + shooter both on target | Auto-fire (`FuelShot` or `FuelShotSim`) repeatedly |
-| Teleop start | Climber is in `Climbed` position | Re-home climber to `Ready` |
+| `shootReady` | All aim conditions satisfied | Auto-fire (`RunIndex`) repeatedly |
+| `shootReady` AND NOT `intaking` | On target, not intaking | `AgitateIntake` to shake fuel into position |
+| Teleop start | Climber is targeting `Climbed` position | Re-home climber to `Ready` |
 
 ---
 
@@ -62,7 +83,7 @@ RobotContainer
 
 ### `Binder` Interface
 
-Each binding group implements `Binder.bind(Superstructure)`. This decouples binding logic from `RobotContainer` and allows each group to be developed, tested, and swapped independently. Adding a new operator controller, for example, only requires a new `Binder` class.
+Each binding group implements `Binder.bind(Superstructure)`. This decouples binding logic from `RobotContainer` and allows each group to be developed, tested, and swapped independently.
 
 ### `CommandBuilder` Pattern
 
@@ -70,8 +91,8 @@ All commands are constructed via `superstructure.build(CommandBuilder)` rather t
 
 ### Hardware/Sim Split at Bind Time
 
-`RobotBindings` selects between `FuelShot` and `FuelShotSim` using `Robot.isReal()` when `bind()` is called. This means simulation gets the projectile animation instead of real indexer commands, without any conditional logic inside the commands themselves.
+`RobotContainer` selects between `MultiBindings(DriverXbox + OperatorPS5)` on real hardware and `KeyboardBindings` in simulation. The split happens once at construction.
 
-### Debounced Auto-Fire
+### Drive Mode
 
-The 0.25 s falling-edge debounce on `shootReady()` prevents the auto-fire command from stopping and restarting during brief tracking interruptions (e.g., vibration, momentary sensor noise). The robot keeps feeding game pieces through transient mis-aims rather than stopping mid-cycle.
+`DriverXboxBindings` passes a `Supplier<TeleopDriveMode>` to `bindDrive`. The left trigger activates robot-relative drive; otherwise it defaults to field-relative spin. Superstructure overrides to `SlowFieldRelativeSpin` automatically during scoring shots.

@@ -129,6 +129,19 @@ Consumed by subsystems:
 
 ---
 
+## Active Strategies
+
+As of the current codebase, both scoring and feeding use `ToFAim` (interpolation-based):
+
+| Mode | Strategy | Data source |
+|---|---|---|
+| `Scoring` | `ToFAim` | `ShooterConstants.scoringMeasurements` (11 data points, 1.7–6.84 m) |
+| `Feeding` | `ToFAim` | `ShooterConstants.feedingMeasurements` (12 data points, including a 15 m feed shot) |
+
+`PhysicsAim` is implemented and tested but not currently used for either mode. `TuneAim` is a tuning utility available as a commented-out alternative.
+
+---
+
 ## Tolerances
 
 Default tolerances on `AimParams` define when the robot is considered "on target":
@@ -139,7 +152,7 @@ Default tolerances on `AimParams` define when the robot is considered "on target
 | `deltaYaw` | ±2° | `Turret.tracked()` |
 | `deltaOutput` | ±0.35 | `Shooter.tracked()` |
 
-Both `Shooter.tracked()` and `Turret.tracked()` must be true simultaneously before the indexer should release a game piece.
+Both `Shooter.tracked()` and `Turret.tracked()` must be true simultaneously (along with `params.isOk()` and valid odometry) before the auto-fire trigger releases a game piece.
 
 ---
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Turret subsystem controls a rotating platform that points the shooter toward a target. It drives a single motor using Motion Magic position control, with absolute position determined at startup via a **Chinese Remainder Theorem (CRT)** algorithm using two CANcoders on gears with different gear ratios. This allows the turret to determine its absolute position across more than one full rotation without a multi-turn encoder. The turret continuously tracks a target yaw from `AimParams` and uses a custom **closest-congruent** algorithm to find the shortest valid path within its allowed travel range.
+The Turret subsystem controls a rotating platform that points the shooter toward a target. It drives a single motor using Motion Magic position control, with absolute position determined at startup via a **Chinese Remainder Theorem (CRT)** algorithm using two CANcoders on gears with different gear ratios. This allows the turret to determine its absolute position across more than one full rotation without a multi-turn encoder. The turret continuously tracks a target yaw from `AimParams` and uses a custom **closest-congruent** algorithm to find the shortest valid path within its allowed travel range (±0.5 rotations, enforced by both software limits and the `findCC` algorithm).
 
 ---
 
@@ -28,25 +28,23 @@ The Turret subsystem controls a rotating platform that points the shooter toward
 - Neutral mode: Coast
 - Inversion: Counter-Clockwise Positive
 - Feedback source: Rotor sensor (internal encoder)
-- Sensor-to-mechanism ratio: 38.46:1
+- Sensor-to-mechanism ratio: 30:1
 
 **Position References**
 
 | Name | Value | Meaning |
 |---|---|---|
-| `kHomePosition` | 0.5 revolutions | Turret home/stow position |
-| `kForwards` | 0.25 revolutions | Position where turret points directly forward on robot |
+| `kHomePosition` | 0.0 revolutions | Turret home/stow position (same as forward) |
+| `kForwards` | 0.0 revolutions | Position where turret points directly forward on robot |
 
 **Travel Limits**
 
-| Name | Value | Used When |
-|---|---|---|
-| `kMinAngle` | −0.75 rotations | Full range (shoot mode) |
-| `kMaxAngle` | +0.75 rotations | Full range (shoot mode) |
-| `kMinTrackingAngle` | −0.5 rotations | Restricted range (tracking mode) |
-| `kMaxTrackingAngle` | +0.5 rotations | Restricted range (tracking mode) |
+| Name | Value |
+|---|---|
+| `kMinAngle` | −0.5 rotations |
+| `kMaxAngle` | +0.5 rotations |
 
-The tighter tracking range prevents the turret from reaching its physical limits while seeking, reserving the extra travel for the final shot when full range access is granted.
+Software limit switches enforce these bounds. There is no longer a separate restricted tracking range.
 
 **At-position tolerance:** 1°
 
@@ -54,33 +52,32 @@ The tighter tracking range prevents the turret from reaching its physical limits
 
 | Parameter | Value |
 |---|---|
-| Cruise velocity | 32 rot/s |
-| Acceleration | 48 rot/s² |
-| Jerk | 480 rot/s³ |
+| Cruise velocity | 3.0 rot/s |
+| Acceleration | 10 rot/s² |
 
 **PID (Slot 0)**
 
 | Gain | Value |
 |---|---|
-| kP | 50 |
+| kP | 35 |
 | kI | 0 |
-| kD | 0 |
-| kS | 0.125 |
-| kV | 0 |
+| kD | 0.1 |
+| kS | 0.6 |
+| kV | 2.5 |
 | kA | 0 |
 
 **3D Offset (robot-relative)**
-- X: −4.4 inches
-- Y: +4.4 inches
-- Z: +22.5 inches
+- X: −0.11 m
+- Y: +0.11 m
+- Z: +0.512 m
 
 **CRT Encoder Config**
 
 | | Encoder 1 | Encoder 2 |
 |---|---|---|
 | CAN ID | 49 | 50 |
-| Magnet offset | −0.352051 | −0.531006 |
-| Gear ratio | 100/12 (~8.33:1) | (100×28)/(12×26) (~8.97:1) |
+| Magnet offset | −0.10400390625 | −0.50634765625 |
+| Gear ratio | 72/12 (6:1) | (72×25)/(12×27) (~5.56:1) |
 | Sensor direction | Default | Clockwise Positive |
 
 ---
@@ -145,11 +142,11 @@ Simulation with a first-order lag model.
 - Accepts a `TurretIO` instance (injected).
 - Calls `io.calibrate()` immediately on construction.
 - Publishes SmartDashboard buttons for `Home` and `Calibrate`.
-- Logs `ready()` trigger state and `tracking` boolean via `OnboardLogger`.
+- Binds `RobotModeTriggers.disabled().onTrue(calibrate)` — re-calibrates the turret automatically every time the robot is disabled.
+- Logs `ready()` trigger state, `tracking` boolean, and `reference` via `OnboardLogger`.
 
 **`periodic()`**
 - Calls `io.updateInputs(inputs)`.
-- Publishes position in revolutions to SmartDashboard under `"Position"`.
 - Sets the `calibrationAlert` (error-level) if `inputs.calibrated` is false.
 
 **Commands**
@@ -161,9 +158,9 @@ Simulation with a first-order lag model.
 | `forwards()` | Commands `kForwards` (0.25 rev), waits until `ready()` |
 
 **`track()` detail:**
-- Computes `relative = aimParams.yaw − robotHeading`
-- Adds `kForwards` offset so the angle is in turret mechanism space
-- Uses the **restricted tracking range** (±0.5 rot) while waiting; switches to **full range** (±0.75 rot) once `state.shootReady()` is true — this prevents the turret from swinging to an extreme while tracking, but allows full travel for the final shot
+- Computes `mechanismAngle = aimParams.yaw − robotHeading + kForwards`
+- Calls `setPosition(angle, !state.shootReady.getAsBoolean())` — passes `true` for the `tracking` flag only while not ready to shoot
+- Currently, the tracking flag parameter is accepted by `setPosition()` but both paths use the same full range `[kMinAngle, kMaxAngle]` — the restricted range behavior (originally ±0.5 rot) is no longer enforced
 
 **Triggers**
 
@@ -172,9 +169,9 @@ Simulation with a first-order lag model.
 | `ready()` | `\|position − reference\| ≤ 1°` |
 | `tracked(Supplier<AimParams>)` | `\|position − reference\| ≤ deltaYaw` AND `tracking == true` |
 
-**Telemetry**
-- `telemetrize(StateManager)` pushes two `Pose2d` objects to the Field2d widget: `"turret"` (actual position) and `"turret-target"` (reference position), both expressed in field coordinates.
-- `turretPose(Pose2d)` returns the turret's 3D pose by applying `kOffset` to the robot's field pose.
+**Utility Methods**
+- `turretPose(Pose2d robotPose)` returns the turret's 3D field pose by applying `kOffset` to the robot's field pose.
+- `turretCameraOffset()` returns the 3D transform from the robot's root frame to the turret-mounted camera, accounting for the current turret angle. Used by the vision localization system to compute camera pose in field space.
 
 ---
 

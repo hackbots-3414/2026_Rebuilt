@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Shooter subsystem controls three motors: two **flywheel motors** that spin a game piece up to speed, and one **hood motor** that adjusts the launch angle. Shot parameters (velocity and pitch) are supplied dynamically at runtime via `AimParams` objects, allowing the shooter to track a target continuously. The hood uses an absolute CANcoder for position feedback. The subsystem follows the same IO-layer pattern as the rest of the robot.
+The Shooter subsystem controls three motors: two **flywheel motors** that spin a game piece up to speed, and one **hood motor** that adjusts the launch angle. Shot parameters (velocity and pitch) are supplied dynamically at runtime via `AimParams` objects, allowing the shooter to track a target continuously. The hood uses an absolute CANcoder for position feedback. `ShooterConstants` also stores the empirical `scoringMeasurements` and `feedingMeasurements` lookup tables used by `ToFAim`. The subsystem follows the same IO-layer pattern as the rest of the robot.
 
 ---
 
@@ -23,28 +23,30 @@ The Shooter subsystem controls three motors: two **flywheel motors** that spin a
 **Flywheel Motors**
 - Motor 1 CAN ID: `53`
 - Motor 2 CAN ID: `54`
-- Motor 2 follows Motor 1 via `Follower` (aligned)
+- Motor 2 alignment: `Aligned` (follows Motor 1)
 - Neutral mode: Coast
 - Inversion: Clockwise Positive
-- Supply current limit: 40 A
-- Stator current limit: 125 A
+- Peak reverse duty cycle: 0 (flywheel only spins one direction)
+- Supply current limit: 80 A
+- Stator current limit: 100 A
+- Peak forward torque current: 80 A
+- Peak reverse torque current: 0 A
 
 **Flywheel PID (Slot 0)**
 
 | Gain | Value |
 |---|---|
-| kP | 8.0 |
+| kP | 3414 |
 | kI | 0 |
 | kD | 0 |
-| kS | 0 |
-| kV | 0 |
-| kA | 0.6 |
 
-- Motion Magic acceleration: 30 rot/s²
+- Motion Magic acceleration: 10 rot/s²
 - Wheel radius: 2 inches
-- Max linear (projectile) speed: 9.0 m/s
-- Max rotational speed: 100 rot/s
+- Max linear (projectile) speed: 15.5 m/s
+- Max rotational speed: 85.0 rot/s
 - Reverse velocity (unjam): 30 rot/s
+- Recovery error threshold: 8 rot/s (above this, enables a recovery control slot)
+- Shooting detection threshold: 4 rot/s (velocity drop larger than this is counted as a ball passing through)
 
 **Hood Motor (`HoodConstants`)**
 - Motor CAN ID: `56`
@@ -60,20 +62,21 @@ The Shooter subsystem controls three motors: two **flywheel motors** that spin a
 
 | Gain | Value |
 |---|---|
-| kP | 40.0 |
+| kP | 60.0 |
 | kI | 0 |
 | kD | 0 |
-| kS | 0 |
-| kV | 10 |
-| kA | 0.2 |
+| kS | 0.3 |
+| kV | 7.0 |
+| kA | 0.1 |
 
 - Motion Magic cruise velocity: 3.0 rot/s
 - Motion Magic acceleration: 4 rot/s²
 - Forward soft limit: 0.065 rotations
 - Reverse soft limit: 0.0 rotations
 - Zero offset (`kOffset`): 18.0°
-- CANcoder magnet offset: 0.24755859375 rotations
-- CANcoder discontinuity point: 0.7 rotations
+- CANcoder direction: Clockwise Positive
+- CANcoder magnet offset: −0.150146484375 rotations
+- CANcoder discontinuity point: 0.8 rotations
 
 ---
 
@@ -167,10 +170,11 @@ Minimal simulation — no physics model.
 **Constructor**
 - Accepts a `ShooterIO` instance (injected).
 - Registers a `disabled()` trigger that resets flywheel velocity to zero when the robot is disabled, preventing it from commanding back to the last setpoint on re-enable.
-- Logs `hoodReference` and `shooterReference` via `OnboardLogger` under `"Shooter"`.
+- Logs `hoodReference`, `shooterReference`, and `Enable Recovery Mode` via `OnboardLogger` under `"Shooter"`.
 
 **`periodic()`**
 - Calls `io.updateInputs(inputs)` each loop cycle.
+- Tracks significant velocity drops: if `shooterReference − shooter1Velocity > kShootingErrorDetectionThreshold` (4 rot/s), records `lastSignificantDrop` timestamp. Used by the `seenBall()` trigger.
 
 **Unit Conversion Helpers (private)**
 
@@ -183,16 +187,23 @@ Minimal simulation — no physics model.
 
 | Method | Behavior |
 |---|---|
-| `shoot(Supplier<AimParams>)` | Continuously tracks `AimParams` — updates flywheel velocity and hood angle every loop cycle. Does NOT stop the shooter when the command ends. |
+| `shoot(Supplier<AimParams>)` | Continuously tracks `AimParams` — updates flywheel velocity and hood angle every loop cycle. Sets velocity to 0 when command ends (via `finallyDo`). |
 | `reverse()` | Runs flywheels in reverse at 30 rot/s to clear jams; stops on end |
 
-**Trigger**
+When `shoot()` is active and `params.isOk()` is false, the shooter commands zero velocity and waits rather than holding the last speed.
 
-`tracked(Supplier<AimParams>)` — returns `true` when **both** of the following are simultaneously true:
-1. `|shooter1Velocity − targetVelocity| ≤ deltaOutput` (velocity within tolerance)
-2. `|hoodPosition − targetAngle| ≤ deltaPitch` (hood angle within tolerance)
+The flywheel uses **recovery mode** (`shouldEnableRecovery`) when the velocity error exceeds `kRecoveryErrorThreshold` (8 rot/s). This switches to a higher-torque control configuration to spin up faster.
 
-This is used externally to gate game piece release — the indexer should only fire once the shooter is confirmed to be on target.
+**Triggers**
+
+`tracked(Supplier<AimParams>)` — returns `true` only when **all three** are simultaneously true:
+1. `active` flag is set (i.e., `shoot()` command is running)
+2. `|shooter1Velocity − targetVelocity| ≤ deltaOutput` (velocity within tolerance)
+3. `|hoodPosition − targetAngle| ≤ deltaPitch` (hood angle within tolerance)
+
+`shooting` — public `Trigger` field, true whenever the `active` flag is set (i.e., `shoot()` is running).
+
+`seenBall(double seconds)` — true when no significant velocity drop has been detected for at least `seconds`. Used to detect whether a ball has passed through the shooter recently.
 
 ---
 

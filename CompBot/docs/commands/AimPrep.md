@@ -13,7 +13,7 @@ Returns a `Commands.parallel(...)` of two commands that run concurrently:
 | Command | Subsystem | Behavior |
 |---|---|---|
 | `turret.track(state)` | Turret | Continuously computes target yaw from `AimParams` and drives the turret to track it |
-| `shooter.shoot(state::predictedAimParams)` | Shooter | Continuously sets flywheel velocity and hood angle from predicted `AimParams` |
+| `shooter.shoot(state::aimParams)` | Shooter | Continuously sets flywheel velocity and hood angle from current `AimParams` |
 
 Both commands run until the parent command ends or is interrupted.
 
@@ -23,10 +23,10 @@ Both commands run until the parent command ends or is interrupted.
 
 ## Usage
 
-`AimPrep` is composed into `FuelShot` — the full shot sequence runs `AimPrep` in parallel with the indexer. It can also be run standalone to pre-warm the shooter and aim the turret before a driver decides to fire.
+`AimPrep` runs continuously while the driver holds the aim button (Right Bumper). Once `shootReady` becomes true, `RobotBindings` triggers `RunIndex` automatically to release the game piece. `AimPrep` can also be pre-activated before a shot opportunity to warm up the shooter and position the turret.
 
 ```
 AimPrep
-  ├─ turret.track(state)         ← rotates turret toward target yaw
-  └─ shooter.shoot(predicted)    ← spins flywheels + sets hood angle
+  ├─ turret.track(state)       ← rotates turret toward target yaw
+  └─ shooter.shoot(aimParams)  ← spins flywheels + sets hood angle
 ```
