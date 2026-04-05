@@ -4,19 +4,13 @@ import org.photonvision.PhotonCamera;
 
 public class CameraIOHardware implements CameraIO {
   private final PhotonCamera camera;
-  private final String name;
 
-  public CameraIOHardware(String name) {
-    camera = new PhotonCamera(name);
-    this.name = name;
+  public CameraIOHardware(CameraConfig config) {
+    camera = new PhotonCamera(config.cameraName());
   }
 
   public void updateInputs(CameraIOInputs inputs) {
     inputs.connected = camera.isConnected();
     inputs.unreadResults = camera.getAllUnreadResults();
-  }
-
-  public String getName() {
-    return name;
   }
 }

@@ -1,73 +1,61 @@
 package frc.robot.vision.localization;
 
 import static edu.wpi.first.units.Units.Milliseconds;
-
 import java.util.function.Supplier;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
-
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.FieldManager;
+import frc.robot.vision.CameraConfig;
 import frc.robot.vision.CameraIO;
 
 public class CameraIOAprilTagSim implements CameraIO {
-  private static boolean setupComplete;
-
   private static final VisionSystemSim simSystem = new VisionSystemSim("localization");
 
   private static final SimCameraProperties simProps = new SimCameraProperties();
 
   private static final Field2d simField = simSystem.getDebugField();
 
-  private final PhotonCamera m_camera;
-  private final PhotonCameraSim m_cameraSim;
-  private final Transform3d m_robotToCamera;
+  private final PhotonCamera camera;
+  private final PhotonCameraSim cameraSim;
 
-  private final Supplier<Pose2d> m_poseSupplier;
+  private final Supplier<Pose2d> poseSupplier;
 
-  private final String m_name;
+  private final CameraConfig config;
 
-  public CameraIOAprilTagSim(String name, Transform3d robotToCamera, Supplier<Pose2d> poseSupplier) {
+  public CameraIOAprilTagSim(CameraConfig config, Supplier<Pose2d> poseSupplier) {
+    FieldManager.getInstance().setField(simField);
+    this.config = config;
     setupSimProps();
-    m_name = name;
-    m_poseSupplier = poseSupplier;
-    m_camera = new PhotonCamera(name);
-    m_robotToCamera = robotToCamera;
-    m_cameraSim = new PhotonCameraSim(m_camera, simProps);
-    // m_cameraSim.enableDrawWireframe(true);
-    simSystem.addCamera(m_cameraSim, m_robotToCamera);
-    SmartDashboard.putBoolean("Vision/" + m_name + " connected", true);
+    this.poseSupplier = poseSupplier;
+    camera = new PhotonCamera(config.cameraName());
+    cameraSim = new PhotonCameraSim(camera, simProps);
+    cameraSim.enableDrawWireframe(true);
+    simSystem.addCamera(cameraSim, config.robotToCamera().get());
+    // SmartDashboard.putBoolean("Vision/" + config.cameraName() + " connected", true);
   }
 
   public void updateInputs(CameraIOInputs inputs) {
-    inputs.connected = SmartDashboard.getBoolean("Vision/" + m_name + " connected", true);
-    simSystem.update(m_poseSupplier.get());
-    inputs.unreadResults = m_camera.getAllUnreadResults();
+    simSystem.adjustCamera(cameraSim, config.robotToCamera().get());
+    inputs.connected =
+        SmartDashboard.getBoolean("Vision/" + config.cameraName() + " connected", true);
+    simSystem.update(poseSupplier.get());
+    inputs.unreadResults = camera.getAllUnreadResults();
   }
 
-  public String getName() {
-    return m_camera.getName();
-  }
-
-  private static void setupSimProps() {
-    if (setupComplete) {
-      return;
-    }
-    setupComplete = true;
+  private void setupSimProps() {
     simSystem.addAprilTags(LocalizationConstants.kTagLayout);
     simProps.setCalibration(
-        LocalizationConstants.kResWidth,
-        LocalizationConstants.kResHeight,
-        LocalizationConstants.kFOV);
+        config.resolutionWidth(),
+        config.resolutionHeight(),
+        new Rotation2d(config.fov()));
     simProps.setAvgLatencyMs(LocalizationConstants.kAvgLatency.in(Milliseconds));
     simProps.setLatencyStdDevMs(LocalizationConstants.kLatencyStdDev.in(Milliseconds));
     simProps.setCalibError(LocalizationConstants.kAvgErr, LocalizationConstants.kErrStdDevs);
-    FieldManager.getInstance().setField(simField);
   }
 }

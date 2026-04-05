@@ -9,6 +9,6 @@ public class AimPrep implements CommandBuilder {
   public Command build(Subsystems subsystems, StateManager state) {
     return Commands.parallel(
       subsystems.turret().track(state),
-      subsystems.shooter().shoot(state::predictedAimParams));
+      subsystems.shooter().shoot(state::aimParams));
   }
 }

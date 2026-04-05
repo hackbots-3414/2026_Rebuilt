@@ -2,7 +2,9 @@ package frc.robot.aiming;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
+
 import java.util.List;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -16,7 +18,7 @@ import frc.robot.aiming.AimParams.SpeedControl;
  */
 public class ToFAim implements AimStrategy {
   static final double EPSILON = 1e-3;
-  static final int ITERATIONS = 5;
+  static final int ITERATIONS = 15;
 
   private final AimConstraints constraints;
 
@@ -49,7 +51,7 @@ public class ToFAim implements AimStrategy {
 
     AimStatus status = AimStatus.Impossible;
 
-    double distance = 0.0; // This will be overriden immediately
+    double distance = start.minus(target).getNorm(); // This will be overriden immediately
     double tof;
 
     for (int i = 0; i < ITERATIONS; i++) {

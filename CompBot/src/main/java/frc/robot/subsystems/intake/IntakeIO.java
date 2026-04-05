@@ -2,16 +2,13 @@ package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
-import static edu.wpi.first.units.Units.Centimeters;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.OnboardLogger;
@@ -37,9 +34,9 @@ public interface IntakeIO {
     public Temperature deployTemperature = Celsius.zero();
     public Angle deployPosition = Rotations.zero();
 
-    public boolean canrangeConnected = false;
-    public Distance canrangeDistance = Meters.zero();
-    public boolean canrangeDetected = false;
+    public boolean deployCANcoderConnected = false;
+    public Angle deployCANcoderPosition = Rotations.zero();
+    public AngularVelocity deployCANcoderVelocity = RadiansPerSecond.of(0);
 
     public IntakeIOInputs() {
       OnboardLogger log = new OnboardLogger("Intake");
@@ -49,6 +46,7 @@ public interface IntakeIO {
       log.registerMeasurement("Intake Motor/Stator Current", () -> intakeStatorCurrent, Amps);
       log.registerMeasurement("Intake Motor/Voltage", () -> intakeVoltage, Volts);
       log.registerMeasurement("Intake Motor/Temperature", () -> intakeTemperature, Celsius);
+      log.registerMeasurement("Intake Motor/Velocity", () -> intakeVelocity, RotationsPerSecond);
 
       log.registerBoolean("Deploy Motor/Connected", () -> deployMotorConnected);
       log.registerMeasurement("Deploy Motor/Supply Current", () -> deploySupplyCurrent, Amps);
@@ -56,11 +54,11 @@ public interface IntakeIO {
       log.registerMeasurement("Deploy Motor/Stator Current", () -> deployStatorCurrent, Amps);
       log.registerMeasurement("Deploy Motor/Voltage", () -> deployVoltage, Volts);
       log.registerMeasurement("Deploy Motor/Temperature", () -> deployTemperature, Celsius);
-      log.registerMeasurement("Deploy Motor/Position", () -> deployPosition, Degrees);
+      log.registerMeasurement("Deploy Motor/Position", () -> deployPosition, Rotations);
 
-      log.registerBoolean("CANrange Connected", () -> canrangeConnected);
-      log.registerMeasurement("CANrange Distance", () -> canrangeDistance, Centimeters);
-      log.registerBoolean("CANrange Detected", () -> canrangeDetected);
+      log.registerBoolean("CANcoder/Connected", () -> deployCANcoderConnected);
+      log.registerMeasurement("CANcoder/Position", () -> deployCANcoderPosition, Rotations);
+      log.registerMeasurement("CANcoder/Velocity", () -> deployCANcoderVelocity, RotationsPerSecond);
     }
   }
 

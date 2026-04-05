@@ -15,8 +15,8 @@ public class TurretIOSim implements TurretIO {
     position = position.times(0.8).plus(reference.times(0.2));
     inputs.position = position;
     inputs.reference = reference;
-    inputs.calibrated = SmartDashboard.getBoolean(calibrationLabel, false);
-    SmartDashboard.putBoolean(calibrationLabel, inputs.calibrated);
+    inputs.calibrated = SmartDashboard.getBoolean(calibrationLabel, true);
+    // SmartDashboard.putBoolean(calibrationLabel, inputs.calibrated);
   }
 
   public void setPosition(Angle position) {

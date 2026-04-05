@@ -3,11 +3,9 @@ package frc.robot.subsystems.climber;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Robot;
 
@@ -30,10 +28,6 @@ public class ClimberIOSim implements ClimberIO {
     inputs.supplyCurrent = Amps.of(motor.getCurrentDrawAmps());
     inputs.voltage = Volts.of(motor.getInputVoltage());
     inputs.velocity = motor.getAngularVelocity();
-  }
-
-  public void setVoltage(Voltage voltage) {
-    motor.setInputVoltage(voltage.baseUnitMagnitude());
   }
 
   public void setPosition(Angle position) {
