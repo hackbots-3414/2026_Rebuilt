@@ -3,6 +3,7 @@ package frc.robot.subsystems.drivetrain;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -58,6 +60,7 @@ import frc.robot.subsystems.drivetrain.AutopilotConstants.HeadingGains;
 import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
+import frc.robot.util.StatusSignalUtil;
 import frc.robot.vision.localization.LocalizationConstants;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 
@@ -208,28 +211,57 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     OnboardLogger ologger = new OnboardLogger("Drivetrain");
     ologger.registerBoolean("Valid Odometry", validOdemetry());
     ologger.registerDouble("Time since last estimate", () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
-    // SwerveModule<TalonFX, TalonFX, CANcoder>[] actualModules = getModules();
-    // TalonFX drive, steer;
-    // for (int i = 0;i < actualModules.length; i ++) {
-    //   SwerveModule<TalonFX, TalonFX, CANcoder> module = actualModules[i];
-    //   drive = module.getDriveMotor();
-    //   steer = module.getSteerMotor();
+    SwerveModule<TalonFX, TalonFX, CANcoder>[] actualModules = getModules();
+    for (int i = 0;i < actualModules.length; i ++) {
+      TalonFX drive, steer;
+      SwerveModule<TalonFX, TalonFX, CANcoder> module = actualModules[i];
+      drive = module.getDriveMotor();
+      steer = module.getSteerMotor();
 
-    //   ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Supply Current", () -: drive.getSupplyCurrent().getValue(), Amps);
-    //   ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Stator Current", drive.getStatorCurrent()::getValue, Amps);
-    //   ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Voltage", drive.getMotorVoltage()::getValue, Volts);
-    //   ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Temperature", drive.getDeviceTemp()::getValue, Celsius);
-    //   ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Velocity", drive.getVelocity()::getValue, RotationsPerSecond);
+      StatusSignalUtil.registerCANivoreSignals(
+        drive.getSupplyCurrent(false),
+        drive.getStatorCurrent(false),
+        drive.getMotorVoltage(false),
+        drive.getDeviceTemp(false),
+        drive.getVelocity(false),
 
-    //   ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Supply Current", steer.getSupplyCurrent()::getValue, Amps);
-    //   ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Stator Current", steer.getStatorCurrent()::getValue, Amps);
-    //   ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Voltage", steer.getMotorVoltage()::getValue, Volts);
-    //   ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Temperature", steer.getDeviceTemp()::getValue, Celsius);
-    //   ologger.registerMeasurement("Steer " + drive.getDeviceID() + " Velocity", steer.getVelocity()::getValue, RotationsPerSecond);
-    // }
+        steer.getSupplyCurrent(false),
+        steer.getStatorCurrent(false),
+        steer.getMotorVoltage(false),
+        steer.getDeviceTemp(false),
+        steer.getVelocity(false),
+        steer.getPosition(false)
+      );
+
+      ologger.registerBoolean("Drive " + drive.getDeviceID() + " Connected", () -> BaseStatusSignal.isAllGood(
+        drive.getSupplyCurrent(false),
+        drive.getStatorCurrent(false),
+        drive.getMotorVoltage(false),
+        drive.getDeviceTemp(false),
+        drive.getVelocity(false)
+      ));
+      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Supply Current", drive.getSupplyCurrent(false)::getValue, Amps);
+      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Stator Current", drive.getStatorCurrent(false)::getValue, Amps);
+      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Voltage", drive.getMotorVoltage(false)::getValue, Volts);
+      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Temperature", drive.getDeviceTemp(false)::getValue, Celsius);
+      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Velocity", drive.getVelocity(false)::getValue, RotationsPerSecond);
+
+      ologger.registerBoolean("Steer " + steer.getDeviceID() + " Connected", () -> BaseStatusSignal.isAllGood(
+        steer.getSupplyCurrent(false),
+        steer.getStatorCurrent(false),
+        steer.getMotorVoltage(false),
+        steer.getDeviceTemp(false),
+        steer.getVelocity(false),
+        steer.getPosition(false)
+      ));
+      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Supply Current", steer.getSupplyCurrent(false)::getValue, Amps);
+      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Stator Current", steer.getStatorCurrent(false)::getValue, Amps);
+      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Voltage", steer.getMotorVoltage(false)::getValue, Volts);
+      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Temperature", steer.getDeviceTemp(false)::getValue, Celsius);
+      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Velocity", steer.getVelocity(false)::getValue, RotationsPerSecond);
+      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Position", steer.getPosition(false)::getValue, Rotations);
+    }
     sysIDCommands();
-    // SmartDashboard.putData("Drivetrain/Reset Pose (Our Hub)", resetOdometry(new
-    // Pose2d(4, 4, Rotation2d.kZero), true));
     // SmartDashboard.putData("Drivetrain/Set Home", setMemorySpot());
     // SmartDashboard.putData("Drivetrain/Go Home", goHome());
     configurePathplanner();
