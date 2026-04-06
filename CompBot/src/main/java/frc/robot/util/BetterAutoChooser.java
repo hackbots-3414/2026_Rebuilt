@@ -40,7 +40,7 @@ public class BetterAutoChooser {
         registerAuto("Right " + remainder + " (Generated)", new PathPlannerAuto(name, RIGHT_IS_FLIPPED));
         registerAuto("Left " + remainder + " (Generated)", new PathPlannerAuto(name, !RIGHT_IS_FLIPPED));
       } else {
-        chooser.addOption(name, new PathPlannerAuto(name));
+        registerAuto(name, new PathPlannerAuto(name));
       }
     }
 
