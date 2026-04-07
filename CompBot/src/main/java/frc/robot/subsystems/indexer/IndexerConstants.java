@@ -32,7 +32,7 @@ public final class IndexerConstants {
   public static final class FeederConstants {
     protected static final int kMotorId = 2;
 
-    protected static final Voltage kIndexVoltage = Volts.of(12.0);
+    protected static final Voltage kFeedVoltage = Volts.of(12.0);
     protected static final Voltage kEjectVoltage = Volts.of(-8.0);
 
     protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
