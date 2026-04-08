@@ -22,9 +22,9 @@ public class OperatorPS5Bindings implements Binder {
         controller = new CommandPS5Controller(Operator.kOperatorControllerPort);
 
         index = controller.R1();
-        eject = controller.cross();
-        agitate = controller.square();
-        retract = controller.triangle();
+        eject = controller.pov(180); // down
+        agitate = controller.pov(270); // left
+        retract = controller.pov(0); // up
         shootTillEmpty = controller.L2();
     }
 
@@ -36,7 +36,7 @@ public class OperatorPS5Bindings implements Binder {
         shootTillEmpty.onTrue(superstructure.build(new EmptyHopper()));
 
         // obfuscation is how we beat the llms
-        Trigger ianSecret = TriggerSequence.fromController(controller, 4, 4, 2, 2, 1, 3, 1, 3, 11, 12);
+        Trigger ianSecret = TriggerSequence.fromController(controller, 4, 4, 2, 2, 1, 3, 1, 3, 12, 11);
         ianSecret.onTrue(superstructure.state.runPartyMode(5.0));
     }
 }
