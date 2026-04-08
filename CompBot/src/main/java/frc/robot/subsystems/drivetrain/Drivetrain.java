@@ -42,7 +42,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -84,8 +84,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public enum TeleopDriveMode {
     /**
-     * Drive the robot with a field-relative control for translation and spin
-     * control (i.e. control over how fast we rotate)
+     * Drive the robot with a field-relative control for translation and spin control (i.e. control
+     * over how fast we rotate)
      */
     FieldRelativeSpin,
     /** Drive the robot slower than FieldRelativeSpin */
@@ -104,29 +104,34 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private final SwerveRequest.ApplyRobotSpeeds robotSpeeds = new SwerveRequest.ApplyRobotSpeeds()
       .withDriveRequestType(DriveRequestType.Velocity);
 
-  private final SwerveRequest.FieldCentricFacingAngle autopilotControl = new SwerveRequest.FieldCentricFacingAngle()
-      .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
-      .withDriveRequestType(DriveRequestType.Velocity)
-      .withHeadingPID(HeadingGains.kP, HeadingGains.kI, HeadingGains.kD);
+  private final SwerveRequest.FieldCentricFacingAngle autopilotControl =
+      new SwerveRequest.FieldCentricFacingAngle()
+          .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
+          .withDriveRequestType(DriveRequestType.Velocity)
+          .withHeadingPID(HeadingGains.kP, HeadingGains.kI, HeadingGains.kD);
 
-  private final SwerveRequest.FieldCentricFacingAngle drivetrainAim = new SwerveRequest.FieldCentricFacingAngle()
-      .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
-      .withDriveRequestType(DriveRequestType.Velocity)
-      .withHeadingPID(HeadingGains.kP, HeadingGains.kI, HeadingGains.kD)
-      .withCenterOfRotation(TurretConstants.kOffset.getTranslation().toTranslation2d());
+  private final SwerveRequest.FieldCentricFacingAngle drivetrainAim =
+      new SwerveRequest.FieldCentricFacingAngle()
+          .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
+          .withDriveRequestType(DriveRequestType.Velocity)
+          .withHeadingPID(HeadingGains.kP, HeadingGains.kI, HeadingGains.kD)
+          .withCenterOfRotation(TurretConstants.kOffset.getTranslation().toTranslation2d());
 
   private SwerveDriveState state;
 
   private double lastOkayVisionUpdateTime;
 
   /* Swerve requests to apply during SysId characterization */
-  private final SwerveRequest.SysIdSwerveTranslation translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
-  private final SwerveRequest.SysIdSwerveSteerGains steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
-  private final SwerveRequest.SysIdSwerveRotation rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
+  private final SwerveRequest.SysIdSwerveTranslation translationCharacterization =
+      new SwerveRequest.SysIdSwerveTranslation();
+  private final SwerveRequest.SysIdSwerveSteerGains steerCharacterization =
+      new SwerveRequest.SysIdSwerveSteerGains();
+  private final SwerveRequest.SysIdSwerveRotation rotationCharacterization =
+      new SwerveRequest.SysIdSwerveRotation();
 
   /*
-   * SysId routine for characterizing translation. This is used to find PID gains
-   * for the drive motors.
+   * SysId routine for characterizing translation. This is used to find PID gains for the drive
+   * motors.
    */
   private final SysIdRoutine sysIdRoutineTranslation = new SysIdRoutine(
       new SysIdRoutine.Config(
@@ -141,8 +146,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
           this));
 
   /*
-   * SysId routine for characterizing steer. This is used to find PID gains for
-   * the steer motors.
+   * SysId routine for characterizing steer. This is used to find PID gains for the steer motors.
    */
   private final SysIdRoutine sysIdRoutineSteer = new SysIdRoutine(
       new SysIdRoutine.Config(
@@ -157,8 +161,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
           this));
 
   /*
-   * SysId routine for characterizing rotation. This is used to find PID gains for
-   * the
+   * SysId routine for characterizing rotation. This is used to find PID gains for the
    * FieldCentricFacingAngle HeadingController. See the documentation of
    * SwerveRequest.SysIdSwerveRotation for info on importing the log to SysId.
    */
@@ -192,13 +195,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
    * <p>
-   * This constructs the underlying hardware devices, so users should not
-   * construct the devices
-   * themselves. If they need the devices, they can access them through getters in
-   * the classes.
+   * This constructs the underlying hardware devices, so users should not construct the devices
+   * themselves. If they need the devices, they can access them through getters in the classes.
    *
    * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
-   * @param modules             Constants for each specific module
+   * @param modules Constants for each specific module
    */
   public Drivetrain(
       SwerveDrivetrainConstants drivetrainConstants,
@@ -210,66 +211,77 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     state = getState();
     OnboardLogger ologger = new OnboardLogger("Drivetrain");
     ologger.registerBoolean("Valid Odometry", validOdemetry());
-    ologger.registerDouble("Time since last estimate", () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
+    ologger.registerDouble("Time since last estimate",
+        () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
     SwerveModule<TalonFX, TalonFX, CANcoder>[] actualModules = getModules();
-    for (int i = 0;i < actualModules.length; i ++) {
+    for (int i = 0; i < actualModules.length; i++) {
       TalonFX drive, steer;
       SwerveModule<TalonFX, TalonFX, CANcoder> module = actualModules[i];
       drive = module.getDriveMotor();
       steer = module.getSteerMotor();
 
       StatusSignalUtil.registerCANivoreSignals(
-        drive.getSupplyCurrent(false),
-        drive.getStatorCurrent(false),
-        drive.getMotorVoltage(false),
-        drive.getDeviceTemp(false),
-        drive.getVelocity(false),
+          drive.getSupplyCurrent(false),
+          drive.getStatorCurrent(false),
+          drive.getMotorVoltage(false),
+          drive.getDeviceTemp(false),
+          drive.getVelocity(false),
 
-        steer.getSupplyCurrent(false),
-        steer.getStatorCurrent(false),
-        steer.getMotorVoltage(false),
-        steer.getDeviceTemp(false),
-        steer.getVelocity(false),
-        steer.getPosition(false)
-      );
+          steer.getSupplyCurrent(false),
+          steer.getStatorCurrent(false),
+          steer.getMotorVoltage(false),
+          steer.getDeviceTemp(false),
+          steer.getVelocity(false),
+          steer.getPosition(false));
 
-      ologger.registerBoolean("Drive " + drive.getDeviceID() + " Connected", () -> BaseStatusSignal.isAllGood(
-        drive.getSupplyCurrent(false),
-        drive.getStatorCurrent(false),
-        drive.getMotorVoltage(false),
-        drive.getDeviceTemp(false),
-        drive.getVelocity(false)
-      ));
-      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Supply Current", drive.getSupplyCurrent(false)::getValue, Amps);
-      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Stator Current", drive.getStatorCurrent(false)::getValue, Amps);
-      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Voltage", drive.getMotorVoltage(false)::getValue, Volts);
-      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Temperature", drive.getDeviceTemp(false)::getValue, Celsius);
-      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Velocity", drive.getVelocity(false)::getValue, RotationsPerSecond);
+      ologger.registerBoolean("Drive " + drive.getDeviceID() + " Connected",
+          () -> BaseStatusSignal.isAllGood(
+              drive.getSupplyCurrent(false),
+              drive.getStatorCurrent(false),
+              drive.getMotorVoltage(false),
+              drive.getDeviceTemp(false),
+              drive.getVelocity(false)));
+      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Supply Current",
+          drive.getSupplyCurrent(false)::getValue, Amps);
+      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Stator Current",
+          drive.getStatorCurrent(false)::getValue, Amps);
+      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Voltage",
+          drive.getMotorVoltage(false)::getValue, Volts);
+      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Temperature",
+          drive.getDeviceTemp(false)::getValue, Celsius);
+      ologger.registerMeasurement("Drive " + drive.getDeviceID() + " Velocity",
+          drive.getVelocity(false)::getValue, RotationsPerSecond);
 
-      ologger.registerBoolean("Steer " + steer.getDeviceID() + " Connected", () -> BaseStatusSignal.isAllGood(
-        steer.getSupplyCurrent(false),
-        steer.getStatorCurrent(false),
-        steer.getMotorVoltage(false),
-        steer.getDeviceTemp(false),
-        steer.getVelocity(false),
-        steer.getPosition(false)
-      ));
-      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Supply Current", steer.getSupplyCurrent(false)::getValue, Amps);
-      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Stator Current", steer.getStatorCurrent(false)::getValue, Amps);
-      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Voltage", steer.getMotorVoltage(false)::getValue, Volts);
-      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Temperature", steer.getDeviceTemp(false)::getValue, Celsius);
-      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Velocity", steer.getVelocity(false)::getValue, RotationsPerSecond);
-      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Position", steer.getPosition(false)::getValue, Rotations);
+      ologger.registerBoolean("Steer " + steer.getDeviceID() + " Connected",
+          () -> BaseStatusSignal.isAllGood(
+              steer.getSupplyCurrent(false),
+              steer.getStatorCurrent(false),
+              steer.getMotorVoltage(false),
+              steer.getDeviceTemp(false),
+              steer.getVelocity(false),
+              steer.getPosition(false)));
+      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Supply Current",
+          steer.getSupplyCurrent(false)::getValue, Amps);
+      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Stator Current",
+          steer.getStatorCurrent(false)::getValue, Amps);
+      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Voltage",
+          steer.getMotorVoltage(false)::getValue, Volts);
+      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Temperature",
+          steer.getDeviceTemp(false)::getValue, Celsius);
+      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Velocity",
+          steer.getVelocity(false)::getValue, RotationsPerSecond);
+      ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Position",
+          steer.getPosition(false)::getValue, Rotations);
     }
     sysIDCommands();
     // SmartDashboard.putData("Drivetrain/Set Home", setMemorySpot());
     // SmartDashboard.putData("Drivetrain/Go Home", goHome());
+    SmartDashboard.putData("Drivetrain/Shake", shake());
     configurePathplanner();
   }
 
   /**
-   * Returns a command that applies the specified control request to this swerve
-   * drivetrain.
+   * Returns a command that applies the specified control request to this swerve drivetrain.
    *
    * @param request Function returning the request to apply
    * @return Command to run
@@ -279,8 +291,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   /**
-   * Runs the SysId Quasistatic test in the given direction for the routine
-   * specified by
+   * Runs the SysId Quasistatic test in the given direction for the routine specified by
    * {@link #sysIdRoutineToApply}.
    *
    * @param direction Direction of the SysId Quasistatic test
@@ -291,8 +302,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   /**
-   * Runs the SysId Dynamic test in the given direction for the routine specified
-   * by
+   * Runs the SysId Dynamic test in the given direction for the routine specified by
    * {@link #sysIdRoutineToApply}.
    *
    * @param direction Direction of the SysId Dynamic test
@@ -313,14 +323,10 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   @Override
   public void periodic() {
     /*
-     * Periodically try to apply the operator perspective. If we haven't applied the
-     * operator
-     * perspective before, then we should apply it regardless of DS state. This
-     * allows us to correct
-     * the perspective in case the robot code restarts mid-match. Otherwise, only
-     * check and apply
-     * the operator perspective if the DS is disabled. This ensures driving behavior
-     * doesn't change
+     * Periodically try to apply the operator perspective. If we haven't applied the operator
+     * perspective before, then we should apply it regardless of DS state. This allows us to correct
+     * the perspective in case the robot code restarts mid-match. Otherwise, only check and apply
+     * the operator perspective if the DS is disabled. This ensures driving behavior doesn't change
      * until an explicit disable event occurs during testing.
      */
     if (!hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
@@ -353,14 +359,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   /**
-   * Adds a vision measurement to the Kalman Filter. This will correct the
-   * odometry pose estimate
+   * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
    * while still accounting for measurement noise.
    *
-   * @param visionRobotPoseMeters The pose of the robot as measured by the vision
-   *                              camera.
-   * @param timestampSeconds      The timestamp of the vision measurement in
-   *                              seconds.
+   * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
+   * @param timestampSeconds The timestamp of the vision measurement in seconds.
    */
   @Override
   public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
@@ -368,23 +371,17 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   /**
-   * Adds a vision measurement to the Kalman Filter. This will correct the
-   * odometry pose estimate
+   * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
    * while still accounting for measurement noise.
    * <p>
-   * Note that the vision measurement standard deviations passed into this method
-   * will continue to
+   * Note that the vision measurement standard deviations passed into this method will continue to
    * apply to future measurements until a subsequent call to
    * {@link #setVisionMeasurementStdDevs(Matrix)} or this method.
    *
-   * @param visionRobotPoseMeters    The pose of the robot as measured by the
-   *                                 vision camera.
-   * @param timestampSeconds         The timestamp of the vision measurement in
-   *                                 seconds.
-   * @param visionMeasurementStdDevs Standard deviations of the vision pose
-   *                                 measurement in the form
-   *                                 [x, y, theta]^T, with units in meters and
-   *                                 radians.
+   * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
+   * @param timestampSeconds The timestamp of the vision measurement in seconds.
+   * @param visionMeasurementStdDevs Standard deviations of the vision pose measurement in the form
+   *        [x, y, theta]^T, with units in meters and radians.
    */
   @Override
   public void addVisionMeasurement(
@@ -399,8 +396,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
    * Return the pose at a given timestamp, if the buffer is not empty.
    *
    * @param timestampSeconds The timestamp of the pose in seconds.
-   * @return The pose at the given timestamp (or Optional.empty() if the buffer is
-   *         empty).
+   * @return The pose at the given timestamp (or Optional.empty() if the buffer is empty).
    */
   @Override
   public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
@@ -412,7 +408,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return this.applyRequest(() -> {
       TeleopDriveMode mode = modeSupplier.get();
       // Recalculate the *real* vx and vy to be operator-dependent
-      Translation2d operatorRelative = new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
+      Translation2d operatorRelative =
+          new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
 
       Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
       double spin = vrot.getAsDouble() * maxRotationalSpeed;
@@ -458,7 +455,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
    * Returns the drivetrain's field-relative velocity.
    */
   public Transform2d robotVelocity() {
-    ChassisSpeeds fieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(state.Speeds, robotPose().getRotation());
+    ChassisSpeeds fieldRelative =
+        ChassisSpeeds.fromRobotRelativeSpeeds(state.Speeds, robotPose().getRotation());
     return new Transform2d(
         fieldRelative.vxMetersPerSecond,
         fieldRelative.vyMetersPerSecond,
@@ -467,7 +465,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public Trigger validOdemetry() {
     return new Trigger(
-        () -> Timer.getTimestamp() - lastOkayVisionUpdateTime <= LocalizationConstants.kValidOdometryCutoff);
+        () -> Timer.getTimestamp()
+            - lastOkayVisionUpdateTime <= LocalizationConstants.kValidOdometryCutoff);
   }
 
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
@@ -514,6 +513,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   public Command driveTo(Supplier<APTarget> target, Autopilot autopilot) {
     return this.run(() -> {
       APResult result = autopilot.calculate(robotPose(), state.Speeds, target.get());
+      FieldManager.getInstance().getField().getObject("Target")
+          .setPose(target.get().getReference());
       setControl(autopilotControl
           .withVelocityX(result.vx())
           .withVelocityY(result.vy())
@@ -567,6 +568,31 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     setControl(robotSpeeds.withSpeeds(speeds));
   }
 
+  private Command shakeAbout(Supplier<Pose2d> center) {
+    APTarget[] target = new APTarget[] {null};
+    return Commands.sequence(
+        this.runOnce(() -> {
+          Rotation2d randomAngle = Rotation2d.fromRotations(Math.random());
+          double radius = 0.5;
+          target[0] = new APTarget(center.get().plus(new Transform2d(
+              radius * randomAngle.getCos(),
+              radius * randomAngle.getSin(),
+              Rotation2d.kZero)));
+        }),
+        driveTo(() -> target[0], AutopilotConstants.kLooseAutopilot))
+
+        .repeatedly();
+  }
+
+  public Command shake() {
+    Pose2d[] start = new Pose2d[] {null};
+    return Commands.sequence(
+        this.runOnce(() -> start[0] = robotPose()),
+        this.shakeAbout(() -> start[0]))
+
+        .withName("Drivetrain Shake");
+  }
+
   private void configurePathplanner() {
     RobotConfig config;
     try {
@@ -580,12 +606,16 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     // Configure AutoBuilder last
     AutoBuilder.configure(
         this::robotPose, // Robot pose supplier
-        this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+        this::resetPose, // Method to reset odometry (will be called if your auto has a starting
+                         // pose)
         () -> state.Speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-        (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE
-                                                              // ChassisSpeeds. Also optionally outputs individual
+        (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot
+                                                              // given ROBOT RELATIVE
+                                                              // ChassisSpeeds. Also optionally
+                                                              // outputs individual
                                                               // module feedforwards
-        new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic
+        new PPHolonomicDriveController( // PPHolonomicController is the built in path following
+                                        // controller for holonomic
                                         // drive trains
             new PIDConstants(1.7, 0.0, 0.0), // Translation PID constants
             new PIDConstants(3.0, 0.0, 0.0) // Rotation PID constants
