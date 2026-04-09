@@ -2,7 +2,9 @@
 package frc.robot.subsystems.indexer;
 
 import static edu.wpi.first.units.Units.Volts;
-
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.indexer.IndexerConstants.FeederConstants;
@@ -15,9 +17,7 @@ public class Indexer extends SubsystemBase {
 
   public Indexer(IndexerIO io) {
     this.io = io;
-
-    // SmartDashboard.putData("Indexer/Index", this.index());
-    // SmartDashboard.putData("Indexer/Eject", this.eject());
+    SmartDashboard.putData("Spindexer/Index with variation", indexWithVariation());
   }
 
   @Override
@@ -31,22 +31,23 @@ public class Indexer extends SubsystemBase {
   public Command index() {
     return this.startEnd(
         () -> {
-          io.setFeedVoltage(FeederConstants.kIndexVoltage);
+          io.setFeedVoltage(FeederConstants.kFeedVoltage);
           io.setSpindexerVoltage(SpindexerConstants.kSpinVoltage);
         },
         this::stop);
   }
 
-  /**
-   * Returns a command that runs the feeder in reverse and stops the spindexer. This can be used to
-   * unjam the shooter/feeder system.
-   */
-  public Command eject() {
-    return this.startEnd(
+  public Command indexWithVariation() {
+    final double MIN_SPIN_VOLTAGE = 9.0;
+    final double MAX_SPIN_VOLTAGE = 12.0;
+    final double OMEGA = Math.PI; // Make this faster for more variation
+    return this.runEnd(
         () -> {
-          // The spindexer can't really run in reverse, so we just tell it to temporarily stop.
-          io.setSpindexerVoltage(Volts.zero());
-          io.setFeedVoltage(FeederConstants.kEjectVoltage);
+          io.setFeedVoltage(FeederConstants.kFeedVoltage);
+          // Ensure always positive, and in the range from 0 to 1.
+          double phase = 0.5 * (Math.sin(Timer.getTimestamp() * OMEGA) + 1.0);
+          double output = MathUtil.interpolate(MIN_SPIN_VOLTAGE, MAX_SPIN_VOLTAGE, phase);
+          io.setSpindexerVoltage(Volts.of(output));
         },
         this::stop);
   }

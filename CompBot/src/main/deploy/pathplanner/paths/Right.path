@@ -12,7 +12,7 @@
         "y": 2.822024096385543
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Right Start"
     },
     {
       "anchor": {
@@ -138,7 +138,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -41.30950981274551
+    "rotation": -41.30950981274552
   },
   "reversed": false,
   "folder": null,

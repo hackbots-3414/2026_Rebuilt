@@ -1,0 +1,122 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.5991440798858774,
+        "y": 4.054407988587732
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.58620542082739,
+        "y": 2.6052781740370894
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.0057346647646215,
+        "y": 2.4888302425106996
+      },
+      "prevControl": {
+        "x": 4.0637691044309765,
+        "y": 2.0343276645602733
+      },
+      "nextControl": {
+        "x": 6.613851640513552,
+        "y": 2.631155492154066
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.0057346647646215,
+        "y": 5.594108416547789
+      },
+      "prevControl": {
+        "x": 7.259038516478155,
+        "y": 4.6988913796095435
+      },
+      "nextControl": {
+        "x": 5.7340228245363765,
+        "y": 5.788188302425108
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.286711643768041,
+        "y": 5.317665405269765
+      },
+      "prevControl": {
+        "x": 4.852289389845073,
+        "y": 5.874027744784743
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Left 2 Start"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.4754797441364536,
+      "rotationDegrees": 86.58764501633443
+    },
+    {
+      "waypointRelativePos": 2.2643923240937927,
+      "rotationDegrees": -128.71892240240112
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 2.284942606347051,
+      "maxWaypointRelativePos": 3.0,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.8831870357866409,
+      "endWaypointRelativePos": 2.1796083727211055,
+      "command": null
+    },
+    {
+      "name": "Aim",
+      "waypointRelativePos": 2.5199189736663956,
+      "endWaypointRelativePos": 3.0,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -178.9187647670302
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

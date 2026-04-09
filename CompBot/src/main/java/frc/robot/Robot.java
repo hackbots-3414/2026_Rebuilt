@@ -41,6 +41,8 @@ public class Robot extends TimedRobot {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
 
+    RobotController.setBrownoutVoltage(6.3); // danger!!!
+
     OnboardLogger logger = new OnboardLogger("Robot");
     logger.registerMeasurement("Battery Voltage", RobotController::getMeasureBatteryVoltage, Volts);
     logger.registerString("Game Data", DriverStation::getGameSpecificMessage);

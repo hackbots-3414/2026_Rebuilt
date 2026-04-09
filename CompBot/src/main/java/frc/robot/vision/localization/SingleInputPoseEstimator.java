@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.superstructure.Superstructure;
+import frc.robot.util.OnboardLogger;
 import frc.robot.vision.CameraConfig;
 import frc.robot.vision.CameraIO;
 import frc.robot.vision.CameraIO.CameraIOInputs;
@@ -61,6 +62,8 @@ public class SingleInputPoseEstimator implements Runnable {
     disconnectedAlert =
         new Alert("Vision/Camera Status", config.cameraName() + " disconnected", AlertType.kError);
     estimator = new PhotonPoseEstimator(LocalizationConstants.kTagLayout, robotToCamera());
+    OnboardLogger log = new OnboardLogger("Cameras");
+    log.registerBoolean(config.cameraName() + " Connected", this::isConnected);
   }
 
   public void refresh(Pose2d robotPose) {
