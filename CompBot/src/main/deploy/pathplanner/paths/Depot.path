@@ -8,27 +8,48 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8974401712548474,
-        "y": 5.639258950356227
+        "x": 2.6094457831325304,
+        "y": 6.144048192771083
       },
       "isLocked": false,
       "linkedName": "Left 2 Start"
     },
     {
       "anchor": {
-        "x": 0.5878192771084336,
-        "y": 5.969204819277109
+        "x": 1.3309036144578312,
+        "y": 7.466301204819277
       },
       "prevControl": {
-        "x": 1.894745611013466,
-        "y": 5.719045481309168
+        "x": 2.637829948362863,
+        "y": 7.216141866851336
+      },
+      "nextControl": {
+        "x": 0.023977280552799574,
+        "y": 7.7164605427872175
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.45668674698795175,
+        "y": 5.051277108433735
+      },
+      "prevControl": {
+        "x": 0.5441084337349398,
+        "y": 5.706939759036145
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6456431535269674,
+      "rotationDegrees": -90.0
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
@@ -49,18 +70,18 @@
     {
       "name": "Aim",
       "waypointRelativePos": 0,
-      "endWaypointRelativePos": 1.0,
+      "endWaypointRelativePos": 2.0,
       "command": null
     },
     {
       "name": "Intake",
-      "waypointRelativePos": 0.2289763289036545,
-      "endWaypointRelativePos": 1.0,
+      "waypointRelativePos": 0.9985111662531012,
+      "endWaypointRelativePos": 2.0,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 0.3414,
+    "maxVelocity": 1.0,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -69,7 +90,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 179.04515874612784
+    "rotation": -90.74405920288872
   },
   "reversed": false,
   "folder": null,
