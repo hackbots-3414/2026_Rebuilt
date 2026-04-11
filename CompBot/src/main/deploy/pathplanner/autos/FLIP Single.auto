@@ -7,11 +7,11 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Inverse Right"
+            "pathName": "Right"
           }
         },
         {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
@@ -21,18 +21,25 @@
                 }
               },
               {
-                "type": "wait",
+                "type": "sequential",
                 "data": {
-                  "waitTime": 10.0
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 7.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Retract"
+                      }
+                    }
+                  ]
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Aim"
           }
         }
       ]

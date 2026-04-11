@@ -120,7 +120,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
           .withHeadingPID(HeadingGains.kP, HeadingGains.kI, HeadingGains.kD)
           .withCenterOfRotation(TurretConstants.kOffset.getTranslation().toTranslation2d());
 
-  private ChassisSpeedRateLimiter rateLimiter = new ChassisSpeedRateLimiter(1.0, 3.0);
+  private ChassisSpeedRateLimiter rateLimiter = new ChassisSpeedRateLimiter(2.0, 3.0);
 
   private SwerveDriveState state;
 

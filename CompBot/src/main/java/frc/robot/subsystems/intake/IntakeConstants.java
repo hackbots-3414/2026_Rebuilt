@@ -39,7 +39,7 @@ public class IntakeConstants {
       .withCurrentLimits(new CurrentLimitsConfigs()
           .withSupplyCurrentLimitEnable(true)
           .withStatorCurrentLimitEnable(true)
-          .withSupplyCurrentLimit(40)
+          .withSupplyCurrentLimit(50)
           .withStatorCurrentLimit(120));
 
   protected static final Current kJamStatorThreshold = Amps.of(70);
