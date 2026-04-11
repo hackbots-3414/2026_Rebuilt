@@ -347,6 +347,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     state = getState();
 
     FieldManager.getInstance().getField().setRobotPose(robotPose());
+    FieldManager.getInstance().getField().getObject("Memory Spot").setPose(memorySpot);
   }
 
   private void startSimThread() {
