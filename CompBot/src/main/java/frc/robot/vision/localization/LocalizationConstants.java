@@ -24,7 +24,7 @@ public class LocalizationConstants {
       Degrees.of(77.4), // Horizontal FOV
       () -> Transform3d.kZero, // Pose supplier
       new CameraTrustConfig(
-          VecBuilder.fill(0.3, 0.3, 0.3), // Base std devs
+          VecBuilder.fill(0.1, 0.1, 0.1), // Base std devs
           0.75, // Latency threshold
           1.3, // Latency multiplier
           2.5, // Field XY margin
