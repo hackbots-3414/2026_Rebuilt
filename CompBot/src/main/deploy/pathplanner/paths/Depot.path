@@ -89,7 +89,7 @@
   "eventMarkers": [
     {
       "name": "Aim",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.14590570719603252,
       "endWaypointRelativePos": 3.0,
       "command": null
     },

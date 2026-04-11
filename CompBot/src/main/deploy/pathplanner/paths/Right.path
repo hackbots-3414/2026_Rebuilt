@@ -3,45 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.4361022727272723,
+        "x": 3.5929397590361445,
         "y": 2.4168295454545454
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.128168674698795,
-        "y": 2.822024096385543
+        "x": 6.171879518072289,
+        "y": 3.2919156626506028
       },
       "isLocked": false,
       "linkedName": "Right Start"
     },
     {
       "anchor": {
-        "x": 6.728808593750001,
-        "y": 1.2268230083626759
+        "x": 7.046096385542168,
+        "y": 0.7457590361445796
       },
       "prevControl": {
-        "x": 6.065178019973029,
-        "y": 2.5536917163810404
+        "x": 5.636421686746989,
+        "y": 1.5981204819277113
       },
       "nextControl": {
-        "x": 7.614337349397591,
-        "y": -0.5437108433734943
+        "x": 7.86954041464832,
+        "y": 0.24786264645248768
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.919806818181818,
-        "y": 3.9525454545454544
+        "x": 6.936819277108433,
+        "y": 3.3684096385542173
       },
       "prevControl": {
-        "x": 8.68011542976235,
-        "y": 5.29958307018095
+        "x": 8.80882222557424,
+        "y": 4.555339167581473
       },
       "nextControl": {
-        "x": 4.499939759036145,
-        "y": 2.100795180722891
+        "x": 4.368807228915662,
+        "y": 1.740180722891567
       },
       "isLocked": false,
       "linkedName": null
@@ -93,19 +93,6 @@
       }
     },
     {
-      "name": "BUMP",
-      "minWaypointRelativePos": 0.06253101736972864,
-      "maxWaypointRelativePos": 0.6342431761786589,
-      "constraints": {
-        "maxVelocity": 3.0,
-        "maxAcceleration": 5.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    },
-    {
       "name": "MORE BUMPING",
       "minWaypointRelativePos": 2.158808933002488,
       "maxWaypointRelativePos": 2.7841191066997464,
@@ -144,7 +131,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 40.23685706767951
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }
