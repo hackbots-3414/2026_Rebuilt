@@ -274,8 +274,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
           steer.getPosition(false)::getValue, Rotations);
     }
     sysIDCommands();
-    // SmartDashboard.putData("Drivetrain/Set Home", setMemorySpot());
-    // SmartDashboard.putData("Drivetrain/Go Home", goHome());
+    SmartDashboard.putData("Drivetrain/Set Home", setMemorySpot());
+    SmartDashboard.putData("Drivetrain/Go Home", goHome());
     SmartDashboard.putData("Drivetrain/Shake", shake());
     configurePathplanner();
   }
