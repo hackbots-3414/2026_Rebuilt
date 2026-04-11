@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 public class BetterAutoChooser {
   private static final boolean RIGHT_IS_FLIPPED = false;
   private static final String DEFAULT_NAME = "None";
-  private static final String PREFIX = "FLIP ";
+  private static final String FLIP_PREFIX = "FLIP ";
 
   private static final double TRANSLATION_ERROR = 0.5; // meters
   private static final double ROTATION_ERROR = 0.1; // rotations
@@ -34,9 +34,9 @@ public class BetterAutoChooser {
     }
 
     for (String name : AutoBuilder.getAllAutoNames()) {
-      if (name.startsWith(PREFIX)) {
+      if (name.startsWith(FLIP_PREFIX)) {
         // Make the flipped paths
-        String remainder = name.substring(PREFIX.length());
+        String remainder = name.substring(FLIP_PREFIX.length());
         registerAuto("Right " + remainder + " (Generated)", new PathPlannerAuto(name, RIGHT_IS_FLIPPED));
         registerAuto("Left " + remainder + " (Generated)", new PathPlannerAuto(name, !RIGHT_IS_FLIPPED));
       } else {

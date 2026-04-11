@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class TriggerSequence {
 
     count = 0;
     for (int i = 0; i < triggers.length; i++) {
-      int j = i;
+      int j = i; // j is the index of the trigger!
       triggers[j].onTrue(Commands.runOnce(() -> {
         if (count == sequence.length) {
           count = 0;
@@ -30,7 +31,7 @@ public class TriggerSequence {
         } else {
           count = 0;
         }
-      }));
+      }).ignoringDisable(true));
     }
   }
 
@@ -65,10 +66,15 @@ public class TriggerSequence {
         // We already have an ID for this one.
         realSequence[i] = seenTriggers.get(triggerId);
       } else {
+        // We haven't seen this trigger before
+        // The index of the newest item in triggers is simply the size of the current seenTriggers (or triggers) list
         realSequence[i] = seenTriggers.size();
-        seenTriggers.put(sequence[i], realSequence[i]);
+        seenTriggers.put(triggerId, realSequence[i]);
+        Trigger button = controller.button(triggerId);
+        triggers.add(button);
       }
     }
-    return create(triggers.toArray(new Trigger[] {}), realSequence);
+    Trigger[] triggerArray = triggers.toArray(new Trigger[] {});
+    return create(triggerArray, realSequence);
   }
 }

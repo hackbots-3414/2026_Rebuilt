@@ -38,9 +38,9 @@ public class Indexer extends SubsystemBase {
   }
 
   public Command indexWithVariation() {
-    final double MIN_SPIN_VOLTAGE = 9.0;
+    final double MIN_SPIN_VOLTAGE = 6.0;
     final double MAX_SPIN_VOLTAGE = 12.0;
-    final double OMEGA = Math.PI; // Make this faster for more variation
+    final double OMEGA = 4 * Math.PI; // Make this faster for more variation
     return this.runEnd(
         () -> {
           io.setFeedVoltage(FeederConstants.kFeedVoltage);

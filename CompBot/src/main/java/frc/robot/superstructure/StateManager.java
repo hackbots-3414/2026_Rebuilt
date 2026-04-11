@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AimConstants;
 import frc.robot.aiming.AimParams;
@@ -40,6 +41,9 @@ public class StateManager {
   public final Trigger shootReady;
 
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
+
+  private boolean partyModeEnabled = false;
+  public final Trigger partying = new Trigger(() -> partyModeEnabled);
 
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
@@ -179,4 +183,7 @@ public class StateManager {
     wantedShootMode = calculateWantedShootMode();
   }
 
+  public Command runPartyMode(double duration) {
+    return Commands.startEnd(() -> partyModeEnabled = true, () -> partyModeEnabled = false).withTimeout(duration).ignoringDisable(true);
+  }
 }

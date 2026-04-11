@@ -25,6 +25,7 @@ public class Led extends SubsystemBase {
 
   private List<LedState> hierarchy = List.of(
       new BadController(),
+      new PartyMode(),
       new TestRslEnabled(),
       new TestRsl(),
       new EndGameAlert(),
