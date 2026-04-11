@@ -1,9 +1,8 @@
 package frc.robot.superstructure;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
@@ -54,7 +53,7 @@ public class Superstructure {
   public final StateManager state;
 
   public Superstructure() {
-    subsystems = switch(RobotIdentifier.id()) {
+    subsystems = switch (RobotIdentifier.id()) {
       case CompBot -> createCompBotSubsystems();
       case SimBot -> createSimBotSubsystems();
       case TestBot -> createTestBotSubsystems();
@@ -99,8 +98,16 @@ public class Superstructure {
     return new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
   }
 
-  public void bindDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, Supplier<TeleopDriveMode> mode) {
-    subsystems.drivetrain.setDefaultCommand(subsystems.drivetrain.teleopDrive(vx, vy, vrot, () -> state.shooting(ShootMode.Scoring).getAsBoolean() ? TeleopDriveMode.SlowFieldRelativeSpin : mode.get()));
+  public void bindDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, BooleanSupplier slowbot) {
+    subsystems.drivetrain.setDefaultCommand(subsystems.drivetrain.teleopDrive(vx, vy, vrot, () -> {
+      if (slowbot.getAsBoolean()) {
+        return TeleopDriveMode.AccelerationLimitedFieldRelative;
+      }
+      if (state.shooting(ShootMode.Scoring).getAsBoolean()) {
+        return TeleopDriveMode.SlowFieldRelative;
+      }
+      return TeleopDriveMode.FieldRelative;
+    }));
   }
 
   /**
@@ -127,7 +134,8 @@ public class Superstructure {
         LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
             "cam1",
             () -> new Transform3d(-0.207, -0.318, 0.473,
-                new Rotation3d(Units.degreesToRadians(0.7), Units.degreesToRadians(-28.578), Units.degreesToRadians(-67.63)))),
+                new Rotation3d(Units.degreesToRadians(0.7), Units.degreesToRadians(-28.578),
+                    Units.degreesToRadians(-67.63)))),
         LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
             "cam2",
             () -> new Transform3d(0.221, -0.262, 0.724,
@@ -139,8 +147,8 @@ public class Superstructure {
         LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
             "cam4",
             () -> new Transform3d(-0.315, 0.138, 0.438,
-                new Rotation3d(Units.degreesToRadians(-6.5), Units.degreesToRadians(-29.9), Units.degreesToRadians(-169))))
-                );
+                new Rotation3d(Units.degreesToRadians(-6.5), Units.degreesToRadians(-29.9),
+                    Units.degreesToRadians(-169)))));
 
     return new AprilTagVisionHandler(this, configs);
   }

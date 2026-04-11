@@ -1,9 +1,4 @@
 {
-  "Joysticks": {
-    "window": {
-      "visible": false
-    }
-  },
   "System Joysticks": {
     "window": {
       "visible": false
@@ -14,14 +9,17 @@
       "axisConfig": [
         {
           "decKey": 83,
+          "decayRate": 1.0,
           "incKey": 87
         },
         {
           "decKey": 68,
+          "decayRate": 1.0,
           "incKey": 65
         },
         {
           "decKey": 93,
+          "decayRate": 1.0,
           "incKey": 91
         },
         {
