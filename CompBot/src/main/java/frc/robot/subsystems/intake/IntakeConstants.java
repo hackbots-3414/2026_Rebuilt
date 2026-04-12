@@ -39,8 +39,12 @@ public class IntakeConstants {
       .withCurrentLimits(new CurrentLimitsConfigs()
           .withSupplyCurrentLimitEnable(true)
           .withStatorCurrentLimitEnable(true)
-          .withSupplyCurrentLimit(50)
+          .withSupplyCurrentLimit(40)
           .withStatorCurrentLimit(120));
+
+  protected static final TalonFXConfiguration kIntakeMotorConfigDuringAuto = kIntakeMotorConfig.clone().withCurrentLimits(
+    kIntakeMotorConfig.CurrentLimits.clone().withSupplyCurrentLimit(80)
+  );
 
   protected static final Current kJamStatorThreshold = Amps.of(70);
   protected static final AngularVelocity kJamVelocityThreshold = RotationsPerSecond.of(0.3);

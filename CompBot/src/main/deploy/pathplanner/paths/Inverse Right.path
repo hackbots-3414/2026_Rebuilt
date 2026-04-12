@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.6364216867469885,
-        "y": 2.701819277108433
+        "x": 5.712915662650602,
+        "y": 2.4168295454545454
       },
       "prevControl": {
-        "x": 4.647963248912461,
-        "y": 2.1280691895482318
+        "x": 4.685710843373494,
+        "y": 2.461409638554217
       },
       "nextControl": {
-        "x": 6.598060240963855,
-        "y": 3.2600017798466583
+        "x": 6.823767668618597,
+        "y": 2.368619212990509
       },
       "isLocked": false,
       "linkedName": null
@@ -36,12 +36,12 @@
         "y": 4.668807228915662
       },
       "prevControl": {
-        "x": 5.481702751455275,
-        "y": 5.263961070201889
+        "x": 5.428795180722891,
+        "y": 5.3463253012048195
       },
       "nextControl": {
-        "x": 9.024012048192771,
-        "y": 4.275409638554216
+        "x": 9.012246699976645,
+        "y": 4.235455330236155
       },
       "isLocked": false,
       "linkedName": null
@@ -78,12 +78,12 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5742738589211605,
-      "rotationDegrees": 45.3100998106724
+      "waypointRelativePos": 0.972614107883791,
+      "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 1.311203319502061,
-      "rotationDegrees": 60.53569897702715
+      "waypointRelativePos": 1.4174273858921158,
+      "rotationDegrees": 79.22193857481086
     },
     {
       "waypointRelativePos": 1.961825726141073,
@@ -118,6 +118,19 @@
       "maxWaypointRelativePos": 3.2992555831265475,
       "constraints": {
         "maxVelocity": 2.5,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0,
+      "constraints": {
+        "maxVelocity": 4.0,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
