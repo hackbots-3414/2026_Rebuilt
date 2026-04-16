@@ -4,9 +4,9 @@ name: CI
 # events but only for the main branch.
 on:
   push:
-    branches: [ main, District-1, District-2, States, Worlds, iri ]
+    branches: [ main, District-1, District-2, dcmp, States, Worlds, iri ]
   pull_request:
-    branches: [ main, District-1, District-2, States, Worlds, iri ]
+    branches: [ main, District-1, District-2, dcmp, States, Worlds, iri ]
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
