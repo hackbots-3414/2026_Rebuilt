@@ -83,7 +83,7 @@ public class TurretConstants {
           .withKI(0)
           .withKD(0.1)
           .withKS(0.6)
-          .withKV(2.5)
+          .withKV(4.0)
           .withKA(0))
 
       .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
