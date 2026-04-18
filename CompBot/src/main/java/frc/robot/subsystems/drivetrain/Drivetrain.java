@@ -589,7 +589,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return Commands.sequence(
         this.runOnce(() -> {
           Rotation2d randomAngle = Rotation2d.fromRotations(Math.random());
-          double radius = 0.5;
+          double radius = 0.25;
           target[0] = new APTarget(center.get().plus(new Transform2d(
               radius * randomAngle.getCos(),
               radius * randomAngle.getSin(),

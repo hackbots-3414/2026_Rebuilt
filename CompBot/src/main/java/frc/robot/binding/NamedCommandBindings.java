@@ -4,6 +4,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 
 import frc.robot.commands.AimPrep;
+import frc.robot.commands.DrivetrainShake;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.RunIntake;
 import frc.robot.superstructure.Superstructure;
@@ -13,6 +14,7 @@ public class NamedCommandBindings implements Binder {
         NamedCommands.registerCommand("Aim", superstructure.build(new AimPrep()));
         NamedCommands.registerCommand("Intake", superstructure.build(new RunIntake()));
         NamedCommands.registerCommand("Retract", superstructure.build(new RetractIntake()));
+        NamedCommands.registerCommand("Shake", superstructure.buildWithoutProxy(new DrivetrainShake()));
         
         new EventTrigger("Aim").whileTrue(superstructure.build(new AimPrep()));
         new EventTrigger("Intake").whileTrue(superstructure.build(new RunIntake()));
