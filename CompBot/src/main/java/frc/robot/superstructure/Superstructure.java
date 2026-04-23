@@ -98,13 +98,10 @@ public class Superstructure {
     return new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
   }
 
-  public void bindDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, BooleanSupplier slowbot) {
+  public void bindDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, BooleanSupplier antislowbot) {
     subsystems.drivetrain.setDefaultCommand(subsystems.drivetrain.teleopDrive(vx, vy, vrot, () -> {
-      if (slowbot.getAsBoolean()) {
-        return TeleopDriveMode.AccelerationLimitedFieldRelative;
-      }
       if (state.shooting(ShootMode.Scoring).getAsBoolean()) {
-        return TeleopDriveMode.SlowFieldRelative;
+        return antislowbot.getAsBoolean() ? TeleopDriveMode.SlowFieldRelative : TeleopDriveMode.AccelerationLimitedFieldRelative;
       }
       return TeleopDriveMode.FieldRelative;
     }));

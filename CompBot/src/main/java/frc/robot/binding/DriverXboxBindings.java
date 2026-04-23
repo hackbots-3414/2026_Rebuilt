@@ -18,7 +18,7 @@ public class DriverXboxBindings implements Binder {
 
   private final DoubleSupplier vx, vy, vrot;
 
-  private final Trigger shoot, intake, resetPerspective, slowbot, retract;
+  private final Trigger shoot, intake, resetPerspective, antislowbot, retract;
 
   public DriverXboxBindings() {
     controller = new CommandXboxController(Driver.kDriveControllerPort);
@@ -30,12 +30,12 @@ public class DriverXboxBindings implements Binder {
     shoot = controller.rightBumper();
     intake = controller.rightTrigger();
     resetPerspective = controller.leftBumper();
-    slowbot = controller.leftTrigger();
+    antislowbot = controller.leftTrigger();
     retract = controller.x();
   }
 
   public void bind(Superstructure superstructure) {
-    superstructure.bindDrive(vx, vy, vrot, slowbot);
+    superstructure.bindDrive(vx, vy, vrot, antislowbot);
 
     shoot.toggleOnTrue(superstructure.build(new AimPrep()));
     intake.toggleOnTrue(superstructure.build(new RunIntake()));

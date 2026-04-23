@@ -14,7 +14,7 @@ import frc.robot.superstructure.Superstructure;
 public class KeyboardBindings implements Binder {
   private final CommandGenericHID controller;
 
-  private final Trigger shoot, intake, slowbot, resetForwards, index, retractIntake;
+  private final Trigger shoot, intake, antislowbot, resetForwards, index, retractIntake;
 
   private final DoubleSupplier vx, vy, vrot;
 
@@ -23,7 +23,7 @@ public class KeyboardBindings implements Binder {
 
     shoot = controller.button(1);
     intake = controller.button(2);
-    slowbot = controller.button(3);
+    antislowbot = controller.button(3);
     resetForwards = controller.button(4);
     index = controller.button(5);
     retractIntake = controller.button(6);
@@ -34,7 +34,7 @@ public class KeyboardBindings implements Binder {
   }
 
   public void bind(Superstructure superstructure) {
-    superstructure.bindDrive(vx, vy, vrot, slowbot);
+    superstructure.bindDrive(vx, vy, vrot, antislowbot);
 
     shoot.toggleOnTrue(superstructure.build(new AimPrep()));
     intake.whileTrue(superstructure.build(new RunIntake()));

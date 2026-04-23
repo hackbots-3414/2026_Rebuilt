@@ -573,7 +573,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public Command setMemorySpot() {
-    return Commands.runOnce(() -> memorySpot = robotPose());
+    return Commands.runOnce(() -> memorySpot = robotPose()).ignoringDisable(true);
   }
 
   public Command goHome() {
