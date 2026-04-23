@@ -17,31 +17,6 @@
           }
         },
         {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Aim"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 10.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Right Cleanup"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Aim"
