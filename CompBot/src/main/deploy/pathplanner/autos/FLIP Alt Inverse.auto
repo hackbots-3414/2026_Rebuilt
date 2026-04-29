@@ -9,15 +9,15 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Aim"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Alt"
                 }
               }
             ]
@@ -26,13 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Alt"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": ""
+            "pathName": "Inverse Right"
           }
         },
         {
@@ -44,7 +38,7 @@
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }
