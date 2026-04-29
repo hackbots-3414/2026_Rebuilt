@@ -5,31 +5,19 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Alt"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Right"
-          }
-        },
-        {
           "type": "race",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "Aim"
+                  "waitTime": 0.5
                 }
               },
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 10.0
+                  "name": "Aim"
                 }
               }
             ]
@@ -38,7 +26,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right Cleanup"
+            "pathName": "Alt"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Inverse Right"
           }
         },
         {

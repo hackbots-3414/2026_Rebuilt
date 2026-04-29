@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8573536084423283,
-        "y": 4.85660485021398
+        "x": 2.2925421686746983,
+        "y": 4.821795180722892
       },
       "isLocked": false,
       "linkedName": "Left Start"
@@ -20,8 +20,8 @@
         "y": 2.4168295454545454
       },
       "prevControl": {
-        "x": 2.9537847045685006,
-        "y": 3.1616405135520687
+        "x": 2.4783132530120486,
+        "y": 3.0624337349397592
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,13 +34,13 @@
   "eventMarkers": [
     {
       "name": "Aim",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": 0,
+      "waypointRelativePos": 0.1121588089329983,
+      "endWaypointRelativePos": 1.0,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 1.5,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -57,5 +57,5 @@
     "velocity": 0,
     "rotation": 0.8493895342646307
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
