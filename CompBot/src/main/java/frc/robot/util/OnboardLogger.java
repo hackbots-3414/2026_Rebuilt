@@ -5,10 +5,15 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import com.ctre.phoenix6.swerve.SwerveModule;
+
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Unit;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
@@ -38,6 +43,8 @@ public class OnboardLogger {
   private final List<Pair<Supplier<Pose3d>, StructLogEntry<Pose3d>>> pose3dEntries;
   private final List<Pair<Supplier<Pose3d[]>, StructArrayLogEntry<Pose3d>>> pose3dArrayEntries;
   private final List<Pair<Supplier<Transform2d>, StructLogEntry<Transform2d>>> transform2dEntries;
+  private final List<Pair<Supplier<SwerveModuleState[]>, StructArrayLogEntry<SwerveModuleState>>> swerveModuleStateEntries;
+  private final List<Pair<Supplier<SwerveModulePosition[]>, StructArrayLogEntry<SwerveModulePosition>>> swerveModulePositionEntries;
 
   public OnboardLogger(String name) {
     this.name = name;
@@ -49,6 +56,8 @@ public class OnboardLogger {
     pose3dEntries = new ArrayList<>();
     pose3dArrayEntries = new ArrayList<>();
     transform2dEntries = new ArrayList<>();
+    swerveModuleStateEntries = new ArrayList<>();
+    swerveModulePositionEntries = new ArrayList<>();
     loggers.add(this);
   }
 
@@ -105,6 +114,16 @@ public class OnboardLogger {
     pose3dArrayEntries.add(new Pair<>(supplier, entry));
   }
 
+  public void registerSwerveModuleState(String name, Supplier<SwerveModuleState[]> supplier) {
+    StructArrayLogEntry<SwerveModuleState> entry = StructArrayLogEntry.create(datalog, this.name + "/" + name, SwerveModuleState.struct);
+    swerveModuleStateEntries.add(new Pair<>(supplier, entry));
+  }
+
+  public void registerSwerveModulePosition(String name, Supplier<SwerveModulePosition[]> supplier) {
+    StructArrayLogEntry<SwerveModulePosition> entry = StructArrayLogEntry.create(datalog, this.name + "/" + name, SwerveModulePosition.struct);
+    swerveModulePositionEntries.add(new Pair<>(supplier, entry));
+  }
+
   public void registerTransform2d(String name, Supplier<Transform2d> supplier) {
     StructLogEntry<Transform2d> entry =
         StructLogEntry.create(datalog, this.name + "/" + name, Transform2d.struct);
@@ -134,6 +153,12 @@ public class OnboardLogger {
       pair.getSecond().update(pair.getFirst().get());
     }
     for (Pair<Supplier<Transform2d>, StructLogEntry<Transform2d>> pair : transform2dEntries) {
+      pair.getSecond().update(pair.getFirst().get());
+    }
+    for (Pair<Supplier<SwerveModuleState[]>, StructArrayLogEntry<SwerveModuleState>> pair : swerveModuleStateEntries) {
+      pair.getSecond().update(pair.getFirst().get());
+    }
+    for (Pair<Supplier<SwerveModulePosition[]>, StructArrayLogEntry<SwerveModulePosition>> pair : swerveModulePositionEntries) {
       pair.getSecond().update(pair.getFirst().get());
     }
   }

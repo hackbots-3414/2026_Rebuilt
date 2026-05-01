@@ -48,11 +48,11 @@
     },
     {
       "anchor": {
-        "x": 2.7187228915662653,
+        "x": 2.5766626506024095,
         "y": 2.4168295454545454
       },
       "prevControl": {
-        "x": 4.897062705366924,
+        "x": 4.755002464403075,
         "y": 2.4941927710843377
       },
       "nextControl": null,
@@ -93,11 +93,11 @@
       }
     },
     {
-      "name": "MORE BUMPING",
-      "minWaypointRelativePos": 2.158808933002488,
-      "maxWaypointRelativePos": 2.7841191066997464,
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 2.8198511166253133,
+      "maxWaypointRelativePos": 3.0,
       "constraints": {
-        "maxVelocity": 3.0,
+        "maxVelocity": 0.1,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -112,6 +112,12 @@
       "name": "Intake",
       "waypointRelativePos": 0.6739864864864873,
       "endWaypointRelativePos": 2.2652027027027057,
+      "command": null
+    },
+    {
+      "name": "Aim",
+      "waypointRelativePos": 2.617369727047151,
+      "endWaypointRelativePos": 3.0,
       "command": null
     }
   ],

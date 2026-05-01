@@ -38,6 +38,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -221,6 +222,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
     SwerveModule<TalonFX, TalonFX, CANcoder>[] actualModules = getModules();
     for (int i = 0; i < actualModules.length; i++) {
+      int j = i;
       TalonFX drive, steer;
       SwerveModule<TalonFX, TalonFX, CANcoder> module = actualModules[i];
       drive = module.getDriveMotor();
@@ -279,6 +281,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Position",
           steer.getPosition(false)::getValue, Rotations);
     }
+    ologger.registerSwerveModuleState("Module States", () -> state.ModuleStates);
+    ologger.registerSwerveModuleState("Module Targets", () -> state.ModuleTargets);
+    ologger.registerSwerveModulePosition("Module Positions", () -> state.ModulePositions);
     sysIDCommands();
     SmartDashboard.putData("Drivetrain/Set Home", setMemorySpot());
     SmartDashboard.putData("Drivetrain/Go Home", goHome());
