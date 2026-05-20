@@ -7,7 +7,9 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AimConstants;
 import frc.robot.aiming.AimParams;
@@ -41,6 +43,9 @@ public class StateManager {
 
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
+  private boolean partyModeEnabled = false;
+  public final Trigger partying = new Trigger(() -> partyModeEnabled);
+
   public StateManager(Subsystems subsystems) {
     this.subsystems = subsystems;
     shootReady = initShootReady();
@@ -68,12 +73,14 @@ public class StateManager {
 
     // If we're not in alliance zone, then all requirements for feeding have been met.
     // We want to feed.
+    boolean testing = DriverStation.isTestEnabled();
+    
     if (!inAllianceZone) {
-      return FieldUtils.inNoFeedZone(robotPose()) ? ShootMode.Donut : ShootMode.Feeding;
+      return FieldUtils.inNoFeedZone(robotPose()) && !testing ? ShootMode.Donut : ShootMode.Feeding;
     }
     
     // By now, we're in a scoring position.
-    if (FieldUtils.inTowerZone(robotPose())) {
+    if (FieldUtils.inTowerZone(robotPose()) && !testing) {
       return ShootMode.Donut;
     }
 
@@ -175,8 +182,12 @@ public class StateManager {
 
   public void update() {
     params = new AimParams(AimStatus.Unchecked);
-    params = aimParams();
     wantedShootMode = calculateWantedShootMode();
+    params = aimParams();
+    SmartDashboard.putString("Wanted Shoot Mode", wantedShootMode.toString());
   }
 
+  public Command runPartyMode(double duration) {
+    return Commands.startEnd(() -> partyModeEnabled = true, () -> partyModeEnabled = false).withTimeout(duration).ignoringDisable(true);
+  }
 }

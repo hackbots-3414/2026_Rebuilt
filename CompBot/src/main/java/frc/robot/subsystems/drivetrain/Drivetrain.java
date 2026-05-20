@@ -38,6 +38,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -49,6 +50,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.FieldManager;
@@ -60,6 +62,7 @@ import frc.robot.subsystems.drivetrain.AutopilotConstants.HeadingGains;
 import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
+import frc.robot.util.ChassisSpeedRateLimiter;
 import frc.robot.util.StatusSignalUtil;
 import frc.robot.vision.localization.LocalizationConstants;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
@@ -87,11 +90,13 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
      * Drive the robot with a field-relative control for translation and spin control (i.e. control
      * over how fast we rotate)
      */
-    FieldRelativeSpin,
+    FieldRelative,
     /** Drive the robot slower than FieldRelativeSpin */
-    SlowFieldRelativeSpin,
+    SlowFieldRelative,
     /** Drive robot relative. */
     RobotRelative,
+    /** Drive with limited acceleration */
+    AccelerationLimitedFieldRelative
   }
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -116,6 +121,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
           .withDriveRequestType(DriveRequestType.Velocity)
           .withHeadingPID(HeadingGains.kP, HeadingGains.kI, HeadingGains.kD)
           .withCenterOfRotation(TurretConstants.kOffset.getTranslation().toTranslation2d());
+
+  private ChassisSpeedRateLimiter rateLimiter = new ChassisSpeedRateLimiter(2.0, 3.0);
 
   private SwerveDriveState state;
 
@@ -215,6 +222,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
     SwerveModule<TalonFX, TalonFX, CANcoder>[] actualModules = getModules();
     for (int i = 0; i < actualModules.length; i++) {
+      int j = i;
       TalonFX drive, steer;
       SwerveModule<TalonFX, TalonFX, CANcoder> module = actualModules[i];
       drive = module.getDriveMotor();
@@ -273,9 +281,12 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       ologger.registerMeasurement("Steer " + steer.getDeviceID() + " Position",
           steer.getPosition(false)::getValue, Rotations);
     }
+    ologger.registerSwerveModuleState("Module States", () -> state.ModuleStates);
+    ologger.registerSwerveModuleState("Module Targets", () -> state.ModuleTargets);
+    ologger.registerSwerveModulePosition("Module Positions", () -> state.ModulePositions);
     sysIDCommands();
-    // SmartDashboard.putData("Drivetrain/Set Home", setMemorySpot());
-    // SmartDashboard.putData("Drivetrain/Go Home", goHome());
+    SmartDashboard.putData("Drivetrain/Set Home", setMemorySpot());
+    SmartDashboard.putData("Drivetrain/Go Home", goHome());
     SmartDashboard.putData("Drivetrain/Shake", shake());
     configurePathplanner();
   }
@@ -342,6 +353,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     state = getState();
 
     FieldManager.getInstance().getField().setRobotPose(robotPose());
+    FieldManager.getInstance().getField().getObject("Memory Spot").setPose(memorySpot);
   }
 
   private void startSimThread() {
@@ -408,40 +420,49 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return this.applyRequest(() -> {
       TeleopDriveMode mode = modeSupplier.get();
       // Recalculate the *real* vx and vy to be operator-dependent
-      Translation2d operatorRelative =
-          new Translation2d(vx.getAsDouble() * maxSpeed, vy.getAsDouble() * maxSpeed);
+      ChassisSpeeds operatorRelative =
+          new ChassisSpeeds(
+              vx.getAsDouble() * maxSpeed,
+              vy.getAsDouble() * maxSpeed,
+              vrot.getAsDouble() * maxRotationalSpeed);
 
-      Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
-      double spin = vrot.getAsDouble() * maxRotationalSpeed;
+      ChassisSpeeds fieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(operatorRelative, getOperatorForwardDirection());
 
       if (mode == TeleopDriveMode.RobotRelative) {
         return robotCentricDrive
-            .withVelocityX(operatorRelative.getX())
-            .withVelocityY(operatorRelative.getY())
-            .withRotationalRate(spin);
+            .withVelocityX(operatorRelative.vxMetersPerSecond)
+            .withVelocityY(operatorRelative.vyMetersPerSecond)
+            .withRotationalRate(operatorRelative.omegaRadiansPerSecond);
       }
 
-      if (mode == TeleopDriveMode.SlowFieldRelativeSpin) {
+      if (mode == TeleopDriveMode.SlowFieldRelative
+          || mode == TeleopDriveMode.AccelerationLimitedFieldRelative) {
         fieldRelative = fieldRelative.times(0.3);
-        spin *= 0.5;
+      }
+
+      if (mode != TeleopDriveMode.AccelerationLimitedFieldRelative) {
+        rateLimiter.reset(fieldRelative);
+      } else {
+        fieldRelative = rateLimiter.calculate(fieldRelative);
       }
 
       if (override.isPresent()) {
-        return drivetrainAim.withVelocityX(fieldRelative.getX())
-            .withVelocityY(fieldRelative.getY())
+        return drivetrainAim
+            .withVelocityX(fieldRelative.vxMetersPerSecond)
+            .withVelocityY(fieldRelative.vyMetersPerSecond)
             .withTargetDirection(override.get().yaw);
       }
 
       return drive
-          .withVelocityX(fieldRelative.getX())
-          .withVelocityY(fieldRelative.getY())
-          .withRotationalRate(spin);
+          .withVelocityX(fieldRelative.vxMetersPerSecond)
+          .withVelocityY(fieldRelative.vyMetersPerSecond)
+          .withRotationalRate(fieldRelative.omegaRadiansPerSecond);
     })
         .withName("Teleop Drive");
   }
 
   public Command teleopDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot) {
-    return teleopDrive(vx, vy, vrot, () -> TeleopDriveMode.FieldRelativeSpin);
+    return teleopDrive(vx, vy, vrot, () -> TeleopDriveMode.FieldRelative);
   }
 
   /**
@@ -557,7 +578,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public Command setMemorySpot() {
-    return Commands.runOnce(() -> memorySpot = robotPose());
+    return Commands.runOnce(() -> memorySpot = robotPose()).ignoringDisable(true);
   }
 
   public Command goHome() {
@@ -573,7 +594,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return Commands.sequence(
         this.runOnce(() -> {
           Rotation2d randomAngle = Rotation2d.fromRotations(Math.random());
-          double radius = 0.5;
+          double radius = 0.25;
           target[0] = new APTarget(center.get().plus(new Transform2d(
               radius * randomAngle.getCos(),
               radius * randomAngle.getSin(),
@@ -617,7 +638,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         new PPHolonomicDriveController( // PPHolonomicController is the built in path following
                                         // controller for holonomic
                                         // drive trains
-            new PIDConstants(1.7, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(3.0, 0.0, 0.0), // Translation PID constants
             new PIDConstants(3.0, 0.0, 0.0) // Rotation PID constants
         ),
         config, // The robot configuration
@@ -635,5 +656,10 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         },
         this // Reference to this subsystem to set requirements
     );
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    SmartDashboard.putNumber("Drivetrain/Speed", robotVelocity().getTranslation().getNorm());
   }
 }

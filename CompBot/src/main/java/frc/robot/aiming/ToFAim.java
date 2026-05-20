@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.aiming.AimParams.AimStatus;
 import frc.robot.aiming.AimParams.SpeedControl;
 
@@ -43,7 +44,7 @@ public class ToFAim implements AimStrategy {
     }
   }
 
-  public AimParams update(Pose3d aimTarget, Pose3d shooterPose, Translation2d shooterVelocity) {
+  public AimParams update(Pose3d aimTarget, Pose3d shooterPose, Translation2d shooterVelocity) {  
     Translation2d target = aimTarget.getTranslation().toTranslation2d();
     Translation2d start = shooterPose.getTranslation().toTranslation2d();
 

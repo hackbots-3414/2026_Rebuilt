@@ -5,9 +5,28 @@
     "data": {
       "commands": [
         {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Aim"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Right"
+            "pathName": "Loopy"
           }
         },
         {
@@ -23,7 +42,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 10.0
+                  "waitTime": 1.0
                 }
               }
             ]
@@ -32,7 +51,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right Cleanup"
+            "pathName": "Depot"
           }
         },
         {
@@ -44,7 +63,7 @@
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }

@@ -10,7 +10,7 @@ import com.therekrab.autopilot.Autopilot;
 
 public class AutopilotConstants {
     private static final APConstraints kConstraints = new APConstraints()
-        .withVelocity(4.0)
+        .withVelocity(2.0)
         .withAcceleration(10.0)
         .withJerk(8.0);
 
@@ -24,7 +24,7 @@ public class AutopilotConstants {
     private static final APProfile kLooseProfile = new APProfile(kConstraints)
         .withBeelineRadius(Meters.of(0.25))
         .withErrorTheta(Degrees.of(30))
-        .withErrorXY(Inches.of(12));
+        .withErrorXY(Inches.of(4));
 
     public static final Autopilot kLooseAutopilot = new Autopilot(kLooseProfile);
 

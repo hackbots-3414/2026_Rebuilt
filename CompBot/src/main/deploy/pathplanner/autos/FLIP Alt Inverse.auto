@@ -9,15 +9,15 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
-                "data": {
-                  "waitTime": 3.0
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Aim"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Alt"
                 }
               }
             ]
@@ -26,32 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center Loop-de-doo"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Aim"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Depot"
+            "pathName": "Inverse Right"
           }
         },
         {

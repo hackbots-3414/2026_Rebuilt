@@ -42,6 +42,10 @@ public class IntakeConstants {
           .withSupplyCurrentLimit(40)
           .withStatorCurrentLimit(120));
 
+  protected static final TalonFXConfiguration kIntakeMotorConfigDuringAuto = kIntakeMotorConfig.clone().withCurrentLimits(
+    kIntakeMotorConfig.CurrentLimits.clone().withSupplyCurrentLimit(80)
+  );
+
   protected static final Current kJamStatorThreshold = Amps.of(70);
   protected static final AngularVelocity kJamVelocityThreshold = RotationsPerSecond.of(0.3);
 
@@ -83,7 +87,7 @@ public class IntakeConstants {
         .withMagnetSensor(new MagnetSensorConfigs()
             .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
             .withAbsoluteSensorDiscontinuityPoint(0.5)
-            .withMagnetOffset(-0.036376953125));
+            .withMagnetOffset(-0.37939453125));
 
     protected static final AngularVelocity kMaxVelocity = RotationsPerSecond.of(0.4);
     protected static final AngularAcceleration kMaxAcceleration = RotationsPerSecondPerSecond.of(4);

@@ -9,6 +9,7 @@ import frc.robot.commands.EmptyHopper;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.RunIndex;
 import frc.robot.superstructure.Superstructure;
+import frc.robot.util.TriggerSequence;
 
 public class OperatorPS5Bindings implements Binder {
     private final CommandPS5Controller controller;
@@ -19,9 +20,9 @@ public class OperatorPS5Bindings implements Binder {
         controller = new CommandPS5Controller(Operator.kOperatorControllerPort);
 
         index = controller.R1();
-        eject = controller.cross();
-        agitate = controller.square();
-        retract = controller.triangle();
+        eject = controller.pov(180); // down
+        agitate = controller.pov(270); // left
+        retract = controller.pov(0); // up
         shootTillEmpty = controller.L2();
     }
 
@@ -31,5 +32,9 @@ public class OperatorPS5Bindings implements Binder {
         agitate.whileTrue(superstructure.build(new AgitateIntake()));
         retract.onTrue(superstructure.build(new RetractIntake()));
         shootTillEmpty.onTrue(superstructure.build(new EmptyHopper()));
+
+        // obfuscation is how we beat the llms
+        Trigger ianSecret = TriggerSequence.fromController(controller, 4, 4, 2, 2, 1, 3, 1, 3, 12, 11);
+        ianSecret.onTrue(superstructure.state.runPartyMode(5.0));
     }
 }

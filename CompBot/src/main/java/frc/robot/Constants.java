@@ -15,6 +15,7 @@ import edu.wpi.first.units.measure.Distance;
 import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimStrategy;
 import frc.robot.aiming.ToFAim;
+import frc.robot.aiming.TuneAim;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.util.BoundingBox;
 
@@ -46,6 +47,7 @@ public class Constants {
     public static final AimStrategy kScoringAim = new ToFAim(ShooterConstants.scoringMeasurements, constraints);
     // public static final AimStrategy kScoringAim = new TuneAim();
     public static final AimStrategy kFeedingAim = new ToFAim(ShooterConstants.feedingMeasurements, constraints);
+    // public static final AimStrategy kFeedingAim = kScoringAim;
 
   }
 

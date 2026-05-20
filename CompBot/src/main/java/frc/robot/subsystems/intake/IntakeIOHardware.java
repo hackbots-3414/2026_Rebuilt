@@ -10,6 +10,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.intake.IntakeConstants.DeployConstants;
 import frc.robot.util.StatusSignalUtil;
 
@@ -33,6 +35,12 @@ public class IntakeIOHardware implements IntakeIO {
 
     deployMotor = new TalonFX(DeployConstants.kDeployMotorId, StatusSignalUtil.canivore);
     deployMotor.getConfigurator().apply(DeployConstants.kDeployMotorConfig);
+
+    RobotModeTriggers.autonomous().onTrue(Commands.startEnd(() -> {
+      intakeMotor.getConfigurator().apply(IntakeConstants.kIntakeMotorConfigDuringAuto);
+    }, () -> {
+      intakeMotor.getConfigurator().apply(IntakeConstants.kIntakeMotorConfig);
+    }));
 
 
     StatusSignalUtil.registerRioSignals(
