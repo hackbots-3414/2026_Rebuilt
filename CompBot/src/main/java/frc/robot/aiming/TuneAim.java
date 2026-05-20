@@ -20,7 +20,7 @@ public class TuneAim implements AimStrategy {
         AimParams params = new AimParams(AimStatus.Possible);
 
         double pitch = SmartDashboard.getNumber("Aim Tuning/Pitch", 60.0);
-        double output = SmartDashboard.getNumber("Aim Tuning/Output", 0);
+        double output = SmartDashboard.getNumber("Aim Tuning/Output", 30);
 
         SmartDashboard.putNumber("Aim Tuning/Pitch", pitch);
         SmartDashboard.putNumber("Aim Tuning/Output", output);

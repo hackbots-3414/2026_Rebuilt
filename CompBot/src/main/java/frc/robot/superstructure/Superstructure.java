@@ -55,6 +55,7 @@ public class Superstructure {
   public Superstructure() {
     subsystems = switch (RobotIdentifier.id()) {
       case CompBot -> createCompBotSubsystems();
+      case DemoBot -> createDemoBotSubsystems();
       case SimBot -> createSimBotSubsystems();
       case TestBot -> createTestBotSubsystems();
     };
@@ -65,6 +66,18 @@ public class Superstructure {
   private Subsystems createCompBotSubsystems() {
     Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain();
     Turret turret = new Turret(new TurretIOHardware());
+    Shooter shooter = new Shooter(new ShooterIOHardware());
+    Indexer indexer = new Indexer(new IndexerIOHardware());
+    Intake intake = new Intake(new IntakeIOHardware());
+    Climber climber = new Climber(new ClimberIOSim());
+    Led led = new Led(new LedIO());
+    return new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
+  }
+
+  /** Creates subsystems initialized for the demo robot. */
+  private Subsystems createDemoBotSubsystems() {
+    Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain();
+    Turret turret = new Turret(new TurretIOSim());
     Shooter shooter = new Shooter(new ShooterIOHardware());
     Indexer indexer = new Indexer(new IndexerIOHardware());
     Intake intake = new Intake(new IntakeIOHardware());
