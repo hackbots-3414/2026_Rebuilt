@@ -45,5 +45,7 @@ public interface TurretIO {
 
   public void setPosition(Angle position);
 
+  public void setVelocity(AngularVelocity velocity);
+
   public void calibrate();
 }

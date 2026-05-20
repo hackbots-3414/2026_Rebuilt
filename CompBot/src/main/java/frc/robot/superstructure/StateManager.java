@@ -20,6 +20,8 @@ import frc.robot.util.ActivityCalculator;
 import frc.robot.util.BetterAutoChooser;
 import frc.robot.util.FieldUtils;
 import frc.robot.util.OnboardLogger;
+import frc.robot.util.RobotIdentifier;
+import frc.robot.util.RobotIdentifier.RobotId;
 
 /**
  * A class representing the robot-wide state variables.
@@ -117,9 +119,10 @@ public class StateManager {
     final double SHOOTER_DEBOUNCE = 1.5;
     final double TURRET_DEBOUNCE = 0.1;
     final boolean FORCE_ODOMETRY = false;
+    final boolean DEMO_MODE = RobotIdentifier.id() == RobotId.DemoBot;
 
     Trigger aimOk = new Trigger(() -> aimParams().isOk());
-    Trigger turretReady = subsystems.turret().tracked(this::aimParams).debounce(TURRET_DEBOUNCE, DebounceType.kFalling);
+    Trigger turretReady = subsystems.turret().tracked(this::aimParams).debounce(TURRET_DEBOUNCE, DebounceType.kFalling).or(() -> DEMO_MODE);
     Trigger shooterReady = subsystems.shooter().tracked(this::aimParams).debounce(SHOOTER_DEBOUNCE,
         DebounceType.kFalling);
     Trigger validOdometry = subsystems.drivetrain().validOdemetry();

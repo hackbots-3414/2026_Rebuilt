@@ -24,11 +24,13 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.util.RobotIdentifier;
+import frc.robot.util.RobotIdentifier.RobotId;
 
 public class IntakeConstants {
   protected static final int kIntakeMotorId = 5;
 
-  protected static final Voltage kIntakeVoltage = Volts.of(12.0);
+  protected static final Voltage kIntakeVoltage = Volts.of(RobotIdentifier.id() == RobotId.DemoBot ? 0.0 : 12.0);
   protected static final Voltage kEjectVoltage = Volts.of(-8);
 
   protected static final TalonFXConfiguration kIntakeMotorConfig = new TalonFXConfiguration()

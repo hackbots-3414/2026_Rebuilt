@@ -2,6 +2,7 @@ package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Radians;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TurretIOSim implements TurretIO {
@@ -22,6 +23,8 @@ public class TurretIOSim implements TurretIO {
   public void setPosition(Angle position) {
     reference = position;
   }
+
+  public void setVelocity(AngularVelocity velocity) {}
 
   public void calibrate() {}
 

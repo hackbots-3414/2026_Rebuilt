@@ -77,7 +77,7 @@ public class Superstructure {
   /** Creates subsystems initialized for the demo robot. */
   private Subsystems createDemoBotSubsystems() {
     Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain();
-    Turret turret = new Turret(new TurretIOSim());
+    Turret turret = new Turret(new TurretIOHardware());
     Shooter shooter = new Shooter(new ShooterIOHardware());
     Indexer indexer = new Indexer(new IndexerIOHardware());
     Intake intake = new Intake(new IntakeIOHardware());

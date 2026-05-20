@@ -9,13 +9,15 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.util.RobotIdentifier;
+import frc.robot.util.RobotIdentifier.RobotId;
 
 public final class IndexerConstants {
 
   public static final class SpindexerConstants {
     protected static final int kMotorId = 7;
 
-    protected static final Voltage kSpinVoltage = Volts.of(12.0);
+    protected static final Voltage kSpinVoltage = Volts.of(RobotIdentifier.id() == RobotId.DemoBot ? 2.25 : 12.0);
 
     protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
         .withMotorOutput(new MotorOutputConfigs()

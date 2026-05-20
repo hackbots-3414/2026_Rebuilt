@@ -2,12 +2,16 @@ package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import java.util.Optional;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.util.StatusSignalUtil;
 import yams.units.EasyCRT;
@@ -21,6 +25,7 @@ public class TurretIOHardware implements TurretIO {
   private final CANcoder gear2CANcoder;
 
   private final DynamicMotionMagicVoltage control;
+  private final VoltageOut voltageControl = new VoltageOut(0);
 
   private Angle reference = Radians.zero();
 
@@ -67,6 +72,10 @@ public class TurretIOHardware implements TurretIO {
   public void setPosition(Angle reference) {
     this.reference = reference;
     motor.setControl(control.withPosition(reference));
+  }
+
+  public void setVelocity(AngularVelocity velocity) {
+    motor.setControl(voltageControl.withOutput(2 * velocity.in(RotationsPerSecond)));
   }
 
   public void updateInputs(TurretIOInputs inputs) {

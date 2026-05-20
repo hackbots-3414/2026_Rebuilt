@@ -1,7 +1,9 @@
 package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -179,5 +181,9 @@ public class Turret extends SubsystemBase {
         new Transform3d(Translation3d.kZero, new Rotation3d(new Rotation2d(inputs.position.minus(TurretConstants.kForwards))))
             .plus(LocalizationConstants.kTurretAoRToTurretCameraOffset);
     return TurretConstants.kOffset.plus(turretRelative);
+  }
+
+  public Command manualControl(DoubleSupplier velocity) {
+    return this.run(() -> io.setVelocity(RotationsPerSecond.of(velocity.getAsDouble())));
   }
 }
