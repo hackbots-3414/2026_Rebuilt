@@ -14,8 +14,6 @@ import frc.robot.util.OnboardLogger;
 public class AimParams {
   /** The status of the parameters object. */
   public AimStatus status = AimStatus.Unchecked;
-  /** The manner of speed control the paramters requires */
-  public SpeedControl control = SpeedControl.ProjectileVelocity;
   /** the launch angle of the fuel out of the robot. */
   public Rotation2d pitch = Rotation2d.kZero;
   /**
@@ -62,19 +60,6 @@ public class AimParams {
   /** Returns whether the aim parameters calculated are feasible */
   public boolean isOk() {
     return status.isOk();
-  }
-
-  public enum SpeedControl {
-    /**
-     * The velocity parameter of the {@link AimParams} is the projectile's desired velocity, in
-     * meters per second.
-     */
-    ProjectileVelocity,
-    /**
-     * The velocity parameter of the {@link AimParams} is the shooter's control input, in its
-     * appropriate units.
-     */
-    MechanismControl;
   }
 
   public static void setupLogging(OnboardLogger log, Supplier<AimParams> params) {

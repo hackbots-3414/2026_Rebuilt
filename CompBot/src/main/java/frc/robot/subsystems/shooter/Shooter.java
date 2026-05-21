@@ -7,16 +7,20 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.aiming.AimParams;
-import frc.robot.aiming.AimParams.SpeedControl;
+import frc.robot.aiming.PhysicsAim;
 import frc.robot.subsystems.shooter.ShooterConstants.HoodConstants;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 import frc.robot.util.OnboardLogger;
@@ -36,7 +40,8 @@ public class Shooter extends SubsystemBase {
   public Shooter(ShooterIO io) {
     this.io = io;
 
-    // When the robot is disabled, set velocity back to zero. This way, when it starts up again, it
+    // When the robot is disabled, set velocity back to zero. This way, when it
+    // starts up again, it
     // won't try to go all the way back to the last commanded velocity.
     RobotModeTriggers.disabled().onTrue(
         this.runOnce(() -> io.setVelocity(RotationsPerSecond.zero())).ignoringDisable(true));
@@ -49,39 +54,28 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putData("Desired Shooter Wheel Speed", (Sendable) shooterReference);
     io.updateInputs(inputs);
 
-    double error =
-        shooterReference.baseUnitMagnitude() - inputs.shooter1Velocity.baseUnitMagnitude();
+    double error = shooterReference.baseUnitMagnitude() - inputs.shooter1Velocity.baseUnitMagnitude();
     if (error > ShooterConstants.kShootingErrorDetectionThreshold.baseUnitMagnitude()) {
       lastSignificantDrop = Timer.getTimestamp();
     }
   }
 
-  private AngularVelocity projectileToShooterVelocity(double output, SpeedControl control) {
-    switch (control) {
-      case ProjectileVelocity:
-        // Assume linear relationship between shooter rotational speed and projectile linear speed.
-        return ShooterConstants.kMaxRotationalSpeed
-            .times(output / ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond));
-      case MechanismControl:
-        return RotationsPerSecond.of(output);
-    }
-    // This will never really happen.
-    return RotationsPerSecond.zero();
-  }
-
   private Angle pitchToHoodAngle(Rotation2d pitch) {
-    // The hood's angle is normal to the angle of the ball, i.e. the hood angle is 90 degrees
+    // The hood's angle is normal to the angle of the ball, i.e. the hood angle is
+    // 90 degrees
     // minus the pitch. Then we subtract the offset to get the mechanism position.
-    Angle mechanismAngle =
-        Rotation2d.kCCW_90deg.minus(pitch).getMeasure().minus(HoodConstants.kOffset);
+    Angle mechanismAngle = Rotation2d.kCCW_90deg.minus(pitch).getMeasure().minus(HoodConstants.kOffset);
     return mechanismAngle;
   }
 
   /**
-   * This command tells the shooter to begin to track the desired target. When this command ends, it
-   * does NOT turn off the shooter; we don't want to have to get all the way back up to speed.
+   * This command tells the shooter to begin to track the desired target. When
+   * this command ends, it
+   * does NOT turn off the shooter; we don't want to have to get all the way back
+   * up to speed.
    */
   public Command shoot(Supplier<AimParams> paramsSupplier) {
     return this.run(() -> {
@@ -91,8 +85,9 @@ public class Shooter extends SubsystemBase {
         io.setVelocity(RotationsPerSecond.zero(), false);
         return;
       }
-      // This runs each tick (no exceptions are possible), so we get to vary slot parameter here.
-      shooterReference = projectileToShooterVelocity(params.output, params.control);
+      // This runs each tick (no exceptions are possible), so we get to vary slot
+      // parameter here.
+      shooterReference = RotationsPerSecond.of(params.output);
       hoodReference = pitchToHoodAngle(params.pitch);
       io.setVelocity(shooterReference, shouldEnableRecovery(shooterReference));
       io.setAngle(hoodReference);
@@ -113,8 +108,8 @@ public class Shooter extends SubsystemBase {
 
   /** Note: this means that if velocity > reference we say it's okay */
   private boolean shooterAtSpeed(AimParams params) {
-    double velocityError = projectileToShooterVelocity(params.output, params.control)
-        .minus(inputs.shooter1Velocity).baseUnitMagnitude();
+    double velocityError = params.output
+        -inputs.shooter1Velocity.baseUnitMagnitude();
     boolean velocityOk = velocityError <= params.deltaOutput;
     return velocityOk;
   }
@@ -125,10 +120,8 @@ public class Shooter extends SubsystemBase {
   }
 
   private boolean hoodAtPosition(AimParams params) {
-    double hoodError =
-        inputs.hoodPosition.minus(pitchToHoodAngle(params.pitch)).baseUnitMagnitude();
-    boolean hoodOk =
-        Math.abs(hoodError) <= params.deltaPitch.getMeasure().baseUnitMagnitude();
+    double hoodError = inputs.hoodPosition.minus(pitchToHoodAngle(params.pitch)).baseUnitMagnitude();
+    boolean hoodOk = Math.abs(hoodError) <= params.deltaPitch.getMeasure().baseUnitMagnitude();
     return hoodOk;
   }
 

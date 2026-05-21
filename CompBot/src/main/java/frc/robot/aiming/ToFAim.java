@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.aiming.AimParams.AimStatus;
-import frc.robot.aiming.AimParams.SpeedControl;
 
 /**
  * An aim strategy that uses time-of-flight recursion to estimate the ideal shot parameters for the
@@ -80,7 +79,6 @@ public class ToFAim implements AimStrategy {
     AimParams params = new AimParams();
     params.pitch = Rotation2d.fromDegrees(pitch);
     params.output = shooterControl;
-    params.control = SpeedControl.MechanismControl;
     Translation2d finalOffset = target.minus(afterShooting);
     params.yaw = Rotation2d.fromRadians(Math.atan2(finalOffset.getY(), finalOffset.getX()));
 

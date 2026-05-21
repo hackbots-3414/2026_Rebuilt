@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimStrategy;
+import frc.robot.aiming.PhysicsAim;
 import frc.robot.aiming.ToFAim;
 import frc.robot.aiming.TuneAim;
 import frc.robot.subsystems.shooter.ShooterConstants;
@@ -48,9 +49,11 @@ public class Constants {
                 Rotation2d.fromDegrees(72.0), // Max pitch
                 ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond)); // max output
         public static final AimStrategy kScoringAim = (RobotIdentifier.id() == RobotId.DemoBot) ? new TuneAim()
-                : new ToFAim(ShooterConstants.scoringMeasurements, constraints);
+                // : new ToFAim(ShooterConstants.scoringMeasurements, constraints);
+                : new PhysicsAim(constraints, 2, 10);
         public static final AimStrategy kFeedingAim = (RobotIdentifier.id() == RobotId.DemoBot) ? new TuneAim()
-                : new ToFAim(ShooterConstants.feedingMeasurements, constraints);
+                // : new ToFAim(ShooterConstants.feedingMeasurements, constraints);
+                : new PhysicsAim(constraints, 2, 10);
     }
 
     public static class AutonConstants {

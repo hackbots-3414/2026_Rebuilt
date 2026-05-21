@@ -14,6 +14,6 @@ public class ShootWhenReady implements CommandBuilder {
         if (Robot.isReal()) {
             return composition;
         }
-        return composition.alongWith(new FuelShotSim().build(subsystems, state).repeatedly());
+        return composition;
     }
 }

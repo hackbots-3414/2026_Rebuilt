@@ -1,12 +1,17 @@
 package frc.robot.aiming;
 
+import java.util.List;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import frc.robot.aiming.AimParams.AimStatus;
-import frc.robot.aiming.AimParams.SpeedControl;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterConstants;
 
 public class PhysicsAim implements AimStrategy {
   private static final int ITERATIONS = 5;
@@ -15,14 +20,23 @@ public class PhysicsAim implements AimStrategy {
 
   private final double minDescentVelocity;
   private final double maxDescentVelocity;
+  private InterpolatingDoubleTreeMap projectileVelocity = new InterpolatingDoubleTreeMap();
 
   public PhysicsAim(AimConstraints constraints, double minDescentVelocity,
       double maxDescentVelocity) {
     this.constraints = constraints;
     this.minDescentVelocity = minDescentVelocity;
     this.maxDescentVelocity = maxDescentVelocity;
+    for (Pair<Double, Double> measurement : ShooterConstants.projectileSpeedMeasurments) {
+      projectileVelocity.put(measurement.getFirst(), measurement.getSecond());
+    }
+
   }
 
+  public double getAngularVelocity(double speed) {
+    return projectileVelocity.get(speed);
+  }
+  
   public AimParams update(Pose3d target, Pose3d shooter, Translation2d shooterVelocity) {
     Translation3d offset = target.getTranslation().minus(shooter.getTranslation());
     // SmartDashboard.putNumber("Distance", offset.toTranslation2d().getNorm());
@@ -44,7 +58,6 @@ public class PhysicsAim implements AimStrategy {
     boolean minWorks = constraints.check(minParams);
     if (minWorks) {
       minParams.status = AimStatus.Possible;
-      minParams.control = SpeedControl.ProjectileVelocity;
       return minParams;
     }
 
@@ -92,7 +105,6 @@ public class PhysicsAim implements AimStrategy {
       return AimParams.impossible();
     }
 
-    best.control = SpeedControl.ProjectileVelocity;
     return best;
   }
 

@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.aiming.AimParams.AimStatus;
-import frc.robot.aiming.AimParams.SpeedControl;
 
 public class TuneAim implements AimStrategy {
     public AimParams update(Pose3d aimTarget, Pose3d shooter, Translation2d velocity) {
@@ -27,7 +26,6 @@ public class TuneAim implements AimStrategy {
 
         params.pitch = Rotation2d.fromDegrees(pitch);
         params.output = output;
-        params.control = SpeedControl.MechanismControl;
 
         params.yaw = Rotation2d.fromRadians(Math.atan2(offset.getY(), offset.getX()));
 
