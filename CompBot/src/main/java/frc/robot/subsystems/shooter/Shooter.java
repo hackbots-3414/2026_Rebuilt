@@ -10,7 +10,9 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -32,6 +34,8 @@ public class Shooter extends SubsystemBase {
   private boolean active = false;
 
   private double lastSignificantDrop = 0;
+
+  private AngularVelocity desiredVelocity;
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -56,12 +60,16 @@ public class Shooter extends SubsystemBase {
     if (error > ShooterConstants.kShootingErrorDetectionThreshold.baseUnitMagnitude()) {
       lastSignificantDrop = Timer.getTimestamp();
     }
+
+    SmartDashboard.putData("Desired Velocity", (Sendable) desiredVelocity);
   }
 
   private AngularVelocity projectileToShooterVelocity(double output, SpeedControl control) {
     switch (control) {
       case ProjectileVelocity:
         // Assume linear relationship between shooter rotational speed and projectile linear speed.
+        desiredVelocity = ShooterConstants.kMaxRotationalSpeed
+            .times(output / ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond));
         return ShooterConstants.kMaxRotationalSpeed
             .times(output / ShooterConstants.kMaxLinearSpeed.in(MetersPerSecond));
       case MechanismControl:
