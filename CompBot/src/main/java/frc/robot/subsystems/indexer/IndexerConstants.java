@@ -21,7 +21,7 @@ public final class IndexerConstants {
 
     protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
         .withMotorOutput(new MotorOutputConfigs()
-            .withNeutralMode(NeutralModeValue.Coast)
+            .withNeutralMode(NeutralModeValue.Brake)
             .withInverted(InvertedValue.CounterClockwise_Positive))
 
         .withCurrentLimits(new CurrentLimitsConfigs()
@@ -39,7 +39,7 @@ public final class IndexerConstants {
 
     protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
         .withMotorOutput(new MotorOutputConfigs()
-            .withNeutralMode(NeutralModeValue.Coast)
+            .withNeutralMode(NeutralModeValue.Brake)
             .withInverted(InvertedValue.CounterClockwise_Positive))
 
         .withCurrentLimits(new CurrentLimitsConfigs()
