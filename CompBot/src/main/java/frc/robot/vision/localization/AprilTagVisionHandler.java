@@ -12,6 +12,7 @@ import frc.robot.superstructure.Superstructure;
 import frc.robot.vision.CameraConfig;
 import frc.robot.vision.CameraIO;
 import frc.robot.vision.CameraIOHardware;
+import frc.robot.vision.tracking.MultiInputTracker;
 
 public class AprilTagVisionHandler implements AutoCloseable {
   @SuppressWarnings("unused")
@@ -19,6 +20,7 @@ public class AprilTagVisionHandler implements AutoCloseable {
 
   private final Notifier m_notifier;
   private final List<SingleInputPoseEstimator> m_estimators = new ArrayList<>();
+
 
   private final Superstructure superstructure;
 
