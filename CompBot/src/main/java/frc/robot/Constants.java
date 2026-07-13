@@ -50,10 +50,10 @@ public class Constants {
                 ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond)); // max output
         public static final AimStrategy kScoringAim = (RobotIdentifier.id() == RobotId.DemoBot) ? new TuneAim()
                 // : new ToFAim(ShooterConstants.scoringMeasurements, constraints);
-                : new PhysicsAim(constraints, 2, 10);
+                : new PhysicsAim(constraints, 4, 10);
         public static final AimStrategy kFeedingAim = (RobotIdentifier.id() == RobotId.DemoBot) ? new TuneAim()
                 // : new ToFAim(ShooterConstants.feedingMeasurements, constraints);
-                : new PhysicsAim(constraints, 2, 10);
+                : new PhysicsAim(constraints, 4, 10);
     }
 
     public static class AutonConstants {

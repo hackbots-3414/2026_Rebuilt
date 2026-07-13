@@ -11,7 +11,7 @@ import frc.robot.superstructure.Superstructure;
 
 public class RobotBindings implements Binder {
     public void bind(Superstructure superstructure) {
-        CommandBuilder shoot = (Robot.isReal()) ? new RunIndex() : new RunIndex();
+        CommandBuilder shoot = new RunIndex();
         superstructure.state.shootReady.whileTrue(superstructure.build(shoot).repeatedly());
         superstructure.state.shootReady.and(superstructure.state.intaking().negate()).whileTrue(superstructure.build(new AgitateIntake()));
         RobotModeTriggers.teleop().onTrue(

@@ -52,15 +52,12 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putData("Desired Shooter Wheel Speed", (Sendable) shooterReference);
     io.updateInputs(inputs);
 
     double error = shooterReference.baseUnitMagnitude() - inputs.shooter1Velocity.baseUnitMagnitude();
     if (error > ShooterConstants.kShootingErrorDetectionThreshold.baseUnitMagnitude()) {
       lastSignificantDrop = Timer.getTimestamp();
     }
-
-    SmartDashboard.putData("Desired Velocity", (Sendable) desiredVelocity);
   }
 
   private Angle pitchToHoodAngle(Rotation2d pitch) {
@@ -109,7 +106,7 @@ public class Shooter extends SubsystemBase {
   /** Note: this means that if velocity > reference we say it's okay */
   private boolean shooterAtSpeed(AimParams params) {
     double velocityError = params.output
-        -inputs.shooter1Velocity.baseUnitMagnitude();
+        -inputs.shooter1Velocity.in(RotationsPerSecond);
     boolean velocityOk = velocityError <= params.deltaOutput;
     return velocityOk;
   }

@@ -156,9 +156,12 @@ public final class ShooterConstants {
             new AimMeasurement(Meters.of(15), Rotation2d.fromDegrees(50), 80, Seconds.of(2)));
 
     public static final List<Pair<Double, Double>> projectileSpeedMeasurments = List.of(
-        new Pair<Double,Double>(0.0, 0.0),
-        new Pair<Double,Double>(0.0, 0.0),
-        new Pair<Double,Double>(0.0, 0.0),
-        new Pair<Double,Double>(0.0, 0.0),
-        new Pair<Double,Double>(0.0, 0.0));
+        new Pair<>(6.03, 29.0),
+        new Pair<>(6.601, 32.0),
+        new Pair<>(7.11, 33.5),
+        new Pair<>(7.52, 37.0),
+        new Pair<>(8.21, 41.25),
+        new Pair<>(8.51, 43.0),
+        new Pair<>(9.02, 46.0),
+        new Pair<>(9.53, 51.0));
 }

@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.aiming.AimParams.AimStatus;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterConstants;
@@ -33,13 +34,16 @@ public class PhysicsAim implements AimStrategy {
 
   }
 
-  public double getAngularVelocity(double speed) {
+  private double getAngularVelocity(double speed) {
     return projectileVelocity.get(speed);
+    // SmartDashboard.putNumber("Shooter/Linear Velocity", speed);
+    // double angularVelocity = SmartDashboard.getNumber("Shooter/Angular Velocity", 0.0);
+    // SmartDashboard.putNumber("Shooter/Angular Velocity", angularVelocity);
+    // return angularVelocity;
   }
   
-  public AimParams update(Pose3d target, Pose3d shooter, Translation2d shooterVelocity) {
+  private AimParams updateUnadjusted(Pose3d target, Pose3d shooter, Translation2d shooterVelocity) {
     Translation3d offset = target.getTranslation().minus(shooter.getTranslation());
-    // SmartDashboard.putNumber("Distance", offset.toTranslation2d().getNorm());
 
     // Calculate the pitch values for the minimum and maximum possible v_zf values:
     AimParams minParams = quicksolve(offset, shooterVelocity, minDescentVelocity);
@@ -106,6 +110,12 @@ public class PhysicsAim implements AimStrategy {
     }
 
     return best;
+  }
+
+  public AimParams update(Pose3d target, Pose3d shooter, Translation2d shooterVelocity) {
+    AimParams unadjusted = updateUnadjusted(target, shooter, shooterVelocity);
+    unadjusted.output = getAngularVelocity(unadjusted.output);
+    return unadjusted;
   }
 
   public static AimParams quicksolve(
