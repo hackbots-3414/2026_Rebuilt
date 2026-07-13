@@ -11,6 +11,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.aiming.AimConstraints;
 import frc.robot.aiming.AimStrategy;
@@ -21,6 +23,8 @@ import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.util.BoundingBox;
 import frc.robot.util.RobotIdentifier;
 import frc.robot.util.RobotIdentifier.RobotId;
+import frc.robot.vision.CameraConfig;
+import frc.robot.vision.localization.LocalizationConstants;
 
 public class Constants {
     // Checked the FIRST Game Manual and fixed the field dimensions.
@@ -55,7 +59,27 @@ public class Constants {
                 // : new ToFAim(ShooterConstants.feedingMeasurements, constraints);
                 : new PhysicsAim(constraints, 4, 10);
     }
-
+    public static class CamConstants {
+        public static final List<CameraConfig> configs = List.of(
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam1",
+            () -> new Transform3d(-0.207, -0.318, 0.473,
+                new Rotation3d(Units.degreesToRadians(0.7), Units.degreesToRadians(-28.578),
+                    Units.degreesToRadians(-67.63)))),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam2",
+            () -> new Transform3d(0.221, -0.262, 0.724,
+                new Rotation3d(0, Units.degreesToRadians(-30), Units.degreesToRadians(26.3)))),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam3",
+            () -> new Transform3d(0.121, 0.271, 0.709,
+                new Rotation3d(0, Units.degreesToRadians(-5.1), Units.degreesToRadians(141.7)))),
+        LocalizationConstants.kRegularBaseCameraConfig.cameraCopy(
+            "cam4",
+            () -> new Transform3d(-0.315, 0.138, 0.438,
+                new Rotation3d(Units.degreesToRadians(-6.5), Units.degreesToRadians(-29.9),
+                    Units.degreesToRadians(-169)))));
+    }
     public static class AutonConstants {
         public static final Pose2d kLeftStart = new Pose2d(3.3, 5.7, Rotation2d.fromDegrees(-45));
         public static final Pose2d kRightStart = new Pose2d(3.3, 2.3, Rotation2d.fromDegrees(45));
