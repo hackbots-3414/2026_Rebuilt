@@ -40,7 +40,7 @@ public class LocalizationConstants {
           20)); // Difference multiplier
 
   protected static final AprilTagFieldLayout kTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
   protected static final String kEstimationName = "estimation";
   protected static final String kRejectName = "rejected";
