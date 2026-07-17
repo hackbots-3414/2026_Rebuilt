@@ -1,6 +1,8 @@
 package frc.robot.binding;
 
 import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -39,7 +41,8 @@ public class DriverXboxBindings implements Binder {
 
     shoot.toggleOnTrue(superstructure.build(new AimPrep()));
     intake.toggleOnTrue(superstructure.build(new RunIntake()));
-    resetPerspective.onTrue(superstructure.build(new ResetForwards()));
+    // resetPerspective.onTrue(superstructure.build(new ResetForwards()));
+    SmartDashboard.putData("Driver/Reset Perspective", superstructure.build(new ResetForwards()));
     retract.onTrue(superstructure.build(new RetractIntake()));
 
     superstructure.state.intaking().and(RobotModeTriggers.teleop()).whileTrue(RumbleUtil.rumble(controller, RumbleStrength.High));
