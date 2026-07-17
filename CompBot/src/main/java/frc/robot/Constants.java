@@ -53,11 +53,11 @@ public class Constants {
                 Rotation2d.fromDegrees(72.0), // Max pitch
                 ShooterConstants.kMaxRotationalSpeed.in(RotationsPerSecond)); // max output
         public static final AimStrategy kScoringAim = (RobotIdentifier.id() == RobotId.DemoBot) ? new TuneAim()
-                // : new ToFAim(ShooterConstants.scoringMeasurements, constraints);
-                : new PhysicsAim(constraints, 4, 10);
+                : new ToFAim(ShooterConstants.scoringMeasurements, constraints);
+                // : new PhysicsAim(constraints, 4, 10);
         public static final AimStrategy kFeedingAim = (RobotIdentifier.id() == RobotId.DemoBot) ? new TuneAim()
-                // : new ToFAim(ShooterConstants.feedingMeasurements, constraints);
-                : new PhysicsAim(constraints, 4, 10);
+                : new ToFAim(ShooterConstants.feedingMeasurements, constraints);
+                // : new PhysicsAim(constraints, 4, 10);
     }
     public static class CamConstants {
         public static final List<CameraConfig> configs = List.of(
