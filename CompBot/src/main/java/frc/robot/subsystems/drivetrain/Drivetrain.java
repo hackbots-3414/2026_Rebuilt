@@ -66,6 +66,7 @@ import frc.robot.util.ChassisSpeedRateLimiter;
 import frc.robot.util.StatusSignalUtil;
 import frc.robot.vision.localization.LocalizationConstants;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
+import edu.wpi.first.math.MathUtil;
 
 public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private static final double kSimLoopPeriod = 0.004; // 4 ms
@@ -81,9 +82,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private boolean hasAppliedOperatorPerspective = false;
 
   private double maxSpeed = CompBotTunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+  final double kAbsoluteMaxSpeed = CompBotTunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   private double maxRotationalSpeed = 2.0 * Math.PI; // radians per second
 
   private Pose2d memorySpot = Pose2d.kZero;
+  private boolean demoMode = false;
 
   public enum TeleopDriveMode {
     /**
@@ -210,13 +213,16 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
    */
   public Drivetrain(
       SwerveDrivetrainConstants drivetrainConstants,
+      boolean demoMode,
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(drivetrainConstants, modules);
+    this.demoMode = demoMode;
     if (Utils.isSimulation()) {
       startSimThread();
     }
-    state = getState();
+    state = getState(); 
     OnboardLogger ologger = new OnboardLogger("Drivetrain");
+    SmartDashboard.setDefaultNumber("Max Speed (Demo)", maxSpeed);
     ologger.registerBoolean("Valid Odometry", validOdemetry());
     ologger.registerDouble("Time since last estimate",
         () -> Timer.getTimestamp() - lastOkayVisionUpdateTime);
@@ -354,6 +360,10 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
     FieldManager.getInstance().getField().setRobotPose(robotPose());
     FieldManager.getInstance().getField().getObject("Memory Spot").setPose(memorySpot);
+
+    if(demoMode) {
+      maxSpeed = maxSpeed*MathUtil.clamp(SmartDashboard.getNumber("Max Speed (Demo)", 0.0), 0.0, 1.0);
+    }
   }
 
   private void startSimThread() {

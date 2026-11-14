@@ -14,19 +14,21 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.intake.IntakeConstants.DeployConstants;
 import frc.robot.util.StatusSignalUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeIOHardware implements IntakeIO {
 
   private final TalonFX intakeMotor;
   private final TalonFX deployMotor;
   private final CANcoder deployCANcoder;
+  private boolean isDemo = false;
 
   private final VoltageOut intakeControl = new VoltageOut(0);
   private final PositionVoltage deployControl = new PositionVoltage(0);
 
   private Voltage lastVoltage = Volts.zero();
 
-  public IntakeIOHardware() {
+  public IntakeIOHardware(boolean isDemo) {
     intakeMotor = new TalonFX(IntakeConstants.kIntakeMotorId);
     intakeMotor.getConfigurator().apply(IntakeConstants.kIntakeMotorConfig);
 
@@ -64,6 +66,10 @@ public class IntakeIOHardware implements IntakeIO {
         deployCANcoder.getVelocity(false));
 
     deployMotor.setPosition(0.0);
+
+    this.isDemo = isDemo;
+    SmartDashboard.setDefaultBoolean("Intake Enabled (Demo)", true);
+
     // SmartDashboard.putData("Intake/Set Zero", Commands.runOnce(() -> deployMotor.setPosition(0)).ignoringDisable(true));
     // SmartDashboard.putData("Intake/Set Deployed", Commands.runOnce(() -> deployMotor.setPosition(DeployPosition.Deployed.position)).ignoringDisable(true));
   }
@@ -110,6 +116,9 @@ public class IntakeIOHardware implements IntakeIO {
   }
 
   public void setIntakeVoltage(Voltage voltage) {
+    // if (isDemo && SmartDashboard.getBoolean("Intake Enabled (Demo)", false)) {
+    //  voltage = Volts.zero();
+    // }
     if (!voltage.equals(lastVoltage)) {
       intakeMotor.setControl(intakeControl.withOutput(voltage.baseUnitMagnitude()));
       lastVoltage = voltage;

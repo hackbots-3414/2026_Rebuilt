@@ -199,9 +199,9 @@ public class CompBotTunerConstants {
      * Creates a CommandSwerveDrivetrain instance.
      * This should only be called once in your robot program,.
      */
-    public static Drivetrain createDrivetrain() {
+    public static Drivetrain createDrivetrain(boolean demoMode) {
         return new Drivetrain(
-            DrivetrainConstants, FrontLeft, FrontRight, BackLeft, BackRight
+            DrivetrainConstants, demoMode, FrontLeft, FrontRight, BackLeft, BackRight
         );
     }
 

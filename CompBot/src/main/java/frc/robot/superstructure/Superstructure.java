@@ -66,11 +66,11 @@ public class Superstructure {
 
   /** Creates subsystems initialized for real comp robot. */
   private Subsystems createCompBotSubsystems() {
-    Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain();
+    Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain(false);
     Turret turret = new Turret(new TurretIOHardware());
     Shooter shooter = new Shooter(new ShooterIOHardware());
     Indexer indexer = new Indexer(new IndexerIOHardware());
-    Intake intake = new Intake(new IntakeIOHardware());
+    Intake intake = new Intake(new IntakeIOHardware(false));
     Climber climber = new Climber(new ClimberIOSim());
     Led led = new Led(new LedIO());
     return new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
@@ -78,11 +78,11 @@ public class Superstructure {
 
   /** Creates subsystems initialized for the demo robot. */
   private Subsystems createDemoBotSubsystems() {
-    Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain();
+    Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain(true);
     Turret turret = new Turret(new TurretIOHardware());
     Shooter shooter = new Shooter(new ShooterIOHardware());
     Indexer indexer = new Indexer(new IndexerIOHardware());
-    Intake intake = new Intake(new IntakeIOHardware());
+    Intake intake = new Intake(new IntakeIOHardware(true));
     Climber climber = new Climber(new ClimberIOSim());
     Led led = new Led(new LedIO());
     return new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
@@ -90,7 +90,7 @@ public class Superstructure {
 
   /** Creates subsystems initialized for simulation robot */
   private Subsystems createSimBotSubsystems() {
-    Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain();
+    Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain(false);
     Turret turret = new Turret(new TurretIOSim());
     Shooter shooter = new Shooter(new ShooterIOSim());
     Indexer indexer = new Indexer(new IndexerIOSim());
@@ -116,7 +116,7 @@ public class Superstructure {
   public void bindDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, BooleanSupplier antislowbot) {
     subsystems.drivetrain.setDefaultCommand(subsystems.drivetrain.teleopDrive(vx, vy, vrot, () -> {
       if (state.shooting(ShootMode.Scoring).getAsBoolean()) {
-        return antislowbot.getAsBoolean() ? TeleopDriveMode.SlowFieldRelative : TeleopDriveMode.AccelerationLimitedFieldRelative;
+        return TeleopDriveMode.SlowFieldRelative;
       }
       return TeleopDriveMode.FieldRelative;
     }));
