@@ -51,7 +51,7 @@ public class RobotIdentifier {
             return RobotId.DemoBot;
         }
 
-        return RobotId.CompBot;
+        return RobotId.DemoBot;
     }
 
     public static void processRobotId() {
