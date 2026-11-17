@@ -11,8 +11,6 @@ import frc.robot.Constants;
 import frc.robot.commands.CommandBuilder;
 import frc.robot.generated.CompBotTunerConstants;
 import frc.robot.generated.TestBotTunerConstants;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.drivetrain.Drivetrain.TeleopDriveMode;
 import frc.robot.subsystems.indexer.Indexer;
@@ -47,7 +45,6 @@ public class Superstructure {
       Shooter shooter,
       Indexer indexer,
       Intake intake,
-      Climber climber,
       Led led) {
   }
 
@@ -56,10 +53,7 @@ public class Superstructure {
 
   public Superstructure() {
     subsystems = switch (RobotIdentifier.id()) {
-      case CompBot -> createCompBotSubsystems();
       case DemoBot -> createDemoBotSubsystems();
-      case SimBot -> createSimBotSubsystems();
-      case TestBot -> createTestBotSubsystems();
     };
     state = new StateManager(subsystems);
   }
@@ -71,9 +65,8 @@ public class Superstructure {
     Shooter shooter = new Shooter(new ShooterIOHardware());
     Indexer indexer = new Indexer(new IndexerIOHardware());
     Intake intake = new Intake(new IntakeIOHardware());
-    Climber climber = new Climber(new ClimberIOSim());
     Led led = new Led(new LedIO());
-    return new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
+    return new Subsystems(drivetrain, turret, shooter, indexer, intake, led);
   }
 
   /** Creates subsystems initialized for the demo robot. */
@@ -83,34 +76,8 @@ public class Superstructure {
     Shooter shooter = new Shooter(new ShooterIOHardware());
     Indexer indexer = new Indexer(new IndexerIOHardware());
     Intake intake = new Intake(new IntakeIOHardware());
-    Climber climber = new Climber(new ClimberIOSim());
     Led led = new Led(new LedIO());
-    return new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
-  }
-
-  /** Creates subsystems initialized for simulation robot */
-  private Subsystems createSimBotSubsystems() {
-    Drivetrain drivetrain = CompBotTunerConstants.createDrivetrain();
-    Turret turret = new Turret(new TurretIOSim());
-    Shooter shooter = new Shooter(new ShooterIOSim());
-    Indexer indexer = new Indexer(new IndexerIOSim());
-    Intake intake = new Intake(new IntakeIOSim());
-    Climber climber = new Climber(new ClimberIOSim());
-    Led led = new Led(new LedIO());
-    return new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
-  }
-
-  /** Creates subsystems initialized for test bot */
-  private Subsystems createTestBotSubsystems() {
-    Drivetrain drivetrain = TestBotTunerConstants.createDrivetrain();
-    // Sim everything besides drivetrain and LEDs.
-    Turret turret = new Turret(new TurretIOSim());
-    Shooter shooter = new Shooter(new ShooterIOSim());
-    Indexer indexer = new Indexer(new IndexerIOSim());
-    Intake intake = new Intake(new IntakeIOSim());
-    Climber climber = new Climber(new ClimberIOSim());
-    Led led = new Led(new LedIO());
-    return new Subsystems(drivetrain, turret, shooter, indexer, intake, climber, led);
+    return new Subsystems(drivetrain, turret, shooter, indexer, intake, led);
   }
 
   public void bindDrive(DoubleSupplier vx, DoubleSupplier vy, DoubleSupplier vrot, BooleanSupplier antislowbot) {

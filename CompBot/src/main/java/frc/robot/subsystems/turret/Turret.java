@@ -3,6 +3,7 @@ package frc.robot.subsystems.turret;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.lang.ref.Reference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -58,6 +59,7 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    SmartDashboard.putNumber("Turret Yaw Rotation", inputs.position.magnitude());
     calibrationAlert.set(!inputs.calibrated);
   }
 

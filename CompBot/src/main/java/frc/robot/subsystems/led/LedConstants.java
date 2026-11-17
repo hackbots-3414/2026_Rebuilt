@@ -12,10 +12,10 @@ public class LedConstants {
     // Offsets & numLEds & IDS
 
     public static final int kCANdleId = 5;
-    public static final CANBus kCanbus = RobotIdentifier.id() == RobotId.TestBot ? StatusSignalUtil.canivore : StatusSignalUtil.rio;
+    public static final CANBus kCanbus = RobotIdentifier.id() == RobotId.DemoBot ? StatusSignalUtil.canivore : StatusSignalUtil.rio;
     public static final CANdleConfiguration kLedConfig = new CANdleConfiguration()
         .withLED(new LEDConfigs()
-            .withStripType(RobotIdentifier.id() == RobotId.TestBot ? StripTypeValue.GRB : StripTypeValue.RGB));
+            .withStripType(RobotIdentifier.id() == RobotId.DemoBot ? StripTypeValue.GRB : StripTypeValue.RGB));
     
     public static final int startIndex = 0;
     public static final int endIndex = 53;

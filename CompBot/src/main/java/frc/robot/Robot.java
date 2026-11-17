@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -15,6 +16,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.ManualTurret;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.util.ActivityCalculator;
 import frc.robot.util.ActivityCalculator.HubStatus;
 import frc.robot.util.OnboardLogger;
@@ -25,8 +29,7 @@ import frc.robot.util.StatusSignalUtil;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
-  private boolean hasStartedVision;
-
+  private Angle mechanismAngle;
   private final RobotContainer robotContainer;
 
   private final Alert autonPoseWarning = new Alert("Robot not in configured starting pose for auton", AlertType.kWarning);
@@ -67,23 +70,18 @@ public class Robot extends TimedRobot {
     OnboardLogger.logAll();
 
     SmartDashboard.putNumber("DS/Match Time", DriverStation.getMatchTime());
-    HubStatus hubStatus = ActivityCalculator.status();
+    // HubStatus hubStatus = ActivityCalculator.status();
     // SmartDashboard.putString("Hub/Active (Color)",
     // hubStatus.color(ActivityCalculator.us()));
-    SmartDashboard.putBoolean("Hub/Active (Boolean)", ActivityCalculator.is(ActivityCalculator.us()));
-    SmartDashboard.putNumber("Hub/Hub Time", hubStatus.timeRemaining());
+    // SmartDashboard.putBoolean("Hub/Active (Boolean)", ActivityCalculator.is(ActivityCalculator.us()));
+    // SmartDashboard.putNumber("Hub/Hub Time", hubStatus.timeRemaining());
     // SmartDashboard.putString("Hub/Current", hubStatus.active().toString());
   }
 
   @Override
   public void disabledInit() {
-    if (!hasStartedVision) {
-      if (RobotIdentifier.id() != RobotId.TestBot) {
-        robotContainer.aprilTagVisionHandler.startThread();
-      }
-      hasStartedVision = true;
+
     }
-  }
 
   @Override
   public void disabledPeriodic() {

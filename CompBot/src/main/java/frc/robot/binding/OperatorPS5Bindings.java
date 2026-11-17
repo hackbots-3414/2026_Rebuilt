@@ -1,5 +1,6 @@
 package frc.robot.binding;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.binding.BindingConstants.Operator;
@@ -10,6 +11,7 @@ import frc.robot.commands.EmptyHopper;
 import frc.robot.commands.ManualTurret;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.RunIndex;
+import frc.robot.commands.RunIntake;
 import frc.robot.commands.ShootWhenReady;
 import frc.robot.subsystems.led.ledStates.ShootReady;
 import frc.robot.superstructure.Superstructure;
@@ -20,17 +22,18 @@ import frc.robot.util.RobotIdentifier.RobotId;
 public class OperatorPS5Bindings implements Binder {
     private final CommandPS5Controller controller;
 
-    private final Trigger index, eject, agitate, retract, manualTurret, shoot;
+    private final Trigger index, eject, agitate, retract, manualTurret, shoot, intake;
 
     public OperatorPS5Bindings() {
         controller = new CommandPS5Controller(Operator.kOperatorControllerPort);
 
-        index = controller.R1();
+        index = controller.L2();
         eject = controller.pov(180); // down
         agitate = controller.pov(270); // left
         retract = controller.pov(0); // up
         manualTurret = controller.R2();
         shoot = controller.L1();
+        intake = controller.R1();
     }
 
     public void bind(Superstructure superstructure) {
@@ -42,6 +45,7 @@ public class OperatorPS5Bindings implements Binder {
         if (RobotIdentifier.id() == RobotId.DemoBot) {
             manualTurret.whileTrue(superstructure.build(new ManualTurret(() -> -controller.getLeftX())));
             shoot.toggleOnTrue(superstructure.build(new AimPrep()));
+            intake.toggleOnTrue(superstructure.build(new RunIntake()));
         }
 
         // obfuscation is how we beat the llms
