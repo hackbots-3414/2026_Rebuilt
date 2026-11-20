@@ -12,9 +12,11 @@ import frc.robot.commands.ManualTurret;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.SetLimiter;
 import frc.robot.commands.ShootWhenReady;
 import frc.robot.subsystems.led.ledStates.ShootReady;
 import frc.robot.superstructure.Superstructure;
+import frc.robot.util.ChassisSpeedRateLimiter;
 import frc.robot.util.RobotIdentifier;
 import frc.robot.util.TriggerSequence;
 import frc.robot.util.RobotIdentifier.RobotId;
@@ -22,7 +24,7 @@ import frc.robot.util.RobotIdentifier.RobotId;
 public class OperatorPS5Bindings implements Binder {
     private final CommandPS5Controller controller;
 
-    private final Trigger index, eject, agitate, retract, manualTurret, shoot, intake;
+    private final Trigger index, eject, agitate, retract, manualTurret, shoot, intake, setLimiter;
 
     public OperatorPS5Bindings() {
         controller = new CommandPS5Controller(Operator.kOperatorControllerPort);
@@ -34,6 +36,7 @@ public class OperatorPS5Bindings implements Binder {
         manualTurret = controller.R2();
         shoot = controller.L1();
         intake = controller.R1();
+        setLimiter = controller.options();
     }
 
     public void bind(Superstructure superstructure) {
@@ -43,9 +46,12 @@ public class OperatorPS5Bindings implements Binder {
         retract.onTrue(superstructure.build(new RetractIntake()));
 
         if (RobotIdentifier.id() == RobotId.DemoBot) {
-            manualTurret.whileTrue(superstructure.build(new ManualTurret(() -> -controller.getLeftX())));
+            manualTurret.whileTrue(superstructure.build(new ManualTurret(() -> SmartDashboard.getNumber("Turret Yaw", 0))));
             shoot.toggleOnTrue(superstructure.build(new AimPrep()));
             intake.toggleOnTrue(superstructure.build(new RunIntake()));
+            setLimiter.onTrue(superstructure.build(new SetLimiter(new ChassisSpeedRateLimiter(SmartDashboard.getNumber("Chassis Speed Limit", 0), 0))));
+            //TODO: this probably doesn't work
+
         }
 
         // obfuscation is how we beat the llms

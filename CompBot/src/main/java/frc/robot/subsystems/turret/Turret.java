@@ -54,6 +54,7 @@ public class Turret extends SubsystemBase {
     log.registerBoolean("Ready", ready());
     log.registerBoolean("Tracking", () -> tracking);
     log.registerMeasurement("Reference", () -> reference, Rotations);
+    SmartDashboard.putNumber("Turret Yaw", inputs.position.magnitude());
   }
 
   @Override

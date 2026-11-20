@@ -563,6 +563,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         state.Speeds.omegaRadiansPerSecond * LOOKAHEAD);
   }
 
+  public void setRateLimiter(ChassisSpeedRateLimiter n_limiter) {
+    rateLimiter = n_limiter;
+  }
   public Pose2d predictedRobotPose() {
     return robotPose().exp(predictedTwist());
   }
