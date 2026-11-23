@@ -12,4 +12,4 @@ scp -r lvuser@10.34.14.2:/media/sda1/logs/*.wpilog $DOWNLOAD_PATH
 
 # BLOW IT UP!!!!!!!
 
-ssh -t admin@10.34.14.2 "sudo rm -rf /media/sda1/logs/*.wpilog"
+ssh -t admin@10.34.14.2 " rm -rf /media/sda1/logs/*.wpilog"
